@@ -1,0 +1,81 @@
+
+No restrictions on the format for submission.
+
+
+Software for Genetic Data Analyses & Database Resources G3:
+Genes|Genomes|Genetics offers an article format for high quality reports
+describing novel software for genetic data analyses and database resources.
+The editors of G3 recognize that modern genetic research requires specialized,
+efficient, and well-documented software, as well as access to high quality
+data.
+
+The Software and Data Resources (SDR) format is succinct and follows a
+semi-structured template (outlined below) designed to make it easy for readers
+to understand the possibilities offered by the software and resource being
+presented.
+
+Criteria for acceptance in this category includes the usefulness (i.e. is the
+tool/resource potentially useful for a broad community of researchers and not
+redundant with existing tools?), innovation, accessibility (including
+availability and quality of the documentation) and, in the case of software,
+scalability. Data resources must be made freely available in a public
+repository, and in the case of software distribution we encourage the use of
+Open Source. Please see the Data and Reagent Policy for full details.
+
+SDR manuscripts have a limit of 2500 words, excluding title, abstract, tables,
+figures, boxes, acknowledgments and references. Content will vary depending on
+the nature of the software or database resource; however, articles are expected
+to adhere to the following structure.
+
+Note: additional subheadings as appropriate are permitted—the below points are
+not designed to be a list of complete subheadings, but rather topics to be
+covered.
+
+1. Title: Include the software or database resource name and make reference to
+the type of problem(s) addressed with the software or database.
+
+2. Keywords: For software, include the relevant models, algorithms and
+language; for database resources include the organism, type of genetic data as
+well as phenotypes available.
+
+3. Abstract: ~ 150 words.  Concise summary of the results.
+
+4. Introduction: Limit of 500 words. The introduction should describe the
+significance of the software or resource presented, discuss novelty, provide an
+overview of the software or resource, and describe how researchers can access
+it.
+
+5. Methods: For database resources, the authors should describe important
+details about the database, including the organisms, type of data available,
+the protocols followed in data collections and data pre-processing if any. For
+software, the authors should describe key elements of the algorithms
+implemented, and are expected to provide both the source code as well as
+examples illustrating the use of the software.
+
+6. Results and Discussion: For software, the authors are expected to present a
+few examples that demonstrate the use of the software and benchmarks. Ideally,
+the examples should be simple. We encourage the use of boxes with scripts
+supported by a narrative. Benchmarks carried under more realistic situations
+than the one presented in the examples are also encouraged.
+
+For database resources the authors are encouraged to present a limited set of
+analysis (e.g., PC analysis, a GWA study) that describe key features of the
+data.
+
+7. Web resources: List websites providing access to the software or database
+and with documentation. Software or data must be accessible via a publicly
+accessible repository such as GitHub, figshare, Dryad, Zenodo, etc. G3 has
+partnered with figshare to provide a author submission portal, which authors
+are welcome to use. More details here.
+
+8. Acknowledgments
+
+9. Footnotes
+
+10. Literature Cited
+
+11. Supplemental data (optional): Include scripts, additional results and
+additional resources to help the reader to get started with the software or
+database. Authors must use a  publicly accessible repository such as GitHub,
+figshare, Dryad, Zenodo, etc. G3 has partnered with figshare to provide a
+author submission portal, which authors are welcome to use. More details here.

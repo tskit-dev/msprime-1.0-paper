@@ -1,0 +1,400 @@
+\documentclass{article}
+\usepackage[round]{natbib}
+
+
+% local definitions
+\newcommand{\msprime}[0]{\texttt{msprime}}
+\newcommand{\tskit}[0]{\texttt{tskit}}
+\newcommand{\ms}[0]{\texttt{ms}}
+\newcommand{\scrm}[0]{\texttt{scrm}}
+\newcommand{\stdpopsim}[0]{\texttt{stdpopsim}}
+
+
+\begin{document}
+
+\title{msprime 1.0: an efficient and extensible coalescent simulation framework}
+\author{Author list to be filled in
+}
+% \address{
+
+% \section{Contact:} \href{jerome.kelleher@bdi.ox.ac.uk}{jerome.kelleher@bdi.ox.ac.uk}
+
+\maketitle
+
+% Abstract: ~ 150 words.  Concise summary of the results.
+
+% Key points in abstract.
+% 1) Coalescent simulation is a vital tool
+% 2) Coalescent with recombination is hard
+% 3) Large sample sizes are crucial today
+% 4) Msprime has lots of features and uses a community development model
+
+\begin{abstract}
+Coalescent simulation is a key tool in population genetics and
+and has been integral to coalescent theory since its earliest days.
+Because of the ease at which the basic model can be simulated,
+a large number of different simulators have been developed. However,
+the coalescent with recombination is far more challenging to simulate,
+and, until recently, it was not possible to simulate efficiently.
+The \msprime\ software has revolutionised
+coalescent simulation, making it possible to simulate millions
+of whole genomes for the first time. We summarise the many features
+of \msprime\ 1.0, which is built around a core model of efficiently
+implementing recombination via the succinct tree sequence data
+structure. We advocate a community oriented open-source development
+process as a way to reduce duplication of effort and increase
+the quality of simulation software.
+\end{abstract}
+
+% Keywords: For software, include the relevant models, algorithms and language;
+\textbf{Keywords:} Coalescent simulation, Python
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Introduction: Limit of 500 words. The introduction should describe the
+% significance of the software or resource presented, discuss novelty, provide an
+% overview of the software or resource, and describe how researchers can access it.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section*{Introduction}
+
+The coalescent
+process~\citep{kingman1982coalescent,hudson1983testing,tajima1983evolutionary}
+models the ancestry of set of sampled genomes. Given some sampled
+genomes, the coalescent provides a mathematical description of the
+genealogical tree relating these to each other. Because of its
+elegance and simplicity, the coalescent is now central to much of
+population genetics and
+genomics~\citep{hudson1990gene,hein2004gene,wakely2008coalescent}.
+Simulation has been a vital
+tool in coalescent theory since its earliest days~\citep{hudson1983testing},
+and dozens of different simulation tools have been
+developed over the decades~\citep{carvajal2008simulation,liu2008survey,
+arenas2012simulation,yuan2012overview,hoban2012computer}.
+Two developments of recent years, however, have made the majority
+of these simulators of little relevance to modern datasets.
+% Some citations here? Darwin tree of life maybe?
+Firstly, whole genome sequencing technology---and in particular fourth-generation
+sequencing technologies---have made chromosome-level assemblies
+commonplace. Thus, regarding input data as a series of unlinked loci
+(a previously reasonable assumption), is no longer defensible and
+recombination must be fully accounted for. While the
+single-locus coalescent can be simulated in constant
+time~\citep{hudson1990gene}, the coalescent with recombination is
+far more challenging to simulate.
+% Sentence is too long...
+Programs such as Hudson's classical \ms~\citep{hudson2002generating}
+can only simulate short segments under the influence of recombination,
+and, until recently, we had to resort to
+approximate models of recombination~\citep{mcvean2005approximating,staab2014scrm}
+if we wished to simulate whole chromosomes.
+
+The second development that has made the majority of
+present day simulators inapplicable to modern data sets is the
+exponential increase in sample size. Human datasets such
+UK Biobank~\citep{bycroft2018genome} and
+gnomAD~\citep{karczewski2019variation} now contain hundreds of
+thousands of genomes, and there is every reason to believe that
+datasets of millions will soon be commonplace~\citep{stephens2015big}.
+Classical simulators such as \ms\ and even fast approximate simulators
+such as \scrm\ simply cannot cope with this scale. Even if we
+spend months of CPU time on running simulations with millions of samples,
+the output would require terabytes of storage space to store and
+days of CPU time to parse~\citep{kelleher2016efficient}.
+
+The \msprime\ simulator~\citep{kelleher2016efficient,kelleher2020coalescent}
+has profoundly changed
+what is possible. Through the use of efficient data structures, it is
+now possible to simulate millions of whole chromosomes, without resorting
+to approximations. The ``succinct tree
+sequence'' data
+structure~\citep{kelleher2016efficient,kelleher2018efficient,kelleher2019inferring},
+introduced as part of \msprime\, makes it possible to store simulations
+of millions of whole chromosomes in a few gigabytes, several orders
+of magnitude smaller than the standard
+Newick~\citep{felsenstein1989phylip} formats. This data structure has
+also lead to major advances in forwards-time
+simulation~\citep{kelleher2018efficient,haller2018tree},
+ancestry inference~\citep{kelleher2019inferring}
+and calculation of population genetic statistics~\citep{ralph2019efficiently}.
+Through a rigorous open-source community development process,
+\msprime\ has gained a large number of features since its introduction,
+making a highly efficient and flexible platform for population
+genetic simulation.
+% This is a bit flat --- anything else to say at the end here?
+This paper marks the release of \msprime\ 1.0.
+
+% JK: Earlier notes on this para
+% - Msprime 1.0 combines the features of many different simulators and is
+%   far more efficient than all of them. The combination of a Python API,
+%   an extremely efficient storage format, and a well-engineered and
+%   extensible codebase changes the game. Stdpopsim builds on this base
+%   to provide easy access to standard models of population genetics.
+%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Methods: For software, the authors should describe key elements of the algorithms
+% implemented, and are expected to provide both the source code as well as
+% examples illustrating the use of the software.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section*{Methods}
+
+In this section we describe the main features of \msprime\ 1.0.
+
+\subsection*{Recombination and gene conversion}
+Recombination is implemented in \msprime\ via
+Hudson's algorithm, which
+works backwards in time tracking the
+through the effects of common ancestor and recombination events
+~\citep{hudson1983properties,hudson1990gene,kelleher2016efficient}. Common
+ancestor events combine the ancestral material of two lineages, and may
+ result in coalescences in the marginal trees. Recombination events
+split the ancestral material for some lineage, creating two independent
+lineages. Using the appropriate data structures~\citep{kelleher2016efficient},
+this process is much more efficient to simulate than either
+methods based on the Ancestral Recombination Graph
+formulation~\citep{griffiths1991two,griffiths1997ancestral}
+or the left-to-right approach~\citep{wiuf1999recombination,wiuf1999ancestry}.
+
+
+We also support variable recombination rates along a chromosome.
+This allows us to model both recombination hotspots like
+\texttt{msHOT}~\citep{hellenthal2007mshot} and also empirical
+recombination maps like those supported by X Y Z.
+(What about ~\cite{wang2014new}?)
+We have also implemented gene
+conversion following the model defined by~\cite{wiuf2000coalescent}
+and used in \ms. Further features are planned to model bacterial
+evolution [Can you elaborate here please Franz?]
+
+\subsection*{SMC approximations}
+
+The SMC~\citep{mcvean2005approximating} and SMC'~\citep{marjoram2006fast}
+models are supported.
+The performance of msprime has made the SMC
+approximation largely unnecessary, at least when simulating human-like
+recombination rates. The SMC is an important analytical approximation
+forming the basis for several important inference methods
+methods~\citep{
+li2011inference,
+harris2013inferring,
+sheehan2013estimating,
+schiffels2014inferring,
+carmi2014renewal,
+rasmussen2014genome,
+zheng2014bayesian,
+terhorst2017robust},
+so simulations are still useful to examine  how good the approximation
+is.
+
+The SMC has been shown to be a good approximation to the
+coalescent with recombination for samples of less than
+four~\citep{hobolth2014markovian,wilton2015smc}
+and in simulations, produces patterns of LD indistinguishable from the
+full coalescent~\citep{mcvean2005approximating,marjoram2006fast}. However,
+LD is a crude approximation of the correlation structure of trees
+and it is not clear how good the SMC is for larger sample sizes.
+
+
+\subsection*{Population structure}
+We support all the stuff that ms does.
+Demographic events where we change
+the properties of the population.
+
+We provide a debugger interface which allows the user to see the
+various population sizes and growth rates over time. This includes
+a way to compute coalescence rate trajectory, which provides a useful
+ground truth when comparing with methods that estimate population
+size over time~\citep{adrion2019community}.
+
+The interface
+is very flexible and general. We also reading in population tree
+descriptions as produced by programs such as
+StarBeast~\citep{heled2009bayesian}.
+
+We support tracking lineages through time by associating a population
+with each node, and having migration records. We also have
+census events, which will record the location of every lineage
+at a particular time.
+
+\subsection*{Selection}
+Selection was added to the coalescent ... Lots of simulators exist:
+SelSim~\citep{spencer2004selsim}
+mbs~\citep{teshima2009mbs},
+msms~\citep{ewing2010msms},
+% What about Cosi, did it simulate selection?
+Cosi2~\citep{shlyakhter2014cosi2},
+and discoal~\citep{kern2016discoal}.
+
+We have implemented the basic infrastructure exists for the structured
+coalescent, which makes adding support for, e.g.,
+inversions straightforward~\citep{peischl2013sequential}
+
+
+\subsection*{Discrete time Wright-Fisher}
+The coalescent is a good approximation for ancient history, but
+is bad for the recent past and in particular when we have large
+sample
+sizes~\citep{wakeley2012gene,bhaskar2014distortion,nelson2020accounting}.
+Describe basic
+approach [DOM, can you fill in please].
+See ~\cite{nelson2020accounting} for more details.
+We compare the peformance of this simulation in Fig X
+with ARGON~\citep{palamara2016argon}, a specialised DTWF simulator.
+
+We support changing the simulation model, so that we can easily
+run hybrid simulations like described by~\cite{bhaskar2014distortion}
+This ia a powerful approach because it lets us combine any
+number of different simulation models.
+
+\subsection*{Integration with forwards-time simulations}
+Forward simulations can also use tree
+sequences~\citep{kelleher2018efficient,haller2018tree}. In particular,
+SLiM 3.0~\citep{haller2019slim} and fwdpp~\citep{thornton2014cpp} can now output tree sequences.
+Msprime can take tree sequences simulated by these forward simulators
+as input and complete the simulation (``recapitation'').
+
+\subsection*{Multiple merger coalescents}
+Kingman's coalescent assumes that all mergers are binary. This
+assumption can be violated in some situations. Lambda coalescents
+~\citep{donnelly1999particle,schweinsberg2000coalescents}
+HybridLambda~\citep{zhu2015hybrid}
+We support X Y Z.
+
+Mention~\citep{becheler2020occupancy} somewhere.
+
+\subsection*{Ancestral recombination graphs}
+The definition of ARGs is vague and confusing.
+\cite{minichiello2006mapping} define it as the data structure
+rather than the original stochastic
+process~\citep{griffiths1991two,griffiths1997ancestral}.
+\cite{rasmussen2014genome} have a slightly different approach.
+Sometimes the ARG is useful.
+The tree sequence output for \msprime\ can be turned into
+an ARG using the \texttt{record\_full\_arg} option, where we store
+recombination nodes.
+
+We also provide an interface to compute the likelihood of a given ARG
+under the~\cite{kuhner2000maximum} model.
+
+\subsection*{Simultaneous bottlenecks}
+Overview of what simulataneous bottlenecks literature. What we
+do [Konrad].
+
+
+\subsection*{Seedbank coalescent}
+Seedbank coalescent. [If we implement this fill in please Thibaud]
+
+\subsection*{Simulation interface}
+The primary interface for \msprime\ is through a Python application
+programming interface (API). This has many advantages. One is
+that we can grow the interface over time. Another is that
+downstream applications such as \texttt{stdpopsim}~\citep{adrion2019community}
+can be developed.
+
+\subsection*{Output}
+The output of \msprime\ is a ``succinct tree sequence`` (or tree sequence,
+for short) using the \tskit\ library. [Quick overview of the output formats
+of other simulators, and the perf advantages of tree sequences.]
+
+\subsection*{Development model}
+The community development process for \msprime\ is enabled by following an
+open source development practise with a strong emphasis on code quality
+and correctness. To ensure a consistent style, we require that all code
+follows the PEP8 guidelines. Unit tests for all additions are required, and
+are automatically run on each pull request on a variety of continuous
+integration testing platforms. For new simulation features, statistical tests
+must also be added, comparing the distribution of results to either analytical
+results or existing simulators.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Results and Discussion: For software, the authors are expected to present a
+% few examples that demonstrate the use of the software and benchmarks. Ideally,
+% the examples should be simple. We encourage the use of boxes with scripts
+% supported by a narrative. Benchmarks carried under more realistic situations
+% than the one presented in the examples are also encouraged.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section*{Results and Discussion}
+\subsection*{Performance}
+We compare \msprime\ with some existing simulators that have a subset of its
+features.
+
+
+\subsection*{Examples}
+We show a few examples of running \msprime.
+
+\subsection*{Discussion}
+% Simulation is useful, and it's really easy for a single locus.
+% This has lead to a culture of developing lots of simulators
+% rather than focusing on one
+Simulation has played a key role in the development of coalescent theory
+and its use in understanding observed patterns of genetic variation.
+The basic model can be simulated for $n$ samples in $O(n)$ time
+and is straightforward to implement---for example, Hudson provided a fully
+functional and highly efficient simulator as a C source code listing in an
+appendix to his seminal review paper~\citep{hudson1990gene}. Because of
+this ease, the dominant approach to producing simulators for extensions
+to this basic model has been to develop them independently. This is
+often seen as a learning opportunity, since those developing extensions
+to the coalescent must have an excellent understanding of the basic
+model in order to develop extensions to the coalescent.
+The coalescent with recombination, however, is \emph{not} straightforward
+to implement, and numerous different approaches have been
+proposed over the
+years~\citep{hudson1983properties,griffiths1997ancestral,wiuf1999recombination,
+mcvean2005approximating}. It has only recently become clear that it is
+possible to implement the model efficiently, and only through the use
+of sophisticated data structures and an intricate and subtle
+algorithm~\citep{kelleher2016efficient}.
+This efficiency, and the ability to handle recombination in a principled
+way is vital with today's vast numbers of whole genome samples.
+
+% Making lots of simulators has given us a fragmented and poort
+% quality ecosystem.
+The approach of developing ``in-house'' simulators
+has lead to a huge proliferation of different programs, with
+slightly different feature sets and often incompatible interfaces.
+It is a fragmented ecosystem with significant issues with software
+quality (see, e.g.,~\cite{yang2014critical});
+few simulators are actively maintained after publication.
+There seems to be little point
+in continuing the huge duplication of effort we have seen.
+It is not possible to achieve the performance levels of
+\msprime\ without investing substantially in software engineering.
+As demonstrated here, \msprime\ is extensible and we would argue
+that developing this simulator as an open-source community asset
+is of more benefit to all.
+
+There is also the welcome development of libraries such as
+Quetzal~\citep{becheler2019quetzal} and libsequence~\citep{thornton2014cpp}
+which break this pattern of monolithic simulation software.
+
+
+Thus, development of \msprime\ is not completed and much remains
+to be done. For example, one key aim of the 1.0 series is to
+improve the mutation models supported which are limited to
+simple infinite-sites currently. The ability to simulate
+sophisticated mutation models like Seq-Gen~\citep{rambaut1997seq}
+and Dawg~\citep{cartwright2005dna} at the megasample scale would be
+useful in many applications. Another key focus of development
+will be [WHAT?]
+
+% Finish up with a paragraph saying that there loads of exciting
+% new things that simulation can do. We need MORE sims!!!
+The ability to infer trees at scale for the first time
+in the presence of
+recombination~\citep{harris2019database,kelleher2019inferring,
+speidel2019method,tang2019genealogy}
+opens the possibility for new applications of coalescent simulations.
+Also \stdpopsim\ is cool~\citep{adrion2019community}
+
+\section*{Acknowledgments}
+JK is supported by the Robertson Foundation. [Others fill in their ACKs please]
+
+\bibliographystyle{plainnat}
+\bibliography{paper}
+
+\end{document}
