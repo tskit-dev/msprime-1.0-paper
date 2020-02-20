@@ -44,5 +44,7 @@ edits should also follow these guidelines:
 
 - Please insert line-breaks before 90-100 characters, ideally at semantic
   break points.
+  
+- For high-level/structural issues, please open an issue to discuss before making changes.
 
 
