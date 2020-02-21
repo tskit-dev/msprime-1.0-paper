@@ -1,0 +1,2 @@
+git+git://github.com/tskit-dev/msprime
+seaborn==0.10.0
