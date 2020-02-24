@@ -165,8 +165,17 @@ recombination maps like those supported by X Y Z.
 (What about ~\cite{wang2014new}?)
 We have also implemented gene
 conversion following the model defined by~\cite{wiuf2000coalescent}
-and used in \ms. Further features are planned to model bacterial
-evolution [Can you elaborate here please Franz?]
+and used in \ms. 
+% % Uncomment this sentence, when the corresponding issue in the msprime github repo is resolved.
+% Furthermore, msprime is now able to simulate gene conversion events that are 
+% initiated proportional to the local recombination rate specified by the recombination map.
+
+Gene conversion is particularly useful to model homologous recombination in bacterial evolution.
+We compare the performance of \msprime\ with gene conversion to \ms\ and
+the whole bacterial genome simulator SimBac~\citep{brown2016simbac}.
+Further features are planned to model bacterial evolution. In particular, we
+aim to include bacterial gene transfer and utilize the succinct tree sequence structure
+to represent the resulting ancestral gene transfer graph~\citep{baumdicker2014AGTG}.
 
 \subsection*{SMC approximations}
 
@@ -240,7 +249,7 @@ sizes~\citep{wakeley2012gene,bhaskar2014distortion,nelson2020accounting}.
 Describe basic
 approach [DOM, can you fill in please].
 See ~\cite{nelson2020accounting} for more details.
-We compare the peformance of this simulation in Fig X
+We compare the performance of this simulation in Fig X
 with ARGON~\citep{palamara2016argon}, a specialised DTWF simulator.
 
 We support changing the simulation model, so that we can easily
