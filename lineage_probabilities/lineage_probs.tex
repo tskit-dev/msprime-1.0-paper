@@ -1,0 +1,36 @@
+Many popular approaches in population genetics use the distribution of coalescence rates between 
+pairs of lineages in one or more populations to infer effective population sizes over time 
+\cite{li2011inference,sheehan2013estimating,schiffels2014inferring}
+or split times 
+and subsequent migration rates between populations 
+\cite{wang2020tracking}.
+Given a demographic model, the 
+\texttt{msprime} DemographyDebugger is able to compute coalescence rates for two or more lineages drawn 
+from one or more populations at specified times in the past, providing a ground truth for coalescent rate-based 
+inference methods. To compute coalescence rates for a set of times $Ts=(t_0, t_1, \ldots)$ in the 
+past, we write
+\begin{lstlisting}[frame=single]
+dbg = demography.debug()
+rates = dbg.coalescence_rate_trajectory(Ts, num_samples)
+\end{lstlisting}
+where \texttt{num_samples} is a list with length equal to the number of populations that
+specifies the number of sampled lineages from each population. For example, 
+to get pairwise rates within the same 
+population, this list would contain zeros for all populations except for the population index of interest, 
+which would have a $2$. To get the rate of coalescence for two lineages sampled from different 
+populations, we would set \texttt{num_samples} to have ones in those population indices.
+
+More simply, \texttt{msprime} can also compute the probability of a lineage that was in a given
+population at some time to be found in other populations (through continuous or mass migration events). 
+For a given sample time $t\geq0$ and any list of times $Ts$ in the past, we write
+\begin{lstlisting}[frame=single]
+prob = dbg.lineage_probabilities(Ts, sample_time=t)
+\end{lstlisting}
+This function is also used to determine the time intervals that lineages can be found in each population,
+given a list of contemporary and/or ancient samples. For a given sampling configuration, by writing
+\begin{lstlisting}[frame=single]
+lineage_dict = dbg.possible_lineage_locations(samples=samples)
+\end{lstlisting}
+we get a dictionary with epoch intervals as keys whose values are a list that indicates True or False for 
+whether each population could contain ancestral material to our samples.
+If no sampling configuration is provided, we assume we sample lineages from each population at time zero.
