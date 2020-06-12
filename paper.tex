@@ -544,9 +544,8 @@ recombination nodes.
 We also provide an interface to compute the likelihood of a given ARG
 under the~\cite{kuhner2000maximum} model.
 
-\subsection*{Simultaneous bottlenecks}
-Overview of what simulataneous bottlenecks literature. What we
-do [Konrad].
+\subsection*{Instantaneous bottlenecks}
+A common approach to modelling the effect of demographic history on genealogies is to assume that effective population size ($N_e$) changes in discrete steps which define a series of epochs~\citep{griffiths1994sampling, marth2004allele, keightley2007joint, li2011inference}. In this setting of piece-wise constant $N_e$, capturing a population bottleneck requires three epochs: $N_e$ is reduced by some fraction $b$ at the start of the bottleneck, $T_{start}$, and recovers to its initial value at time $T_{end}$~\citep{marth2004allele}. If bottlenecks are short both on the timescale of coalescence and mutations, one may expect little information about the duration of a bottleneck (T_end-T_end) in sequence data. Thus a simpler, alternative model is to assume that bottlenecks are instantaneous ($T_{end}-T_{start} \rightarrow 0$) and generate a sudden burst of coalescence events (a multiple merger event) in the genealogy. The strength of the bottleneck B can be thought of as an (imaginary) time period during which coalescence events are collapsed, i.e. there is no growth in genealogical branches during B and the probability that a single pair of lineages entering the bottleneck coalesce during the bottleneck is $1-e^{-B}$. Although this simple two parameter model of bottlenecks is attractive and both analytic results and empirical inference~\citep{griffiths1994sampling, galtier2000detecting, bunnefeld2015inferring} have been developed under this model, it has not been straightforward to simulate data under instantaneous bottleneck histories with \ms\. Instantaneous bottlenecks are implemented as a demographic event in \msprime\.
 
 
 \subsection*{Seedbank coalescent}
