@@ -2,10 +2,11 @@ paper.pdf: paper.tex paper.bib
 	pdflatex paper.tex
 	bibtex paper
 	pdflatex paper.tex
-paper.ps: paper.dvi 
+
+paper.ps: paper.dvi
 	dvips paper
 
-paper.dvi: paper.tex paper.bib 
+paper.dvi: paper.tex paper.bib
 	latex paper.tex
 	bibtex paper
 	latex paper.tex
@@ -15,8 +16,8 @@ paper.dvi: paper.tex paper.bib
 clean:
 	rm -f *.log *.dvi *.aux
 	rm -f *.blg *.bbl
-	rm -f *.eps *.[1-9]	
+	rm -f *.eps *.[1-9]
 	rm -f src/*.mpx *.mpx
-	
-mrproper:
+
+mrproper: clean
 	rm -f *.ps *.pdf
