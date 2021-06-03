@@ -332,7 +332,7 @@ lineages, or the simultaneous \citep{S00,MS01} merger of at least four
 lineages in at least two distinct groups, and each group involving at
 least two lineages.  Multiple-merger coalescent processes have also
 been shown to be relevant for modeling the effects of selection on
-gene genealogies \citep{Gillespie909,DS04}. 
+gene genealogies \citep{Gillespie909,DS04}.
 
 
 Multiple-merger coalescents, in which a random number of ancestral
@@ -340,13 +340,13 @@ lineages may merge at a given time in one group, and only one such
 group of lineages can merge at any given time (asynchronous multiple
 mergers), are referred to as $\Lambda$-coalescents; the rate at which  a given group of $k$ lineages out of a total of  $b$ lineages merges  is given by ($a\ge  0$ constant)
 \begin{equation}\label{lambdabk}
-\lambda_{b, k} =  \int_0^1  x^{k-2}(1-x)^{b-k}\Lambda(dx) + a\one{k=2}, \quad 2 \le k \le b, 
+\lambda_{b, k} =  \int_0^1  x^{k-2}(1-x)^{b-k}\Lambda(dx) + a\one{k=2}, \quad 2 \le k \le b,
 \end{equation}
 where $\Lambda$ is a finite measure on the  (Borel subsets of)  unit interval without an atom at zero \citep{DK99,P99,S99}.    The  total rate  is given by
 \be\label{lambdab}
  \lambda_{b} = \int_0^1 \left(1 - (1-x)^{b} - bx(1-x)^{b-1} \right)x^{-2}\Lambda(dx) + \binom{b}{2},
 \ee
-\citep{S99}  which can be useful in applications, in particular  provided the  antiderivative  can be explicitly identified.     
+\citep{S99}  which can be useful in applications, in particular  provided the  antiderivative  can be explicitly identified.
 
 A larger class of multiple-merger coalescents involving simultaneous
 multiple mergers of distinct groups of ancestral lineages also exists
@@ -381,8 +381,8 @@ The number of such $(k_1, \ldots, k_r)$ mergers is
       \lambda(n; k_1, \ldots, k_r)         =    \mathcal{N}(b; k_1, \ldots, k_r ) \lambda_{n; k_1, \ldots, k_r; s}.
 \ee
 
-The total rate is given by, with 
-$n\ge 2$ denoting the total  number of ancestral lineages,  
+The total rate is given by, with
+$n\ge 2$ denoting the total  number of ancestral lineages,
 \be
   \label{Xilambdab}
   \lambda_{n} = \int_\Delta \left(1 - \sum_{\ell = 0}^n \sum_{i_1 \neq
@@ -402,7 +402,7 @@ $n\ge 2$ denoting the total  number of ancestral lineages,
   should therefore apply the models as appropriate, i.e.\
   $\Lambda$-coalescents to data (e.g.\ mtDNA data) inherited in a
   haploid fashion, and $\Xi$-coalescents to e.g.\ autosomal data
-  inherited in diploid or polyploid fashion \citep{Blath2016}.  
+  inherited in diploid or polyploid fashion \citep{Blath2016}.
 
 
 
@@ -424,7 +424,7 @@ $\psi$.  The simplicity of this model does allow one to obtain some
 explicit mathematical results (see e.g.\
 \cite{EF2018,Matuszewski2017,Der2012,Freund2020}). The model
 considered by \cite{EW06} has also been applied in algorithms for
-simulating gene genealogies within phylogenies \citep{Zhu2015}. The
+simulating gene genealogies within phylogenies \citep{zhu2015hybrid}. The
  specific model incorporated into \msprime is the diploid version
 \citep{BBE13} of the model studied by \cite{EW06}, which would be
 necessary in order to incorporate recombination.  In the model
@@ -437,7 +437,7 @@ event, which can lead to up to four simultaneous mergers.  Let
 C_{b; k_1, \ldots, k_r;s } &=  \frac{4}{\psi^2} \sum_{\ell = 0}^{s \wedge (4-r)} \binom{s}{\ell} (4)_{r+\ell} (1-\psi)^{s-\ell }\left( \frac{\psi}{4} \right) ^{k_1 + \cdots + k_r + \ell},  \\
 \end{esplit}
 where  $C_{b; k_1, \ldots, k_r;s }$ corresponds to the coalescence rate $ \lambda_{b;k_1, \ldots, k_r;s}$ (see Eq. \eqref{xi}) of a  $\Xi$-coalescent on  $(\psi/4, \psi/4, \psi/4, \psi/4, 0, \ldots)$.
-The total merger rate (see Eq.\ \eqref{lambdabkall}) is then 
+The total merger rate (see Eq.\ \eqref{lambdabkall}) is then
 \be\label{xidirlambdabk}
       \lambda(b;k_1, \ldots, k_r) =    \mathcal{N}(b; k_1, \ldots, k_r ) \left( \frac{c\psi^2/4}{1 +  c\psi^2/4}C_{b; k_1, \ldots, k_r;s } +     \frac{ \one{r=1, k_1 = 2} }{1 +  c\psi^2/4}  \right),
 \ee
@@ -445,7 +445,7 @@ and the total coalescence rate (see Eq.\ \eqref{xilambdab}) becomes
     \begin{esplit}{xilambdab}
 \lambda_b & =  \frac{c\psi^2/4}{1 +  c\psi^2/4}  \frac{4 }{\psi^2 } \left(1 - \sum_{\ell = 0 }^{b\wedge 4} \binom{b}{\ell} (4)_\ell \left( \frac{\psi}{4} \right)^\ell (1 - \psi)^{b-\ell } \right) +    \frac{1}{1 +  c\psi^2/4} \binom{b}{2}.  \\
 \end{esplit}
-The interpretation of Eq.\ \eqref{xilambdab} is that with probability  $1/(1 + c\psi^2/4)$  a `small' reproduction event occurs, in which the parent pair produce one  diploid offspring; with probability  $c\psi^2/4/(1 + c\psi^2/4)$ a `large' reproduction event occurs, in which  the parent pair produce  $\lfloor \psi N \rfloor$ offspring.   
+The interpretation of Eq.\ \eqref{xilambdab} is that with probability  $1/(1 + c\psi^2/4)$  a `small' reproduction event occurs, in which the parent pair produce one  diploid offspring; with probability  $c\psi^2/4/(1 + c\psi^2/4)$ a `large' reproduction event occurs, in which  the parent pair produce  $\lfloor \psi N \rfloor$ offspring.
 
 
 The other multiple-merger coalescent model incorporated in \msprime is
@@ -468,7 +468,7 @@ where $B(2-\alpha,\alpha)$ is the beta function $B(a,b) = \Gamma(a)\Gamma(b)/\Ga
 \be\label{xibeta}
    \lambda_{b;k_1, \ldots, k_r} = \sum_{\ell = 0}^{ (b - k)\wedge (4-r) } \binom{b-k}{\ell} \frac{ (4)_{r+\ell} }{4^{k+\ell}} \frac{B(k+\ell - \alpha, b-k-\ell + \alpha ) }{B(2-\alpha,\alpha)}
 \ee
-\citep{Blath2016,BLS15}. The interpretation of Eq.\ \eqref{xibeta} is  that the random   number of diploid  juveniles each  diploid pair of parents  produces  is  governed by  the law in Eq.\ \eqref{jX},   and   each diploid juvenile  is assigned  one chromosome  from each parent (selfing is excluded).   
+\citep{Blath2016,BLS15}. The interpretation of Eq.\ \eqref{xibeta} is  that the random   number of diploid  juveniles each  diploid pair of parents  produces  is  governed by  the law in Eq.\ \eqref{jX},   and   each diploid juvenile  is assigned  one chromosome  from each parent (selfing is excluded).
 
 
 
@@ -495,7 +495,7 @@ where $K > 0$ is a constant and  $m := \lim_{N\to \infty} \EE{X} = 1 + 2^{1-\alp
 
 
 
-\cite{Becheler2020}  investigate a general framework for  constructing efficient algorithms for general  coalescent processes.   
+\cite{becheler2020occupancy}  investigate a general framework for  constructing efficient algorithms for general  coalescent processes.
 
 %assumption can be
 %violated in some situations. Lambda coalescents
@@ -512,13 +512,13 @@ possible transitions are the mergers of pairs of blocks (elements of a
 partition $\pi \in \cP_n$), one pair at a time.  The $n$ leaves
 (corresponding to the sampled DNA sequences) are arbitrarily labelled
 from 1 to $n$, and  the blocks of a partition represent the common ancestors
-of the labels of each block.    The initial state is  (usually) taken as 
-$\{ \{1\}, \ldots, \{n\}\}$, and the final state, i.e.\ when the most 
+of the labels of each block.    The initial state is  (usually) taken as
+$\{ \{1\}, \ldots, \{n\}\}$, and the final state, i.e.\ when the most
 recent common ancester is reached, as $\{ [n]\}$. A block in a partition of
 $[n]$ represents an ancestor of the leaves in the block, i.e.\ the block
 $\{i_1, \ldots, i_k\}$ in a given partition of $[n]$ is an ancestor of the
 $k$ leaves $i_1, \ldots, i_k \in [n]$, and the leaves  correspond to
-arbitrarily labelled DNA sequences in the sample.  
+arbitrarily labelled DNA sequences in the sample.
 \end{comment}
 
 
@@ -544,7 +544,7 @@ new kinds of nodes:
 \begin{itemize}
 \item Each recombination event is marked by two nodes with identical birth times
 given by the time of the recombination event, and marked with the
-\texttt{NODE\_IS\_RE\_EVENT} flag. 
+\texttt{NODE\_IS\_RE\_EVENT} flag.
 Each node represents an ancestor of the recombinant child node, and edges connect
 the relevant segments of genome from the child node to these two ancestors.
 \item We store common ancestor nodes even when the corresponding merger event
@@ -568,26 +568,26 @@ methods such as Metropolis-Hastings
 \citep{kuhner2000maximum, nielsen2000estimation, wang2008bayesian}.
 
 We provide two functions to facilitate likelihood-based inference.
-Both are implemented only for the simplest case of the standard ARG with a 
-constant population size, and require tree sequences compatible with the 
+Both are implemented only for the simplest case of the standard ARG with a
+constant population size, and require tree sequences compatible with the
 \texttt{record\_full\_arg} option as their arguments.
 \begin{itemize}
-\item \texttt{msprime.log\_arg\_likelihood(ts, r, N)} returns the natural logarithm of 
+\item \texttt{msprime.log\_arg\_likelihood(ts, r, N)} returns the natural logarithm of
 the sampling probability of the tree sequence \texttt{ts} under the ARG with per-link,
 per-generation recombination probability \texttt{r} and population size \texttt{N}.
 Specifically, the function returns the logarithm of
 \begin{equation*}
 \Bigg( \frac{ 1 }{ 2 N } \Bigg)^{ q_c } \Bigg( \prod_{ i : \mathcal{R} } r g_i \Bigg)
-	\exp\Bigg( -\sum_{ i = 1 }^q \Big[\frac{ 1 }{ 2 N } \binom{ k_i }{ 2 } 
+	\exp\Bigg( -\sum_{ i = 1 }^q \Big[\frac{ 1 }{ 2 N } \binom{ k_i }{ 2 }
 		+ r l_i \Big] t_i  \Bigg),
 \end{equation*}
 where $t_i$ is the number of generations between the $(i - 1)$th and $i$th event,
 $k_i$ is the number of extant ancestors in that interval, $l_i$ is the number of links
 in that interval that would split ancestral material should they recombine,
 $q$ is the total number of events in the tree sequence $\texttt{ts}$,
-$q_c$ is the number of coalescences, $\mathcal{R}$ is the set of indices 
+$q_c$ is the number of coalescences, $\mathcal{R}$ is the set of indices
 of time intervals which end in a recombination, and $g_i$ is the corresponding
-\emph{gap}:  the length of material in which the recombination at the end of the 
+\emph{gap}:  the length of material in which the recombination at the end of the
 $i$th period could have taken place without affecting the resulting genealogy.
 A recombination in ancestral material will always have $g_i = 1$, while a recombination
 in trapped non-ancestral material can result in other values of $g_i$.
@@ -597,7 +597,7 @@ we set $g_i = 1$ and interpret the result as a density.
 natural logarithm of the probability of the mutations recorded in the tree sequence
 \texttt{ts} given the corresponding ancestry, assuming the infinite sites model, up to
 a normalising constant which depends on the pattern of mutations,
-but not on the tree sequence or the per-site, per-generation mutation 
+but not on the tree sequence or the per-site, per-generation mutation
 probability \texttt{m}.
 Specifically, the function returns the logarithm of
 \begin{equation*}
@@ -660,30 +660,30 @@ must also be added, comparing the distribution of results to either analytical
 results or existing simulators.
 
 \subsection*{Computing coalescence rates and lineage location probabilities}
-Many popular approaches in population genetics use the distribution of coalescence rates between 
-pairs of lineages in one or more populations to infer effective population sizes over time 
+Many popular approaches in population genetics use the distribution of coalescence rates between
+pairs of lineages in one or more populations to infer effective population sizes over time
 \cite{li2011inference,sheehan2013estimating,schiffels2014inferring}
-or split times 
-and subsequent migration rates between populations 
+or split times
+and subsequent migration rates between populations
 \cite{wang2020tracking}.
-Given a demographic model, the 
-\texttt{msprime} DemographyDebugger is able to compute coalescence rates for two or more lineages drawn 
-from one or more populations at specified times in the past, providing a ground truth for coalescent rate-based 
-inference methods. To compute coalescence rates for a set of times $Ts=(t_0, t_1, \ldots)$ in the 
+Given a demographic model, the
+\texttt{msprime} DemographyDebugger is able to compute coalescence rates for two or more lineages drawn
+from one or more populations at specified times in the past, providing a ground truth for coalescent rate-based
+inference methods. To compute coalescence rates for a set of times $Ts=(t_0, t_1, \ldots)$ in the
 past, we write
 \begin{lstlisting}[frame=single]
 dbg = demography.debug()
 rates = dbg.coalescence_rate_trajectory(Ts, num_samples)
 \end{lstlisting}
 where \texttt{num\_samples} is a list with length equal to the number of populations that
-specifies the number of sampled lineages from each population. For example, 
-to get pairwise rates within the same 
-population, this list would contain zeros for all populations except for the population index of interest, 
-which would have a $2$. To get the rate of coalescence for two lineages sampled from different 
+specifies the number of sampled lineages from each population. For example,
+to get pairwise rates within the same
+population, this list would contain zeros for all populations except for the population index of interest,
+which would have a $2$. To get the rate of coalescence for two lineages sampled from different
 populations, we would set \texttt{num\_samples} to have ones in those population indices.
 
 More simply, \texttt{msprime} can also compute the probability of a lineage that was in a given
-population at some time to be found in other populations (through continuous or mass migration events). 
+population at some time to be found in other populations (through continuous or mass migration events).
 For a given sample time $t\geq0$ and any list of times $Ts$ in the past, we write
 \begin{lstlisting}[frame=single]
 prob = dbg.lineage_probabilities(Ts, sample_time=t)
@@ -693,7 +693,7 @@ given a list of contemporary and/or ancient samples. For a given sampling config
 \begin{lstlisting}[frame=single]
 lineage_dict = dbg.possible_lineage_locations(samples=samples)
 \end{lstlisting}
-we get a dictionary with epoch intervals as keys whose values are a list that indicates True or False for 
+we get a dictionary with epoch intervals as keys whose values are a list that indicates True or False for
 whether each population could contain ancestral material to our samples.
 If no sampling configuration is provided, we assume we sample lineages from each population at time zero.
 
@@ -781,7 +781,7 @@ opens the possibility for new applications of coalescent simulations.
 Also \stdpopsim\ is cool~\citep{adrion2019community}
 
 \section*{Acknowledgments}
-JK is supported by the Robertson Foundation. 
+JK is supported by the Robertson Foundation.
 Jere Koskela is supported in part by EPSRC grant EP/R044732/1.
 [Others fill in their ACKs please]
 
