@@ -1,2 +1,3 @@
-git+git://github.com/tskit-dev/msprime
+msprime>=1.0
 seaborn==0.10.0
+pyvolve
