@@ -60,7 +60,7 @@
 
 \begin{abstract}
 Coalescent simulation is a key tool in population genetics and
-and has been integral to coalescent theory since its earliest days.
+has been integral to coalescent theory since its beginnings.
 Because of the ease at which the basic model can be simulated,
 a large number of different simulators have been developed. However,
 the coalescent with recombination is far more challenging to simulate,
@@ -107,15 +107,15 @@ sequencing technologies---have made chromosome-level assemblies
 commonplace. Thus, regarding input data as a series of unlinked loci
 (a previously reasonable assumption), is no longer defensible and
 recombination must be fully accounted for. While the
-single-locus coalescent can be simulated in constant
+single-locus coalescent for $n$ samples can be simulated in $O(n)$
 time~\citep{hudson1990gene}, the coalescent with recombination is
-far more challenging to simulate.
+far more challenging.
 % Sentence is too long...
 Programs such as Hudson's classical \ms~\citep{hudson2002generating}
 can only simulate short segments under the influence of recombination,
-and, until recently, we had to resort to
-approximate models of recombination~\citep{mcvean2005approximating,staab2014scrm}
-if we wished to simulate whole chromosomes.
+and, until recently, approximate models of
+recombination~\citep{mcvean2005approximating,staab2014scrm}
+were necessary to simulate whole chromosomes.
 
 The second development that has made the majority of
 present day simulators inapplicable to modern data sets is the
@@ -123,7 +123,8 @@ exponential increase in sample size. Human datasets such
 UK Biobank~\citep{bycroft2018genome} and
 gnomAD~\citep{karczewski2019variation} now contain hundreds of
 thousands of genomes, and there is every reason to believe that
-datasets of millions will soon be commonplace~\citep{stephens2015big}.
+researchers will be soon be routinely working with
+datasets containing millions of samples~\citep{stephens2015big}.
 Classical simulators such as \ms\ and even fast approximate simulators
 such as \scrm\ simply cannot cope with this scale. Even if we
 spend months of CPU time on running simulations with millions of samples,
@@ -136,14 +137,15 @@ what is possible. Through the use of efficient data structures, it is
 now possible to simulate millions of whole chromosomes, without resorting
 to approximations. The ``succinct tree
 sequence'' data
-structure~\citep{kelleher2016efficient,kelleher2018efficient,kelleher2019inferring},
+structure~\citep{kelleher2016efficient,kelleher2018efficient,kelleher2019inferring,
+wohns2021unified},
 introduced as part of \msprime\, makes it possible to store simulations
 of millions of whole chromosomes in a few gigabytes, several orders
 of magnitude smaller than the standard
-Newick~\citep{felsenstein1989phylip} formats. This data structure has
+Newick~\citep{felsenstein1989phylip} based formats. This data structure has
 also lead to major advances in forwards-time
 simulation~\citep{kelleher2018efficient,haller2018tree},
-ancestry inference~\citep{kelleher2019inferring}
+ancestry inference~\citep{kelleher2019inferring,wohns2021unified}
 and calculation of population genetic statistics~\citep{ralph2019efficiently}.
 Through a rigorous open-source community development process,
 \msprime\ has gained a large number of features since its introduction,
@@ -190,7 +192,8 @@ or the left-to-right approach~\citep{wiuf1999recombination,wiuf1999ancestry}.
 We also support variable recombination rates along a chromosome.
 This allows us to model both recombination hotspots like
 \texttt{msHOT}~\citep{hellenthal2007mshot} and also empirical
-recombination maps like those supported by X Y Z.
+recombination maps like those supported \texttt{cosi2}
+\citep{shlyakhter2014cosi2}
 (What about ~\cite{wang2014new}?)
 We have also implemented gene
 conversion following the model defined by~\cite{wiuf2000coalescent}
@@ -207,6 +210,12 @@ aim to include bacterial gene transfer and utilize the succinct tree sequence st
 to represent the resulting ancestral gene transfer graph~\citep{baumdicker2014AGTG}.
 
 \subsection*{SMC approximations}
+
+\textbf{TODO:} It's important that we acknowledge that (a) the coalescent
+with recombination does become quite slow for large $N_e$; (b) our
+implementation of the SMC is naive; and (c) for sufficiently large
+$N_e$ programs like \texttt{scrm} will be faster.
+
 
 The SMC~\citep{mcvean2005approximating} and SMC'~\citep{marjoram2006fast}
 models are supported.
@@ -233,7 +242,6 @@ and in simulations, produces patterns of LD indistinguishable from the
 full coalescent~\citep{mcvean2005approximating,marjoram2006fast}. However,
 LD is a crude approximation of the correlation structure of trees
 and it is not clear how good the SMC is for larger sample sizes.
-
 
 \subsection*{Population structure}
 We support all the stuff that ms does.
@@ -633,9 +641,29 @@ under the~\cite{kuhner2000maximum} model.
 \subsection*{Instantaneous bottlenecks}
 A common approach to modelling the effect of demographic history on genealogies is to assume that effective population size ($N_e$) changes in discrete steps which define a series of epochs~\citep{griffiths1994sampling, marth2004allele, keightley2007joint, li2011inference}. In this setting of piece-wise constant $N_e$, capturing a population bottleneck requires three epochs: $N_e$ is reduced by some fraction $b$ at the start of the bottleneck, $T_{start}$, and recovers to its initial value at time $T_{end}$~\citep{marth2004allele}. If bottlenecks are short both on the timescale of coalescence and mutations, one may expect little information about the duration of a bottleneck ($T_{end}-T_{start}$) in sequence data. Thus a simpler, alternative model is to assume that bottlenecks are instantaneous ($T_{end}-T_{start} \rightarrow 0$) and generate a sudden burst of coalescence events (a multiple merger event) in the genealogy. The strength of the bottleneck B can be thought of as an (imaginary) time period during which coalescence events are collapsed, i.e. there is no growth in genealogical branches during B and the probability that a single pair of lineages entering the bottleneck coalesce during the bottleneck is $1-e^{-B}$. Although this simple two parameter model of bottlenecks is attractive and both analytic results and empirical inference~\citep{griffiths1994sampling, galtier2000detecting, bunnefeld2015inferring} have been developed under this model, it has not been straightforward to simulate data under instantaneous bottleneck histories with \ms. Instantaneous bottlenecks are implemented as a demographic event in \msprime.
 
+\subsection*{Finite sites mutations}
+Version 0.x of \texttt{msprime} provided a very simple mutation model,
+supporting only the infinite sites model.
+With version 1.0, we now support a large number of mutation models,
+including
+JC69~\citep{jukes1969evolution},
+F84~\citep{felsenstein1996hidden},
+and
+GTR~\citep{tavare1986some} nucleotide models
+and
+the BLOSUM62~\citep{henikoff1992amino}
+and PAM~\citep{dayhoff1978} amino acid models.
+The general model accepts an arbitrary transition matrix between
+any number of alleles (which can be arbitrary unicode strings),
+and so other models such as the Kimura two and three
+parameter models~\citep{kimura1980simple,kimura1981estimation}
+parameters models can be easily
+and efficiently defined in user code.
+Full support for the original infinite sites model is also maintained.
 
-\subsection*{Seedbank coalescent}
-Seedbank coalescent. [If we implement this fill in please Thibaud]
+\textbf{TODO} Compare performance and features with
+Seq-Gen~\citep{rambaut1997seq},
+Dawg~\citep{cartwright2005dna} and Pyvolve~\citep{spielman2015pyvolve}
 
 \subsection*{Simulation interface}
 The primary interface for \msprime\ is through a Python application
@@ -763,13 +791,18 @@ which break this pattern of monolithic simulation software.
 
 
 Thus, development of \msprime\ is not completed and much remains
-to be done. For example, one key aim of the 1.0 series is to
-improve the mutation models supported which are limited to
-simple infinite-sites currently. The ability to simulate
-sophisticated mutation models like Seq-Gen~\citep{rambaut1997seq},
-Dawg~\citep{cartwright2005dna} and Pyvolve~\citep{spielman2015pyvolve} at the megasample scale would be
-useful in many applications. Another key focus of development
-will be [WHAT?]
+to be done.
+
+
+% We need to acknowledge that for long genomes and for large population
+% sizes msprime's performance does drop off and SMC simulators like
+% scrm become more efficient.
+Msprime's performance for large sample sizes is excellent, but
+simulating species with large population sizes is still challenging.
+An important avenue for future development is to improve performance
+in these scenarios by incorporating data structures such as skip lists
+and implementing more efficient coalescent approximations, as done
+in \texttt{cosi2}~\citep{shlyakhter2014cosi2}.
 
 % Finish up with a paragraph saying that there loads of exciting
 % new things that simulation can do. We need MORE sims!!!
