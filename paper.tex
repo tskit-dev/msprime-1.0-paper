@@ -301,6 +301,63 @@ SLiM 3.0~\citep{haller2019slim} and fwdpp~\citep{thornton2014cpp} can now output
 Msprime can take tree sequences simulated by these forward simulators
 as input and complete the simulation (``recapitation'').
 
+
+\subsection*{Finite sites mutations}
+Version 0.x of \texttt{msprime} provided a very simple mutation model,
+supporting only the infinite sites model.
+With version 1.0, we now support a large number of mutation models,
+including
+JC69~\citep{jukes1969evolution},
+F84~\citep{felsenstein1996hidden},
+and
+GTR~\citep{tavare1986some} nucleotide models
+and
+the BLOSUM62~\citep{henikoff1992amino}
+and PAM~\citep{dayhoff1978} amino acid models.
+The general model accepts an arbitrary transition matrix between
+any number of alleles (which can be arbitrary unicode strings),
+and so other models such as the Kimura two and three
+parameter models~\citep{kimura1980simple,kimura1981estimation}
+parameters models can be easily
+and efficiently defined in user code.
+Full support for the original infinite sites model is also maintained.
+The results of mutation simulations across a range of models are
+extensively validated
+against both theoretical expectations and output from
+Seq-Gen~\citep{rambaut1997seq} and
+Pyvolve~\citep{spielman2015pyvolve}, and are run before every
+release.
+
+Comparing the performance of mutation generation methods is problematic.
+Because there is no standard format for representing trees and
+the accompanying mutations, all existing methods are focused on
+writing out the resulting sequences. Methods are also not modular,
+and so it is very difficult to disentangle the time required to
+read in the tree file and output the sequences from the actual
+time required to perform the simulation.
+
+The mutation generation machinery in \msprime\ is extremely
+efficient. For example, we simulated mutations under the JC69
+model for a tree with $10^6$ leaves over $10^4$ sites (resulting
+in $\sim 280000$ mutations) in less that 1.5 seconds, including
+the time required for file input and output. While a systematic
+comparison of run-times is not feasible here, this is orders
+of magnitude faster than methods such as
+Seq-Gen~\citep{rambaut1997seq} and
+Pyvolve~\citep{spielman2015pyvolve}
+and at least competitive with the recent method from
+\cite{demaio2021phastsim}.
+
+\textbf{TODO: would love to do a like-for-like comparison, but quite hard}
+
+Another substantial advantage of our approach is that the simulated
+mutations are stored directly in the output data format with
+a defined API. Although
+Pyvolve and Phastsim are implemented in Python, neither provide
+programatic access to the simulated output, outputting instead
+to a series of files which must subsequently be parsed.
+See the Data Model section for more details and discussion.
+
 \subsection*{Multiple merger coalescents}
 %%Kingman's coalescent assumes that all mergers are binary. This
 %%assumption can be violated in some situations. Lambda coalescents
@@ -641,30 +698,6 @@ under the~\cite{kuhner2000maximum} model.
 \subsection*{Instantaneous bottlenecks}
 A common approach to modelling the effect of demographic history on genealogies is to assume that effective population size ($N_e$) changes in discrete steps which define a series of epochs~\citep{griffiths1994sampling, marth2004allele, keightley2007joint, li2011inference}. In this setting of piece-wise constant $N_e$, capturing a population bottleneck requires three epochs: $N_e$ is reduced by some fraction $b$ at the start of the bottleneck, $T_{start}$, and recovers to its initial value at time $T_{end}$~\citep{marth2004allele}. If bottlenecks are short both on the timescale of coalescence and mutations, one may expect little information about the duration of a bottleneck ($T_{end}-T_{start}$) in sequence data. Thus a simpler, alternative model is to assume that bottlenecks are instantaneous ($T_{end}-T_{start} \rightarrow 0$) and generate a sudden burst of coalescence events (a multiple merger event) in the genealogy. The strength of the bottleneck B can be thought of as an (imaginary) time period during which coalescence events are collapsed, i.e. there is no growth in genealogical branches during B and the probability that a single pair of lineages entering the bottleneck coalesce during the bottleneck is $1-e^{-B}$. Although this simple two parameter model of bottlenecks is attractive and both analytic results and empirical inference~\citep{griffiths1994sampling, galtier2000detecting, bunnefeld2015inferring} have been developed under this model, it has not been straightforward to simulate data under instantaneous bottleneck histories with \ms. Instantaneous bottlenecks are implemented as a demographic event in \msprime.
 
-\subsection*{Finite sites mutations}
-Version 0.x of \texttt{msprime} provided a very simple mutation model,
-supporting only the infinite sites model.
-With version 1.0, we now support a large number of mutation models,
-including
-JC69~\citep{jukes1969evolution},
-F84~\citep{felsenstein1996hidden},
-and
-GTR~\citep{tavare1986some} nucleotide models
-and
-the BLOSUM62~\citep{henikoff1992amino}
-and PAM~\citep{dayhoff1978} amino acid models.
-The general model accepts an arbitrary transition matrix between
-any number of alleles (which can be arbitrary unicode strings),
-and so other models such as the Kimura two and three
-parameter models~\citep{kimura1980simple,kimura1981estimation}
-parameters models can be easily
-and efficiently defined in user code.
-Full support for the original infinite sites model is also maintained.
-
-\textbf{TODO} Compare performance and features with
-Seq-Gen~\citep{rambaut1997seq},
-Dawg~\citep{cartwright2005dna} and Pyvolve~\citep{spielman2015pyvolve}
-
 \subsection*{Simulation interface}
 The primary interface for \msprime\ is through a Python application
 programming interface (API). This has many advantages. One is
@@ -672,10 +705,13 @@ that we can grow the interface over time. Another is that
 downstream applications such as \texttt{stdpopsim}~\citep{adrion2019community}
 can be developed.
 
-\subsection*{Output}
+\subsection*{Data model}
 The output of \msprime\ is a ``succinct tree sequence`` (or tree sequence,
 for short) using the \tskit\ library. [Quick overview of the output formats
 of other simulators, and the perf advantages of tree sequences.]
+
+[Review the data model in Phastsim~\cite{demaio2021phastsim} and
+Usher~\citep{turakhia2021ultrafast}.]
 
 \subsection*{Development model}
 The community development process for \msprime\ is enabled by following an
@@ -803,6 +839,11 @@ An important avenue for future development is to improve performance
 in these scenarios by incorporating data structures such as skip lists
 and implementing more efficient coalescent approximations, as done
 in \texttt{cosi2}~\citep{shlyakhter2014cosi2}.
+
+In terms of mutation simulation, future work will need to do things like
+Dawg~\citep{cartwright2005dna} and to implement
+codon models and indels~\citep{fletcher2009indelible}.
+
 
 % Finish up with a paragraph saying that there loads of exciting
 % new things that simulation can do. We need MORE sims!!!
