@@ -8,6 +8,7 @@
 \usepackage{geometry}%
 \usepackage{color}
 \usepackage{graphicx}
+\usepackage{authblk}
 \usepackage{dsfont}
 \usepackage{verbatim}%
 \usepackage{environ}%
@@ -41,25 +42,107 @@
 
 \begin{document}
 
-\title{Msprime 1.0: an efficient and extensible coalescent simulation framework}
-\author{Author list to be filled in
-}
-% \address{
+\title{Efficient ancestry and mutation simulation with msprime 1.0}
+% First authors
+%% FIXME affiliations are all broken
+\author[1,$\star$]{Franz Baumdicker}
+\author[2,$\star$]{Gertjan Bisschop}
+\author[3,$\star$]{Daniel Goldstein}
+\author[4,$\star$]{Graham Gower}
+\author[5,$\star$]{Aaron P. Ragsdale}
+\author[6,$\star$]{Georgia Tsambos}
+\author[7,$\star$]{Sha Zhu}
 
-%%Affiliations:
-% Franz Baumdicker:
-% Cluster of Excellence "Controlling Microbes to Fight Infections", Mathematical and Computational Population Genetics, University of Tübingen, Germany
+% Middle Authors
+\author[8]{Bjarki Eldon}
+\author[9]{Castedo E. Ellerman}
+\author[10]{Jared G. Galloway}
+\author[11]{Ariella L. Gladstein}
+\author[12]{Gregor Gorjanc}
+\author[13]{Guo, Bing}
+\author[7]{Ben Jeffery}
+\author[14]{Warren W. Kretzschmar}
+\author[15]{Ivan Krukov}
+\author[2]{Konrad Lohse}
+\author[16]{Michael Matschiner}
+\author[15]{Dominic Nelson}
+\author[17]{Nathaniel Pope}
+\author[18]{Consuelo D. Quinto-Cort\'es}
+\author[10]{Murillo F. Rodrigues}
+\author[19]{Kumar Suanack}
+\author[20]{Thibaut Sellinger}
+\author[21]{Kevin Thornton}
+\author[22]{Hugo van Kemenade}
+\author[7]{Anthony W. Wohns}
+\author[7]{H. Yan Wong}
 
+% Senior Authors
+\author[15,$\dagger$]{Simon Gravel}
+\author[10,$\dagger$]{Andrew Kern}
+\author[23,$\dagger$]{Jere Koskela}
+\author[10,24,$\dagger$]{Peter L. Ralph}
 
-% Consuelo D. Quinto-Cortés
-%National Laboratory of Genomics for Biodiversity (LANGEBIO), Unit of Advanced Genomics, CINVESTAV, Irapuato, Mexico
+% Corresponding
+\author[7,$\ddagger$]{Jerome Kelleher}
 
-% Peter L. Ralph
-% Institute of Ecology and Evolution, Departments of Mathematics and Biology, University of Oregon, USA
+% Franz
+\affil[1]{Mathematical and Computational Population Genetics, University of T\"ubingen}
+% Gertjan, Konrad
+\affil[2]{Institute of Evolutionary Biology, The University of Edinburgh}
+% Daniel
+\affil[3]{FIXME: DANIEL'S AFFILIATION}
+% Graham
+\affil[4]{Lundbeck GeoGenetics Centre, Globe Institute, University of Copenhagen}
+% Simon, Dom, Ivan
+\affil[5]{FIXME AARON's AFFILIATION}
+% Georgia
+\affil[6]{Melbourne Integrative Genomics, School of Mathematics and Statistics,
+    University of Melbourne}
+% Jerome, Yan, Wilder, Joe
+\affil[7]{Big Data Institute, Li Ka Shing Centre for Health Information and Discovery,
+    University of Oxford}
 
+% Bjarki
+\affil[8]{FIXME: BJARKI's AFFILIATION}
+% Castedo
+\affil[9]{FIXME: CASTEDO's AFFILIATION}
+% Jared, Murillo, Peter, Andy
+\affil[10]{Department of Biology and Institute of Ecology and Evolution,
+    University of Oregon}
+% Ariella
+\affil[11]{Department of Genetics, University of North Carolina at Chapel Hill}
+% Gregor
+\affil[12]{The Roslin Institute and Royal (Dick) School of Veterinary Studies,
+    University of Edinburgh}
+% Bing
+\affil[13]{FIXME: BING's AFFILIATION}
+% Winni
+\affil[14]{FIXME: WINNI's AFFILIATION}
+% Simon, Dom, Ivan
+\affil[15]{Department of Human Genetics, McGill University}
+% Michael
+\affil[16]{FIXME: MICHAEL's AFFILIATION}
+% Nathaniel
+\affil[17]{FIXME: NATHANIEL's AFFILIATION}
+% Consuelo
+\affil[18]{National Laboratory of Genomics for Biodiversity (LANGEBIO),
+    Unit of Advanced Genomics, CINVESTAV, Irapuato, Mexico}
+% Saunack
+\affil[19]{FIXME: SAUNACK's AFFILIATION}
+% Thibaut
+\affil[20]{FIXME: THIBAUT's AFFILIATION}
+% Kevin
+\affil[21]{Ecology and Evolutionary Biology, University of California at Irvine}
+% Hugo
+\affil[22]{FIXME HUGO's AFFILIATION}
+% Jere
+\affil[23]{FIXME: JERE'S AFFILIATION}
+% Peter (second affil)
+\affil[24]{Department of Mathematics, University of Oregon}
 
-% \author[n]{Graham Gower}
-% \affil[n]{Lundbeck GeoGenetics Centre, Globe Institute, Faculty of Health and Medical Sciences, University of Copenhagen, Denmark}
+\affil[$\star$]{Denotes shared first authorship, listed alphabetically}
+\affil[$\dagger$]{Denotes shared senior authorship, listed alphabetically}
+\affil[$\ddagger$]{Denotes corresponding author}
 
 % \section*{Contact:} \href{jerome.kelleher@bdi.ox.ac.uk}{jerome.kelleher@bdi.ox.ac.uk}
 
