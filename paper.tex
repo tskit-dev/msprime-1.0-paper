@@ -360,43 +360,37 @@ See the Data Model section for more details and discussion.
 
 \subsection*{Multiple merger coalescents}
 
-Kingman's coalescent assumes that at most two ancestral lineages can
-merge at each merger event.  This follows from the fact that the
-Kingman coalescent can be shown to be the process describing the
-random ancestral relations of gene copies sampled from a population
-evolving according to the Wright-Fisher model (or similar models) of
-genetic evolution.  Multiple-merger coalescent models can also be
-obtained from appropriate extensions of the Moran
-model \citep{EW06,HM12}, i.e.\ where a single randomly picked individual
-(e.g.\ in a haploid population), or a pair of diploid parent
-individuals \citep{BBE13}, produces offspring in each reproduction
-event.  Convergence to the Kingman coalescent follows from certain
-assumptions on the offspring distribution \citep{S99,MS01,SW08}.  These
-assumptions may be violated in certain highly fecund
-organisms \citep{hedgecock_94,B94,HP11,A04,irwin16}.  We take `high
-fecundity' to mean the ability of individuals to produce numbers of
-offspring on the order of the population size.  A key issue regarding
-high fecundity involves the concept of `sweepstakes
-reproduction' \citep{hedgecock_94}, where a few individuals may produce
-the bulk of the offspring in any given generation.  Sweepstakes
-reproduction is not captured by the Wrigth-Fisher model (or similar
-models).  Population models, which do capture high fecundity and
-sweepstakes reproduction, are in the domain of attraction of
-`multiple-merger' coalescents \citep{DK99,P99,S99,S00}, in which a
-random number of ancestral lineages may merge at any given time.  The
-term `multiple merger' refers to a merger of at least three ancestral
-lineages, or the simultaneous \citep{S00,MS01} merger of at least four
-lineages in at least two distinct groups, and each group involving at
-least two lineages.  Multiple-merger coalescent processes have also
-been shown to be relevant for modeling the effects of selection on
+Kingman's coalescent assumes that at most two ancestral lineages can merge at
+each merger event. Although this is generally a reasonable approximation there
+are certain situations in which the underlying mathematical assumptions are
+violated. For example in certain highly fecund organisms
+\citep{hedgecock_94,B94,HP11,A04,irwin16}, where individuals have the ability
+to produce numbers of offspring on the order of the population size and
+therefore a few individuals may produce the bulk of the offspring in any given
+generation\citep{hedgecock_94}. These population dynamics violate basic
+assumptions of the Kingman coalescent, and are better modelled by
+`multiple-merger' coalescents \citep{DK99,P99,S99,S00,MS01}, in which more than
+two lineages can merge in a given event. Multiple-merger coalescent processes
+have also been shown to be relevant for modeling the effects of selection on
 gene genealogies \citep{Gillespie909,DS04}.
 
-\cite{becheler2020occupancy}  investigate a general framework for  constructing efficient algorithms for general  coalescent processes.
+Although multiple merger coalescents have been of significant theoretical
+interest for around two decades, there has been little practical software
+available to simulate these models.
+\cite{kelleher2013coalescent,kelleher2014coalescent} developed packages to
+simulate a related spatial continuum model~\citep{barton2010new},
+and \cite{zhu2015hybrid} simulate genealogies within a species tree
+based on a multiple-merger model.
+More recently \cite{becheler2020occupancy}
+provide a general method for simulating multiple merger processes
+as part of the Quetzal framework~\citep{becheler2019quetzal}.
+None of these methods work with large genomes, and very little work
+has been performed on simulating multiple merger processes with recombination.
 
-%assumption can be
-%violated in some situations. Lambda coalescents
-%%~\citep{donnelly1999particle,schweinsberg2000coalescents}
-%%HybridLambda~\citep{zhu2015hybrid}
+We have added two multiple merger coalescent models in \msprime\ 1.0, the
+$\beta$-coalescent and ``dirac''-coalescent, allowing us to simulate
+such models with recombination efficiently for the first time.
+Please see the Appendix for full details and derivations.
 
 \subsection*{Ancestral recombination graphs}
 
