@@ -359,14 +359,6 @@ to a series of files which must subsequently be parsed.
 See the Data Model section for more details and discussion.
 
 \subsection*{Multiple merger coalescents}
-%%Kingman's coalescent assumes that all mergers are binary. This
-%%assumption can be violated in some situations. Lambda coalescents
-%%~\citep{donnelly1999particle,schweinsberg2000coalescents}
-%%HybridLambda~\citep{zhu2015hybrid}
-%%We support X Y Z.
-
-\label{mmc}%
-
 
 Kingman's coalescent assumes that at most two ancestral lineages can
 merge at each merger event.  This follows from the fact that the
@@ -399,196 +391,12 @@ least two lineages.  Multiple-merger coalescent processes have also
 been shown to be relevant for modeling the effects of selection on
 gene genealogies \citep{Gillespie909,DS04}.
 
-
-Multiple-merger coalescents, in which a random number of ancestral
-lineages may merge at a given time in one group, and only one such
-group of lineages can merge at any given time (asynchronous multiple
-mergers), are referred to as $\Lambda$-coalescents; the rate at which  a given group of $k$ lineages out of a total of  $b$ lineages merges  is given by ($a\ge  0$ constant)
-\begin{equation}\label{lambdabk}
-\lambda_{b, k} =  \int_0^1  x^{k-2}(1-x)^{b-k}\Lambda(dx) + a\one{k=2}, \quad 2 \le k \le b,
-\end{equation}
-where $\Lambda$ is a finite measure on the  (Borel subsets of)  unit interval without an atom at zero \citep{DK99,P99,S99}.    The  total rate  is given by
-\be\label{lambdab}
- \lambda_{b} = \int_0^1 \left(1 - (1-x)^{b} - bx(1-x)^{b-1} \right)x^{-2}\Lambda(dx) + \binom{b}{2},
-\ee
-\citep{S99}  which can be useful in applications, in particular  provided the  antiderivative  can be explicitly identified.
-
-A larger class of multiple-merger coalescents involving simultaneous
-multiple mergers of distinct groups of ancestral lineages also exists
-\citep{S00}. These are commonly referred to as $\Xi$-coalescents, and
-can be shown to be the limits of ancestral processes derived from
-population models incorporating diploidy (or more general polyploidy)
-\citep{BBE13,Blath2016}, and certain models of selection \citep{DS04}.
-To describe a general $\Xi$-coalescent let $\Delta$ denote the
-infinite simplex \be\label{Delta} \Delta := \{ (x_1, \ldots ): x_1 \ge
-x_2 \ge \cdots \ge 0, \sum_{j}x_j \le 1\}; \ee for any
-$r \in \{1,2, \ldots\}$ let $k_1, \cdots, k_r \ge 2$, and
-$b = s + k_1 + \cdots + k_r$ be the total number of blocks in a given
-partition ($s = b - k_1 - \cdots - k_r$ is the number of blocks not
-participating in the mergers at the given time).  The existence of
-simultaneous multiple-merger coalescents was proved by \cite{S00}.
-There exists a finite measure $\Xi$ on $\Delta$, with
-$\Xi = \Xi_0 + a\delta_0$, the measure $\Xi_0$ has no atom at zero,
-$a >0$ is fixed, and the rate at which one sees a given (simultaneous)
-merger of ancestral lineages with merger sizes $k_1, \ldots, k_r$,
-$s = n - k_1 - \cdots - k_r$, is given by
-\begin{esplit}{xi}
-  \lambda_{n; k_1, \ldots, k_r; s}  & = \int_\Delta  \sum_{\ell = 0}^s \sum_{\substack {i_1, \ldots, i_{r+\ell} = 1\\ \text{all distinct}} }^\infty  \binom{s}{\ell} x_{i_1}^{k_1} \cdots  x
-_{i_{r}}^{k_r} x_{i_{r+1}} \cdots x_{i_{r+\ell}}\left(1 - \sum_{j=1}^\infty x_j \right)^{s-\ell} \frac{1}{ \sum_{j=1}^\infty x_j^2 } \Xi_0(dx)   \\
-  & +  a\one{r=1, k_1 = 2}.
-\end{esplit}%
-The number of such $(k_1, \ldots, k_r)$ mergers is
-\be\label{N}
-    \mathcal{N}(b; k_1, \ldots, k_r ) = \binom{b}{k_1 \ldots k_r\, s} \frac{1}{ \prod_{j=2}^b\ell_j!  },
-\ee
-\citep{S00},   in particular  $\mathcal{N}(b;2) = b(b-1)/2$, and one can compute the total rate of a  $(k_1, \ldots, k_r)$ merger as
-\be\label{lambdabkall}
-      \lambda(n; k_1, \ldots, k_r)         =    \mathcal{N}(b; k_1, \ldots, k_r ) \lambda_{n; k_1, \ldots, k_r; s}.
-\ee
-
-The total rate is given by, with
-$n\ge 2$ denoting the total  number of ancestral lineages,
-\be
-  \label{Xilambdab}
-  \lambda_{n} = \int_\Delta \left(1 - \sum_{\ell = 0}^n \sum_{i_1 \neq
-  \cdots \neq i_\ell } \binom{n}{\ell} x_{i_1}\cdots x_{i_\ell}\left(1
-  - \sum_{i=1}^\infty x_i\right)^{n-\ell} \right)
-  \frac{1}{\sum_{j=1}^\infty x_j^2}\Xi_0(dx) + a\binom{n}{2} \ee
-  \citep{S00}.  Viewing coalescent processes strictly as mathematical
-  objects, it is clear that the class of $\Xi$-coalescents contains
-  $\Lambda$-coalescents as a specific example (i.e.\ allowing at most
-  one group of lineages to merge each time), and the class of
-  $\Lambda$-coalescents contain the Kingman-coalescent as a special
-  case.  However, viewed as limits of ancestral processes derived from
-  specific population models they are not nested, since one would
-  obtain $\Lambda$-coalescents when deriving coalescent processes from
-  haploid population models incorporating sweepstakes reproduction and
-  high fecundity, and $\Xi$-coalescents for diploid populations.  One
-  should therefore apply the models as appropriate, i.e.\
-  $\Lambda$-coalescents to data (e.g.\ mtDNA data) inherited in a
-  haploid fashion, and $\Xi$-coalescents to e.g.\ autosomal data
-  inherited in diploid or polyploid fashion \citep{Blath2016}.
-
-
-
-In \msprime we have incorporated two examples of multiple-merger
-coalescents.  One is a diploid extension \citep{BBE13} of the haploid
-model of sweepstakes reproduction considered by \cite{EW06}, which is
-a haploid Moran model adapted to sweepstakes reproduction.  Let $N$
-denote population size, and take $\psi \in (0,1]$ to be fixed.  In
-every generation, with probability $1-\varepsilon_N$ a single
-individual (picked uniformly at random) perishes, and one of the
-surviving individuals (sampled uniformly at random) produces one
-offspring; with probability $\varepsilon_N$ a total of
-$\lfloor \psi N \rfloor$ individuals perish, and of the remaining
-individuals a single individual produces $\lfloor \psi N \rfloor -1 $
-offspring.  Taking $\varepsilon_N = 1/N^\gamma$ for some $\gamma > 0$,
-\cite{EW06} obtain specific examples of $\Lambda$-coalescents, where
-the $\Lambda$ measure in Eq \eqref{lambdabk} is a point mass at
-$\psi$.  The simplicity of this model does allow one to obtain some
-explicit mathematical results (see e.g.\
-\cite{EF2018,Matuszewski2017,Der2012,Freund2020}). The model
-considered by \cite{EW06} has also been applied in algorithms for
-simulating gene genealogies within phylogenies \citep{zhu2015hybrid}. The
- specific model incorporated into \msprime is the diploid version
-\citep{BBE13} of the model studied by \cite{EW06}, which would be
-necessary in order to incorporate recombination.  In the model
-considered by \cite{BBE13}, a single pair of diploid individuals
-contribute offspring in each generation, selfing is excluded, and each
-offspring is assigned one chromosome from each parent. There are,
-therefore, four parent chromosomes involved in each reproduction
-event, which can lead to up to four simultaneous mergers.  Let
-\begin{esplit}{Cconst}
-C_{b; k_1, \ldots, k_r;s } &=  \frac{4}{\psi^2} \sum_{\ell = 0}^{s \wedge (4-r)} \binom{s}{\ell} (4)_{r+\ell} (1-\psi)^{s-\ell }\left( \frac{\psi}{4} \right) ^{k_1 + \cdots + k_r + \ell},  \\
-\end{esplit}
-where  $C_{b; k_1, \ldots, k_r;s }$ corresponds to the coalescence rate $ \lambda_{b;k_1, \ldots, k_r;s}$ (see Eq. \eqref{xi}) of a  $\Xi$-coalescent on  $(\psi/4, \psi/4, \psi/4, \psi/4, 0, \ldots)$.
-The total merger rate (see Eq.\ \eqref{lambdabkall}) is then
-\be\label{xidirlambdabk}
-      \lambda(b;k_1, \ldots, k_r) =    \mathcal{N}(b; k_1, \ldots, k_r ) \left( \frac{c\psi^2/4}{1 +  c\psi^2/4}C_{b; k_1, \ldots, k_r;s } +     \frac{ \one{r=1, k_1 = 2} }{1 +  c\psi^2/4}  \right),
-\ee
-and the total coalescence rate (see Eq.\ \eqref{xilambdab}) becomes
-    \begin{esplit}{xilambdab}
-\lambda_b & =  \frac{c\psi^2/4}{1 +  c\psi^2/4}  \frac{4 }{\psi^2 } \left(1 - \sum_{\ell = 0 }^{b\wedge 4} \binom{b}{\ell} (4)_\ell \left( \frac{\psi}{4} \right)^\ell (1 - \psi)^{b-\ell } \right) +    \frac{1}{1 +  c\psi^2/4} \binom{b}{2}.  \\
-\end{esplit}
-The interpretation of Eq.\ \eqref{xilambdab} is that with probability  $1/(1 + c\psi^2/4)$  a `small' reproduction event occurs, in which the parent pair produce one  diploid offspring; with probability  $c\psi^2/4/(1 + c\psi^2/4)$ a `large' reproduction event occurs, in which  the parent pair produce  $\lfloor \psi N \rfloor$ offspring.
-
-
-The other multiple-merger coalescent model incorporated in \msprime is
-derived from an adaptation of the haploid population model considered
-by \cite{schweinsberg03} to diploid populations \citep{BLS15}.  In the
-haploid version, in each generation individuals independently produce
-random numbers of juveniles, where the random  number of juveniles $(X)$ produced by
-a given individual  has the stable law \be\label{jX} \lim_{k\to
-\infty} C k^\alpha \prb{X \ge k} = 1 \ee with index $\alpha > 0$, and
-$C > 0$ is a normalising constant.   One can interpret  Eq.\ \eqref{jX} as  stating the form of the  probability distribution  for number of juveniles at least on the order of the population size.     If the random  total number of juveniles $(S_N)$ produced in this way is at least the population size $(N)$, then one samples  $N$ juveniles uniformly at random without replacement to form the next generation of  reproducing individuals; if  $S_N < N$ one simply  carries on with  the same  set of individuals.   However,   assuming  $\EE{X} > 1$, one can show that $\prb{S_N < N}$ decays exponentially fast in $N$ \citep{schweinsberg03}.         If $\alpha \ge 2$ the ancestral
-process converges to the Kingman-coalescent; if $1 \le \alpha < 2$ the
-ancestral process converges to a specific case of a
-$\Lambda$-coalescent, where the $\Lambda$ measure in Eq.\
-\eqref{lambdabk} is associated with the Beta$(2-\alpha, \alpha)$
-probability distribution, i.e.\
-\be\label{Fbeta}
-    \Lambda(dx) = \one{0< x \le 1} \frac{1}{B(2-\alpha,\alpha)} x^{1 - \alpha}(1-x)^{\alpha - 1}  dx,
-\ee
-where $B(2-\alpha,\alpha)$ is the beta function $B(a,b) = \Gamma(a)\Gamma(b)/\Gamma(a+b)$, $a,b > 0$ \citep{schweinsberg03}.    This model has been adapted to diploid populations  by                      \cite{BLS15}, where  the resulting coalescent process  is a  four-fold $\Xi$-coalescent on  $(x/4, x/4, x/4, x/4, 0, 0, \ldots)$, where $x$ is a random variate with  the Beta$(2-\alpha,\alpha)$ distribution.  The merger rate (see Eq.\ \eqref{xi}) is then ($1 \le r \le 4$)
-\be\label{xibeta}
-   \lambda_{b;k_1, \ldots, k_r} = \sum_{\ell = 0}^{ (b - k)\wedge (4-r) } \binom{b-k}{\ell} \frac{ (4)_{r+\ell} }{4^{k+\ell}} \frac{B(k+\ell - \alpha, b-k-\ell + \alpha ) }{B(2-\alpha,\alpha)}
-\ee
-\citep{Blath2016,BLS15}. The interpretation of Eq.\ \eqref{xibeta} is  that the random   number of diploid  juveniles each  diploid pair of parents  produces  is  governed by  the law in Eq.\ \eqref{jX},   and   each diploid juvenile  is assigned  one chromosome  from each parent (selfing is excluded).
-
-
-
-The model in Eq.\ \eqref{jX} assumes that individuals can produce
-arbitrarily large numbers of juveniles. Considering diploid juveniles,
-this assumption is probably rather strong, since diploid juveniles are
-at least fertilised eggs, and so it is reasonable to suppose that the
-number of juveniles surviving to the  particular life stage we are modeling  cannot be
-arbitrarily large.  With this in mind, we also consider an adaptation
-of the Schweinsberg model, where the random number of juveniles $(X)$
-produced by a   given parent pair  is distributed according to
-\be\label{jtr}
-  \prb{X=k} =   \one{1 \le k \le \phi(N)} \frac{\phi(N+1)^\alpha }{ \phi(N+1)^\alpha - 1 }  \left( \frac{1}{k^\alpha} - \frac{1}{(k+1)^\alpha}  \right) ,
-\ee
-where $\phi(N)$ is a deterministic strict upper bound on the number of juveniles produced by  any given parent pair (see also \citep{Eldon2018}).   One can follow the calculations in  \citep{schweinsberg03} or \citep{BLS15}  to show  that  if $1 < \alpha < 2$   then  $(k = k_1 + \cdots + k_r)$ then the merger rate (see Eq.\ \eqref{xibeta}) is
-\be
-   \lambda_{b;k_1, \ldots, k_r} =  \sum_{\ell = 0}^{ (b - k)\wedge (4-r) } \binom{b-k}{\ell} \frac{ (4)_{r+\ell} }{4^{k+\ell}} \frac{B(M; k+\ell - \alpha, b-k-\ell + \alpha ) }{B(M;2-\alpha,\alpha)}
-\ee
-with $B(z;a,b) := \int_0^z t^{a-1}(1-t)^{b-1}dt$ for  $a,b>0$ and $0< z\le 1$, and
-\be
-M :=  \frac{K}{K+m} \one{\phi(N) = KN} + \one{\phi(N)/N \to \infty }
-\ee
-where $K > 0$ is a constant and  $m := \lim_{N\to \infty} \EE{X} = 1 + 2^{1-\alpha}/(\alpha - 1)$ \citep{CDEE2020,AEKKZ2020}.    In other words,  the measure $(\Lambda)$ driving the multiple mergers is of the same form as in Eq.\ \eqref{Fbeta}  with $0 < x \le M$ in the case $1 < \alpha < 2$ and $\phi(N) \ge KN$.   If $\alpha \ge 2$ or $\phi(N)/N \to 0$ then  the  ancestral process converges (in the sense of convergence of  finite-dimensional distributions) to  the Kingman-coalescent \citep{CDEE2020,AEKKZ2020}.
-
-
-
 \cite{becheler2020occupancy}  investigate a general framework for  constructing efficient algorithms for general  coalescent processes.
 
 %assumption can be
 %violated in some situations. Lambda coalescents
 %%~\citep{donnelly1999particle,schweinsberg2000coalescents}
 %%HybridLambda~\citep{zhu2015hybrid}
-
-\begin{comment}%
-A coalescent process is a continuous-time Markov process taking values among the
-partitions of $\IN := \{1,2, \ldots \}$, such that the restriction to
-any finite $n \in \IN $ takes values among partitions of
-$[n] := \{1, 2, \ldots, n\}$.  Write $\one{A} = 1$ if $A$ holds, and zero otherwise.   Let $\cP_n$ denote the set of
-partitions of $[n]$.  In the classical Kingman-coalescent, the only
-possible transitions are the mergers of pairs of blocks (elements of a
-partition $\pi \in \cP_n$), one pair at a time.  The $n$ leaves
-(corresponding to the sampled DNA sequences) are arbitrarily labelled
-from 1 to $n$, and  the blocks of a partition represent the common ancestors
-of the labels of each block.    The initial state is  (usually) taken as
-$\{ \{1\}, \ldots, \{n\}\}$, and the final state, i.e.\ when the most
-recent common ancester is reached, as $\{ [n]\}$. A block in a partition of
-$[n]$ represents an ancestor of the leaves in the block, i.e.\ the block
-$\{i_1, \ldots, i_k\}$ in a given partition of $[n]$ is an ancestor of the
-$k$ leaves $i_1, \ldots, i_k \in [n]$, and the leaves  correspond to
-arbitrarily labelled DNA sequences in the sample.
-\end{comment}
-
-
-
-Mention~\citep{becheler2020occupancy} somewhere.
 
 \subsection*{Ancestral recombination graphs}
 
@@ -861,5 +669,209 @@ Jere Koskela is supported in part by EPSRC grant EP/R044732/1.
 
 \bibliographystyle{plainnat}
 \bibliography{paper}
+
+\appendix
+\label{app-multiple-mergers}
+\section{Multiple merger coalescent model}
+
+Multiple-merger coalescents, in which a random number of ancestral
+lineages may merge at a given time in one group, and only one such
+group of lineages can merge at any given time (asynchronous multiple
+mergers), are referred to as $\Lambda$-coalescents; the rate at which  a given group of $k$ lineages out of a total of  $b$ lineages merges  is given by ($a\ge  0$ constant)
+\begin{equation}\label{lambdabk}
+\lambda_{b, k} =  \int_0^1  x^{k-2}(1-x)^{b-k}\Lambda(dx) + a\one{k=2}, \quad 2 \le k \le b,
+\end{equation}
+where $\Lambda$ is a finite measure on the  (Borel subsets of)  unit interval without an atom at zero \citep{DK99,P99,S99}.    The  total rate  is given by
+\be\label{lambdab}
+ \lambda_{b} = \int_0^1 \left(1 - (1-x)^{b} - bx(1-x)^{b-1} \right)x^{-2}\Lambda(dx) + \binom{b}{2},
+\ee
+\citep{S99}  which can be useful in applications, in particular  provided the  antiderivative  can be explicitly identified.
+
+A larger class of multiple-merger coalescents involving simultaneous
+multiple mergers of distinct groups of ancestral lineages also exists
+\citep{S00}. These are commonly referred to as $\Xi$-coalescents, and
+can be shown to be the limits of ancestral processes derived from
+population models incorporating diploidy (or more general polyploidy)
+\citep{BBE13,Blath2016}, and certain models of selection \citep{DS04}.
+To describe a general $\Xi$-coalescent let $\Delta$ denote the
+infinite simplex \be\label{Delta} \Delta := \{ (x_1, \ldots ): x_1 \ge
+x_2 \ge \cdots \ge 0, \sum_{j}x_j \le 1\}; \ee for any
+$r \in \{1,2, \ldots\}$ let $k_1, \cdots, k_r \ge 2$, and
+$b = s + k_1 + \cdots + k_r$ be the total number of blocks in a given
+partition ($s = b - k_1 - \cdots - k_r$ is the number of blocks not
+participating in the mergers at the given time).  The existence of
+simultaneous multiple-merger coalescents was proved by \cite{S00}.
+There exists a finite measure $\Xi$ on $\Delta$, with
+$\Xi = \Xi_0 + a\delta_0$, the measure $\Xi_0$ has no atom at zero,
+$a >0$ is fixed, and the rate at which one sees a given (simultaneous)
+merger of ancestral lineages with merger sizes $k_1, \ldots, k_r$,
+$s = n - k_1 - \cdots - k_r$, is given by
+\begin{esplit}{xi}
+  \lambda_{n; k_1, \ldots, k_r; s}  & = \int_\Delta  \sum_{\ell = 0}^s \sum_{\substack {i_1, \ldots, i_{r+\ell} = 1\\ \text{all distinct}} }^\infty  \binom{s}{\ell} x_{i_1}^{k_1} \cdots  x
+_{i_{r}}^{k_r} x_{i_{r+1}} \cdots x_{i_{r+\ell}}\left(1 - \sum_{j=1}^\infty x_j \right)^{s-\ell} \frac{1}{ \sum_{j=1}^\infty x_j^2 } \Xi_0(dx)   \\
+  & +  a\one{r=1, k_1 = 2}.
+\end{esplit}%
+The number of such $(k_1, \ldots, k_r)$ mergers is
+\be\label{N}
+    \mathcal{N}(b; k_1, \ldots, k_r ) = \binom{b}{k_1 \ldots k_r\, s} \frac{1}{ \prod_{j=2}^b\ell_j!  },
+\ee
+\citep{S00},   in particular  $\mathcal{N}(b;2) = b(b-1)/2$, and one can compute the total rate of a  $(k_1, \ldots, k_r)$ merger as
+\be\label{lambdabkall}
+      \lambda(n; k_1, \ldots, k_r)         =    \mathcal{N}(b; k_1, \ldots, k_r ) \lambda_{n; k_1, \ldots, k_r; s}.
+\ee
+
+The total rate is given by, with
+$n\ge 2$ denoting the total  number of ancestral lineages,
+\be
+\label{Xilambdab}
+\lambda_{n} = \int_\Delta \left(1 - \sum_{\ell = 0}^n \sum_{i_1 \neq
+\cdots \neq i_\ell } \binom{n}{\ell} x_{i_1}\cdots x_{i_\ell}\left(1
+- \sum_{i=1}^\infty x_i\right)^{n-\ell} \right)
+\frac{1}{\sum_{j=1}^\infty x_j^2}\Xi_0(dx) + a\binom{n}{2} \ee
+\citep{S00}.  Viewing coalescent processes strictly as mathematical
+objects, it is clear that the class of $\Xi$-coalescents contains
+$\Lambda$-coalescents as a specific example (i.e.\ allowing at most
+one group of lineages to merge each time), and the class of
+$\Lambda$-coalescents contain the Kingman-coalescent as a special
+case.  However, viewed as limits of ancestral processes derived from
+specific population models they are not nested, since one would
+obtain $\Lambda$-coalescents when deriving coalescent processes from
+haploid population models incorporating sweepstakes reproduction and
+high fecundity, and $\Xi$-coalescents for diploid populations.  One
+should therefore apply the models as appropriate, i.e.\
+$\Lambda$-coalescents to data (e.g.\ mtDNA data) inherited in a
+haploid fashion, and $\Xi$-coalescents to e.g.\ autosomal data
+inherited in diploid or polyploid fashion \citep{Blath2016}.
+
+
+In \msprime\ we have incorporated two examples of multiple-merger coalescents.
+One is a diploid extension \citep{BBE13} of the haploid model of sweepstakes
+reproduction considered by \cite{EW06}, which is a haploid Moran model adapted
+to sweepstakes reproduction.  Let $N$ denote population size, and take $\psi
+\in (0,1]$ to be fixed.  In every generation, with probability
+$1-\varepsilon_N$ a single individual (picked uniformly at random) perishes,
+and one of the surviving individuals (sampled uniformly at random) produces one
+offspring; with probability $\varepsilon_N$ a total of $\lfloor \psi N \rfloor$
+individuals perish, and of the remaining individuals a single individual
+produces $\lfloor \psi N \rfloor -1 $ offspring.  Taking $\varepsilon_N =
+1/N^\gamma$ for some $\gamma > 0$, \cite{EW06} obtain specific examples of
+$\Lambda$-coalescents, where the $\Lambda$ measure in Eq.~\eqref{lambdabk} is a
+point mass at $\psi$.  The simplicity of this model does allow one to obtain
+some explicit mathematical results (see e.g.\
+\cite{EF2018,Matuszewski2017,Der2012,Freund2020}). The model considered by
+\cite{EW06} has also been applied in algorithms for simulating gene genealogies
+within phylogenies \citep{zhu2015hybrid}. The specific model incorporated into
+\msprime\ is the diploid version \citep{BBE13} of the model studied by
+\cite{EW06}, which would be necessary in order to incorporate recombination.
+In the model considered by \cite{BBE13}, a single pair of diploid individuals
+contribute offspring in each generation, selfing is excluded, and each
+offspring is assigned one chromosome from each parent. There are, therefore,
+four parent chromosomes involved in each reproduction event, which can lead to
+up to four simultaneous mergers.  Let \begin{esplit}{Cconst} C_{b; k_1, \ldots,
+k_r;s } &= \frac{4}{\psi^2} \sum_{\ell = 0}^{s \wedge (4-r)} \binom{s}{\ell}
+(4)_{r+\ell} (1-\psi)^{s-\ell }\left( \frac{\psi}{4} \right) ^{k_1 + \cdots +
+k_r + \ell},  \\ \end{esplit} where  $C_{b; k_1, \ldots, k_r;s }$ corresponds
+to the coalescence rate $ \lambda_{b;k_1, \ldots, k_r;s}$ (see Eq~\eqref{xi})
+of a  $\Xi$-coalescent on  $(\psi/4, \psi/4, \psi/4, \psi/4, 0, \ldots)$. The
+total merger rate (see Eq~\eqref{lambdabkall}) is then
+\be\label{xidirlambdabk} \lambda(b;k_1, \ldots, k_r) = \mathcal{N}(b; k_1,
+\ldots, k_r ) \left( \frac{c\psi^2/4}{ 1 +  c\psi^2/4}C_{b; k_1, \ldots, k_r;s
+} + \frac{ \one{r=1, k_1 = 2} }{1 +  c\psi^2/4}  \right), \ee and the total
+coalescence rate becomes \begin{esplit}{xilambdab} \lambda_b & =
+\frac{c\psi^2/4}{1 +  c\psi^2/4}  \frac{4 }{\psi^2 } \left(1 - \sum_{\ell = 0
+}^{b\wedge 4} \binom{b}{\ell} (4)_\ell \left( \frac{\psi}{4} \right)^\ell (1 -
+\psi)^{b-\ell } \right) + \frac{1}{1 +  c\psi^2/4} \binom{b}{2}.  \\
+\end{esplit} The interpretation of \eqref{xilambdab} is that with probability
+$1/(1 + c\psi^2/4)$  a `small' reproduction event occurs, in which the parent
+pair produce one  diploid offspring; with probability  $c\psi^2/4/(1 +
+c\psi^2/4)$ a `large' reproduction event occurs, in which  the parent pair
+produce  $\lfloor \psi N \rfloor$ offspring.
+
+
+The other multiple-merger coalescent model incorporated in \msprime\ is derived
+from an adaptation of the haploid population model considered by
+\cite{schweinsberg03} to diploid populations \citep{BLS15}.  In the haploid
+version, in each generation individuals independently produce random numbers of
+juveniles, where the random  number of juveniles $(X)$ produced by a given
+individual  has the stable law \be\label{jX} \lim_{k\to \infty} C k^\alpha
+\prb{X \ge k} = 1 \ee with index $\alpha > 0$, and $C > 0$ is a normalising
+constant.   One can interpret  Eq.~\eqref{jX} as  stating the form of the
+probability distribution  for number of juveniles at least on the order of the
+population size.     If the random  total number of juveniles $(S_N)$ produced
+in this way is at least the population size $(N)$, then one samples  $N$
+juveniles uniformly at random without replacement to form the next generation
+of  reproducing individuals; if  $S_N < N$ one simply  carries on with  the
+same  set of individuals.   However,   assuming  $\EE{X} > 1$, one can show
+that $\prb{S_N < N}$ decays exponentially fast in $N$ \citep{schweinsberg03}.
+If $\alpha \ge 2$ the ancestral process converges to the Kingman-coalescent; if
+$1 \le \alpha < 2$ the ancestral process converges to a specific case of a
+$\Lambda$-coalescent, where the $\Lambda$ measure in Eq.~\eqref{lambdabk} is
+associated with the Beta$(2-\alpha, \alpha)$ probability distribution, i.e.\
+\be\label{Fbeta} \Lambda(dx) = \one{0< x \le 1} \frac{1}{B(2-\alpha,\alpha)}
+x^{1 - \alpha}(1-x)^{\alpha - 1}  dx, \ee where $B(2-\alpha,\alpha)$ is the
+beta function $B(a,b) = \Gamma(a)\Gamma(b)/\Gamma(a+b)$, $a,b > 0$
+\citep{schweinsberg03}.
+This model has been adapted to diploid populations
+by \cite{BLS15}, where  the resulting coalescent process
+is a  four-fold $\Xi$-coalescent on  $(x/4, x/4, x/4, x/4, 0, 0, \ldots)$,
+where $x$ is a random variate with  the Beta$(2-\alpha,\alpha)$ distribution.
+The merger rate (see Eq.~\eqref{xi}) is then ($1 \le r \le 4$)
+\be\label{xibeta} \lambda_{b;k_1, \ldots, k_r} = \sum_{\ell = 0}^{ (b -
+k)\wedge (4-r) } \binom{b-k}{\ell} \frac{ (4)_{r+\ell} }{4^{k+\ell}}
+\frac{B(k+\ell - \alpha, b-k-\ell + \alpha ) }{B(2-\alpha,\alpha)} \ee
+\citep{Blath2016,BLS15}. The interpretation of Eq.~\eqref{xibeta} is  that the
+random   number of diploid  juveniles each  diploid pair of parents  produces
+is  governed by  the law in Eq.~\eqref{jX},   and   each diploid juvenile  is
+assigned  one chromosome  from each parent (selfing is excluded).
+
+The model in Eq~\eqref{jX} assumes that individuals can produce arbitrarily
+large numbers of juveniles. Considering diploid juveniles, this assumption is
+probably rather strong, since diploid juveniles are at least fertilised eggs,
+and so it is reasonable to suppose that the number of juveniles surviving to
+the  particular life stage we are modeling  cannot be arbitrarily large.  With
+this in mind, we also consider an adaptation of the Schweinsberg model, where
+the random number of juveniles $(X)$ produced by a   given parent pair  is
+distributed according to \be\label{jtr} \prb{X=k} =   \one{1 \le k \le \phi(N)}
+\frac{\phi(N+1)^\alpha }{ \phi(N+1)^\alpha - 1 }  \left( \frac{1}{k^\alpha} -
+\frac{1}{(k+1)^\alpha}  \right) , \ee where $\phi(N)$ is a deterministic strict
+upper bound on the number of juveniles produced by  any given parent pair (see
+also \citep{Eldon2018}).   One can follow the calculations in
+\citep{schweinsberg03} or \citep{BLS15}  to show  that  if $1 < \alpha < 2$
+then  $(k = k_1 + \cdots + k_r)$ then the merger rate (see Eq.~\eqref{xibeta})
+is
+ \be \lambda_{b;k_1, \ldots, k_r} =  \sum_{\ell = 0}^{ (b - k)\wedge (4-r) }
+\binom{b-k}{\ell} \frac{ (4)_{r+\ell} }{4^{k+\ell}} \frac{B(M; k+\ell - \alpha,
+b-k-\ell + \alpha ) }{B(M;2-\alpha,\alpha)}
+\ee
+with $B(z;a,b) := \int_0^z
+t^{a-1}(1-t)^{b-1}dt$ for  $a,b>0$ and $0< z\le 1$, and \be M :=  \frac{K}{K+m}
+\one{\phi(N) = KN} + \one{\phi(N)/N \to \infty } \ee where $K > 0$ is a
+constant and  $m := \lim_{N\to \infty} \EE{X} = 1 + 2^{1-\alpha}/(\alpha - 1)$
+\citep{CDEE2020,AEKKZ2020}.    In other words,  the measure $(\Lambda)$ driving
+the multiple mergers is of the same form as in Eq.~\eqref{Fbeta}  with $0 < x
+\le M$ in the case $1 < \alpha < 2$ and $\phi(N) \ge KN$.   If $\alpha \ge 2$
+or $\phi(N)/N \to 0$ then  the  ancestral process converges (in the sense of
+convergence of  finite-dimensional distributions) to  the Kingman-coalescent
+\citep{CDEE2020,AEKKZ2020}.
+
+\begin{comment}%
+A coalescent process is a continuous-time Markov process taking values among
+the partitions of $\IN := \{1,2, \ldots \}$, such that the restriction to any
+finite $n \in \IN $ takes values among partitions of $[n] := \{1, 2, \ldots,
+n\}$.  Write $\one{A} = 1$ if $A$ holds, and zero otherwise.   Let $\cP_n$
+denote the set of partitions of $[n]$.  In the classical Kingman-coalescent,
+the only possible transitions are the mergers of pairs of blocks (elements of a
+partition $\pi \in \cP_n$), one pair at a time.  The $n$ leaves (corresponding
+to the sampled DNA sequences) are arbitrarily labelled from 1 to $n$, and  the
+blocks of a partition represent the common ancestors of the labels of each
+block.    The initial state is  (usually) taken as $\{ \{1\}, \ldots, \{n\}\}$,
+and the final state, i.e.\ when the most recent common ancester is reached, as
+$\{ [n]\}$. A block in a partition of $[n]$ represents an ancestor of the
+leaves in the block, i.e.\ the block $\{i_1, \ldots, i_k\}$ in a given
+partition of $[n]$ is an ancestor of the $k$ leaves $i_1, \ldots, i_k \in [n]$,
+and the leaves  correspond to arbitrarily labelled DNA sequences in the sample.
+\end{comment}
+
+
 
 \end{document}
