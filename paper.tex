@@ -360,7 +360,7 @@ See the Data Model section for more details and discussion.
 
 \subsection*{Multiple merger coalescents}
 
-Kingman's coalescent assumes that at most two ancestral lineages can merge at
+Kingman's coalescent assumes that only two ancestral lineages can merge at
 each merger event. Although this is generally a reasonable approximation there
 are certain situations in which the underlying mathematical assumptions are
 violated. For example in certain highly fecund organisms
@@ -379,18 +379,25 @@ interest for around two decades, there has been little practical software
 available to simulate these models.
 \cite{kelleher2013coalescent,kelleher2014coalescent} developed packages to
 simulate a related spatial continuum model~\citep{barton2010new},
-and \cite{zhu2015hybrid} simulate genealogies within a species tree
-based on a multiple-merger model.
-More recently \cite{becheler2020occupancy}
-provide a general method for simulating multiple merger processes
+\cite{zhu2015hybrid} simulate genealogies within a species tree
+based on a multiple-merger model, and
+\cite{becheler2020occupancy} provide a general method for simulating
+multiple merger processes
 as part of the Quetzal framework~\citep{becheler2019quetzal}.
+The \texttt{Beta-Xi-Sim} simulator~\citep{koskela2018multi,koskela2019robust}
+includes a number of extensions to the Beta-coalescent, although
+it only supports unlinked loci.
 None of these methods work with large genomes, and very little work
 has been performed on simulating multiple merger processes with recombination.
 
 We have added two multiple merger coalescent models in \msprime\ 1.0, the
-$\beta$-coalescent and ``dirac''-coalescent, allowing us to simulate
+Beta-coalescent and ``dirac''-coalescent, allowing us to simulate
 such models with recombination efficiently for the first time.
-Please see the Appendix for full details and derivations.
+These simulation models have been extensively validated against
+analytical results from the site frequency
+spectrum~\citep{birkner2013statistical,blath2016site,hobolth2019phase}
+ as well as more general properties of coalescent processes.
+Please see the Appendix for more details and model derivations.
 
 \subsection*{Ancestral recombination graphs}
 
@@ -686,7 +693,7 @@ multiple mergers of distinct groups of ancestral lineages also exists
 \citep{S00}. These are commonly referred to as $\Xi$-coalescents, and
 can be shown to be the limits of ancestral processes derived from
 population models incorporating diploidy (or more general polyploidy)
-\citep{BBE13,Blath2016}, and certain models of selection \citep{DS04}.
+\citep{BBE13,blath2016site}, and certain models of selection \citep{DS04}.
 To describe a general $\Xi$-coalescent let $\Delta$ denote the
 infinite simplex \be\label{Delta} \Delta := \{ (x_1, \ldots ): x_1 \ge
 x_2 \ge \cdots \ge 0, \sum_{j}x_j \le 1\}; \ee for any
@@ -735,7 +742,7 @@ high fecundity, and $\Xi$-coalescents for diploid populations.  One
 should therefore apply the models as appropriate, i.e.\
 $\Lambda$-coalescents to data (e.g.\ mtDNA data) inherited in a
 haploid fashion, and $\Xi$-coalescents to e.g.\ autosomal data
-inherited in diploid or polyploid fashion \citep{Blath2016}.
+inherited in diploid or polyploid fashion \citep{blath2016site}.
 
 
 In \msprime\ we have incorporated two examples of multiple-merger coalescents.
@@ -813,7 +820,7 @@ The merger rate (see Eq.~\eqref{xi}) is then ($1 \le r \le 4$)
 \be\label{xibeta} \lambda_{b;k_1, \ldots, k_r} = \sum_{\ell = 0}^{ (b -
 k)\wedge (4-r) } \binom{b-k}{\ell} \frac{ (4)_{r+\ell} }{4^{k+\ell}}
 \frac{B(k+\ell - \alpha, b-k-\ell + \alpha ) }{B(2-\alpha,\alpha)} \ee
-\citep{Blath2016,BLS15}. The interpretation of Eq.~\eqref{xibeta} is  that the
+\citep{blath2016site,BLS15}. The interpretation of Eq.~\eqref{xibeta} is  that the
 random   number of diploid  juveniles each  diploid pair of parents  produces
 is  governed by  the law in Eq.~\eqref{jX},   and   each diploid juvenile  is
 assigned  one chromosome  from each parent (selfing is excluded).
