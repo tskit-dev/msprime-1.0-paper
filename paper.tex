@@ -194,6 +194,9 @@ In \msprime\ 1.0 recombination rates can vary along a chromosome, allowing
 us to simulate recombination hotspots like \texttt{msHOT}~\citep{hellenthal2007mshot}
 and empirical recombination maps similar to other
 simulators~\citep[e.g.][]{shlyakhter2014cosi2}.
+The implementation of recombination in \msprime\ is extensively validated
+against analytical results~\citep{hudson1983properties,kaplan1985use}
+and results from \ms.
 
 The Sequentially Markovian Coalescent (SMC) is an approximation of the
 coalescent with recombination
@@ -247,22 +250,35 @@ to simulate than the exact coalescent with recombination. These
 models are therefore only appropriate for studying the SMC approximations
 themselves; an important avenue for future work is to implement
 efficient SMC-like models, perhaps based on the approaches used
-in \texttt{cosi2}~\citep{shlyakhter2014cosi2}.
+in \texttt{cosi2}~\citep{shlyakhter2014cosi2}, to facilitate
+simulation of organisms such as \textit{Drosophila melagaster}.
 
 \subsection*{Gene conversion}
 
-We have also implemented gene
-conversion following the model defined by~\cite{wiuf2000coalescent}
-and used in \ms.
+Gene conversion is \jkcomment{A couple of sentences describing gene
+conversion, and what the model is. What other simulators simulate
+gc? }
+We have implemented this model of gene
+conversion in \msprime\ 1.0, and validated the output against
+\ms\ and analytical results~\citep{wiuf2000coalescent}.
+
+\begin{figure}
+\caption{\label{fig-gc-perf}Comparison of the running time
+for E-coli simulations using \msprime\ and SimBac for varying
+sample sizes. The parameters used are [] based on [references].}
+\end{figure}
 
 Gene conversion is particularly useful to model homologous recombination in
-bacterial evolution. We compare the performance of \msprime\ with gene
-conversion to \ms\ and the whole bacterial genome simulator
-SimBac~\citep{brown2016simbac}. Further features are planned to model bacterial
+bacterial evolution.
+We compare the performance of \msprime\ with gene conversion to
+SimBac~\citep{brown2016simbac}, a simulator developed specifically to
+simulate bacterial evolution. Although \msprime\ is missing some features
+relevant to this case, it is far more efficient at simulating the basic
+processes. An important avenue for future work
+will be to add further features to model bacterial
 evolution. In particular, we aim to include bacterial gene transfer and utilize
 the succinct tree sequence structure to represent the resulting ancestral gene
 transfer graph~\citep{baumdicker2014AGTG}.
-
 
 \subsection*{Population structure}
 We support all the stuff that ms does.
@@ -628,13 +644,6 @@ If no sampling configuration is provided, we assume we sample lineages from each
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section*{Results and Discussion}
-\subsection*{Performance}
-We compare \msprime\ with some existing simulators that have a subset of its
-features.
-
-
-\subsection*{Examples}
-We show a few examples of running \msprime.
 
 \subsection*{Discussion}
 % Simulation is useful, and it's really easy for a single locus.
@@ -661,6 +670,26 @@ of sophisticated data structures and an intricate and subtle
 algorithm~\citep{kelleher2016efficient}.
 This efficiency, and the ability to handle recombination in a principled
 way is vital with today's vast numbers of whole genome samples.
+
+
+A significant advantage to simulating the coalescent with recombination
+backwards in time using Hudson's algorithm rather than
+left-to-right
+approaches~\citep{wiuf1999recombination,chen2009fast,staab2014scrm}
+is the ease with which additional processes can be integrated.
+We have seen that processes such as gene conversion, complex
+demography, instantaneous bottlenecks, multiple merger caolescents
+and selective sweeps have been integrated seamlessly into
+the simulations. Incorporating any of these extensions into
+either the exact or approximate left-to-right processes would require
+complex derivations. Because we are going backwards
+in time, processes can be modelled as competing exponentials
+using Gillespie's algorithm \jkcomment{I think?},
+and therefore in principle we can
+add as many extra processes as we like.
+\jkcomment{so, backwards in time
+sims in msprime is extensible for the future.}
+
 
 % Making lots of simulators has given us a fragmented and poort
 % quality ecosystem.
