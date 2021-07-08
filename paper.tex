@@ -6,6 +6,7 @@
 \usepackage[utf8]{inputenc}%
 \usepackage{amsmath,amssymb,amsfonts}%
 \usepackage{geometry}%
+\usepackage{color}
 \usepackage{dsfont}
 \usepackage{verbatim}%
 \usepackage{environ}%
@@ -18,6 +19,8 @@
 \newcommand{\ms}[0]{\texttt{ms}}
 \newcommand{\scrm}[0]{\texttt{scrm}}
 \newcommand{\stdpopsim}[0]{\texttt{stdpopsim}}
+
+\newcommand{\jkcomment}[1]{\textcolor{red}{#1}}
 
 %% local definitions for section multiple merger coalescents
  \newcommand{\be}{\begin{equation}}
@@ -132,17 +135,18 @@ the output would require terabytes of storage space to store and
 days of CPU time to parse~\citep{kelleher2016efficient}.
 
 The \msprime\ simulator~\citep{kelleher2016efficient,kelleher2020coalescent}
-has profoundly changed
-what is possible. Through the use of efficient data structures, it is
-now possible to simulate millions of whole chromosomes, without resorting
-to approximations. The ``succinct tree
-sequence'' data
+has greatly increased the scope of coalescent simulations.
+Through the use of efficient data structures, it is
+now straightforward to simulate millions of whole chromosomes.
+The ``succinct tree sequence'' data
 structure~\citep{kelleher2016efficient,kelleher2018efficient,kelleher2019inferring,
 wohns2021unified},
 introduced as part of \msprime\, makes it possible to store simulations
 of millions of whole chromosomes in a few gigabytes, several orders
 of magnitude smaller than the standard
-Newick~\citep{felsenstein1989phylip} based formats. This data structure has
+Newick~\citep{felsenstein1989phylip} or
+VCF~\citep{danecek2011variant} based formats formats.
+This data structure has
 also lead to major advances in forwards-time
 simulation~\citep{kelleher2018efficient,haller2018tree},
 ancestry inference~\citep{kelleher2019inferring,wohns2021unified}
@@ -162,7 +166,6 @@ This paper marks the release of \msprime\ 1.0.
 %   to provide easy access to standard models of population genetics.
 %
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Methods: For software, the authors should describe key elements of the algorithms
 % implemented, and are expected to provide both the source code as well as
@@ -173,56 +176,39 @@ This paper marks the release of \msprime\ 1.0.
 
 In this section we describe the main features of \msprime\ 1.0.
 
-\subsection*{Recombination and gene conversion}
-Recombination is implemented in \msprime\ via
-Hudson's algorithm, which
+\subsection*{Recombination}
+
+Recombination is implemented in \msprime\ using Hudson's algorithm, which
 works backwards in time tracking the
-through the effects of common ancestor and recombination events
-~\citep{hudson1983properties,hudson1990gene,kelleher2016efficient}. Common
-ancestor events combine the ancestral material of two lineages, and may
- result in coalescences in the marginal trees. Recombination events
+effects of common ancestor and recombination
+events~\citep{hudson1983properties,hudson1990gene,kelleher2016efficient}.
+Common ancestor events combine the ancestral material of two lineages, and may
+result in coalescences in the marginal trees. Recombination events
 split the ancestral material for some lineage, creating two independent
 lineages. Using the appropriate data structures~\citep{kelleher2016efficient},
 this process is much more efficient to simulate than either
 methods based on the Ancestral Recombination Graph
 formulation~\citep{griffiths1991two,griffiths1997ancestral}
 or the left-to-right approach~\citep{wiuf1999recombination,wiuf1999ancestry}.
+In \msprime\ 1.0 recombination rates can vary along a chromosome, allowing
+us to simulate recombination hotspots like \texttt{msHOT}~\citep{hellenthal2007mshot}
+and empirical recombination maps similar to other
+simulators~\citep[e.g.][]{shlyakhter2014cosi2}.
 
-
-We also support variable recombination rates along a chromosome.
-This allows us to model both recombination hotspots like
-\texttt{msHOT}~\citep{hellenthal2007mshot} and also empirical
-recombination maps like those supported \texttt{cosi2}
-\citep{shlyakhter2014cosi2}
-(What about ~\cite{wang2014new}?)
-We have also implemented gene
-conversion following the model defined by~\cite{wiuf2000coalescent}
-and used in \ms.
-% % Uncomment this sentence, when the corresponding issue in the msprime github repo is resolved.
-% Furthermore, msprime is now able to simulate gene conversion events that are
-% initiated proportional to the local recombination rate specified by the recombination map.
-
-Gene conversion is particularly useful to model homologous recombination in bacterial evolution.
-We compare the performance of \msprime\ with gene conversion to \ms\ and
-the whole bacterial genome simulator SimBac~\citep{brown2016simbac}.
-Further features are planned to model bacterial evolution. In particular, we
-aim to include bacterial gene transfer and utilize the succinct tree sequence structure
-to represent the resulting ancestral gene transfer graph~\citep{baumdicker2014AGTG}.
-
-\subsection*{SMC approximations}
-
-\textbf{TODO:} It's important that we acknowledge that (a) the coalescent
-with recombination does become quite slow for large $N_e$; (b) our
-implementation of the SMC is naive; and (c) for sufficiently large
-$N_e$ programs like \texttt{scrm} will be faster.
-
-
-The SMC~\citep{mcvean2005approximating} and SMC'~\citep{marjoram2006fast}
-models are supported.
-The performance of msprime has made the SMC
-approximation largely unnecessary, at least when simulating human-like
-recombination rates. The SMC is an important analytical approximation
-forming the basis for several important inference methods
+The Sequentially Markovian Coalescent (SMC) is an approximation of the
+coalescent with recombination
+model~\citep{mcvean2005approximating,marjoram2006fast},
+and was originally motivated to a significant degree by the need to
+simulate longer genomes than was possible using tools like \ms.
+The SMC is a good approximation to the
+coalescent with recombination when we have four or fewer sampled
+genomes~\citep{hobolth2014markovian,wilton2015smc}, but the
+effects of the approximation are less well understood for larger
+sample sizes and several approaches have been proposed to
+allow simulations more closely approximate the coalescent
+with recombination~\citep{chen2009fast,wang2014new,staab2014scrm}.
+The SMC is an important analytical approximation
+and has allowed the development of numerous inference
 methods~\citep{
 li2011inference,
 harris2013inferring,
@@ -231,17 +217,52 @@ schiffels2014inferring,
 carmi2014renewal,
 rasmussen2014genome,
 zheng2014bayesian,
-terhorst2017robust},
-so simulations are still useful to examine  how good the approximation
-is.
+terhorst2017robust}.
 
-The SMC has been shown to be a good approximation to the
-coalescent with recombination for samples of less than
-four~\citep{hobolth2014markovian,wilton2015smc}
-and in simulations, produces patterns of LD indistinguishable from the
-full coalescent~\citep{mcvean2005approximating,marjoram2006fast}. However,
-LD is a crude approximation of the correlation structure of trees
-and it is not clear how good the SMC is for larger sample sizes.
+\begin{figure}
+\caption{\label{fig-recombination-perf}Approximate run time for \msprime\
+simulations as a function of scaled recombination rate.}
+\end{figure}
+
+In human-like parameter regimes, \msprime's implementation of the
+exact coalescent with recombination comprehensively outperforms
+all other simulators, including those based on SMC
+approximations~\citep{kelleher2016efficient}. However, it is important
+to note that although the implementation of Hudson's algorithm is
+very efficient, it is still quadratic in the scaled recombination rate
+$\rho$, and therefore for sufficiently large $N_e$, recombination rate
+or long genome, efficient SMC implementations will be faster
+that \msprime.
+
+\jkcomment{We want to round out this discussion here by giving some
+sort of rough argument for why Hudson's algorithm is quadratic, and discussing
+to Fig.~\ref{fig-recombination-perf} to show roughly what we can expect
+to simulate in how long. See issue 28.}
+
+The SMC~\citep{mcvean2005approximating} and
+SMC'~\citep{marjoram2006fast} models are available
+in \msprime\ 1.0. However, they are currently implemented using a
+naive rejection sampling approach, and are somewhat slower
+to simulate than the exact coalescent with recombination. These
+models are therefore only appropriate for studying the SMC approximations
+themselves; an important avenue for future work is to implement
+efficient SMC-like models, perhaps based on the approaches used
+in \texttt{cosi2}~\citep{shlyakhter2014cosi2}.
+
+\subsection*{Gene conversion}
+
+We have also implemented gene
+conversion following the model defined by~\cite{wiuf2000coalescent}
+and used in \ms.
+
+Gene conversion is particularly useful to model homologous recombination in
+bacterial evolution. We compare the performance of \msprime\ with gene
+conversion to \ms\ and the whole bacterial genome simulator
+SimBac~\citep{brown2016simbac}. Further features are planned to model bacterial
+evolution. In particular, we aim to include bacterial gene transfer and utilize
+the succinct tree sequence structure to represent the resulting ancestral gene
+transfer graph~\citep{baumdicker2014AGTG}.
+
 
 \subsection*{Population structure}
 We support all the stuff that ms does.
