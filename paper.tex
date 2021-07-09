@@ -581,12 +581,22 @@ and more recent machine learning
 methods~\citep{sheehan2016deep,schrider2018supervised,flagel2019unreasonable}
 perform population genetic inference by using large numbers of
 simulations as training data. Clearly, simulation efficiency is
-crucial since the size and number of simulations that can be performed
-largely determines the scope of what can be inferred. Equally important,
+crucial since the size and number of simulations that can be performed determines
+the depth to which the model and parameter space can be sampled from.
+Equally important,
 however, is the efficiency with which the simulation results can be
 transformed into the specific input required by the inference method.
-In the case of ABC, this is usually a set of summary statistics of the
-sequence data. General approaches such as
+In the case of ABC, this is usually a set of summary statistics of the sequence data.
+Modern approaches such as
+ABC-RF~\citep{raynal2019abc,pudlo2016abc} and
+ABC-NN~\citep{csillery2012abc,blum2010abc} can accommodate large numbers of statistics
+that are individually weakly informative, but jointly close to sufficient for the 
+desired model or parameter.
+However, the computational resources needed to calculate these statistics can be even 
+greater than those used to generate the simulated datasets.
+[An example would be good here? Hmmm...]
+
+General approaches such as
 ABCtoolbox~\citep{wegmann2010abctoolbox} connect to
 simulation and summary statistic computation programs via text streams
 and are quite flexible, but the overhead involved in processing
@@ -613,8 +623,16 @@ room for error.
     away.
 
 \item Side note somewhere: with efficient access to branch length
-    statisics~\citep{ralph2019efficiently}, maybe we don't need to
+    statistics~\citep{ralph2019efficiently}, maybe we don't need to
     simulate mutations at all.
+[GT: I'm not so sure about this -- the desired statistics/summaries 
+must be calculated on the observed dataset as well as on the many
+simulated datasets.
+Unless the observed dataset is stored as a tree sequence,
+(because it has been through tsinfer, for example),
+it's not clear how branch or node stats could be calculated 
+from it.
+]
 
 \item Msprime uses the \tskit\ library~\citep{tskit2021tskit}, which provides
     extremely efficient interchange and data processing. A quick example
