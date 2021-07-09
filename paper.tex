@@ -280,26 +280,54 @@ evolution. In particular, we aim to include bacterial gene transfer and utilize
 the succinct tree sequence structure to represent the resulting ancestral gene
 transfer graph~\citep{baumdicker2014AGTG}.
 
-\subsection*{Population structure}
-We support all the stuff that ms does.
-Demographic events where we change
-the properties of the population.
+\subsection*{Demography}
+% TODO should we put in some citations here for the models? Hardly seems
+% necessary.
+One of the key applications of population genetic simulations is to generate
+data for complex demographies. Beyond idealised cases such as stepping-stone or
+island models, or specialised cases such as isolation-with-migration models,
+analytical results are rarely possible. Simulation is therefore integral to the
+development and evaluation of methods for demographic inference. The demography
+model in \msprime\ is directly derived from the approach used in \ms, and
+supports an arbitrary number of randomly mating populations exchanging migrants
+at specified rates. A range of demographic events are provided, which allow for
+varying population parameters and migration rates over time, as well as
+population splits, admixtures and pulse migrations. The location of lineages
+over time can be tracked in as much detail as required: each tree node is
+automatically associated with the population in which it arose, the location of
+lineages can be recorded at any given time via census events, or every lineage
+migration can be recorded.
 
-We provide a debugger interface which allows the user to see the
-various population sizes and growth rates over time. This includes
-a way to compute coalescence rate trajectory, which provides a useful
-ground truth when comparing with methods that estimate population
-size over time~\citep{adrion2019community}.
+A major change for \msprime\ 1.0 is the introduction of the new Demography API,
+designed to address a serious flaw in the \msprime\ 0.x interface which lead to
+a number of avoidable errors in downstream
+simulations~\citep{ragsdale2020lessons}. Briefly, the 0.x API required three
+separate parameters be provided to the \texttt{simulate} function to describe a
+demographic model, making it easy to accidentally omit information. The 1.0 API
+resolves this issue by creating a new \texttt{Demography} class, which
+encapsulates all information about the demographic model, and fully decouples
+the definition from other simulation details. An instance of this class is then
+provided as a parameter to the new \texttt{sim\_ancestry} function,
+substantially reducing the potential for error. Another improvement over the
+0.X APIs is the introduction of explicit population split and admixture events,
+and a population state machine that ensures that lineages cannot migrate into
+(or be sampled from) inactive populations. This demography model is compatible
+with the Demes standard~\citep{gower2021demes}, and the \texttt{Demography}
+class supports importing Demes models. We also support importing demographic
+models in the form of Newick species tree descriptions, as well as those
+produced by programs such as *BEAST~\citep{heled2009bayesian}.
 
-The interface
-is very flexible and general. We also reading in population tree
-descriptions as produced by programs such as
-StarBeast~\citep{heled2009bayesian}.
-
-We support tracking lineages through time by associating a population
-with each node, and having migration records. We also have
-census events, which will record the location of every lineage
-at a particular time.
+Many popular approaches in population genetics use the distribution of
+coalescence rates between pairs of lineages in one or more populations to infer
+effective population sizes over
+time~\citep{li2011inference,sheehan2013estimating,schiffels2014inferring} or
+split times and subsequent migration rates between
+populations~\citep{wang2020tracking}. The \texttt{DemographyDebugger} provides
+methods to compute a suite of numerical predictions about the location of
+lineages over time, for example the coalescence rates for two or more lineages
+drawn from populations at specified times in the past. This provides a valuable
+ground-truth when evaluating such inference methods, as illustrated by
+\cite{adrion2020community}.
 
 \subsection*{Selection}
 Selection was added to the coalescent ... Lots of simulators exist:
@@ -568,8 +596,12 @@ site frequency spectrum~\citep{bunnefeld2015inferring}.
 The primary interface for \msprime\ is through a Python application
 programming interface (API). This has many advantages. One is
 that we can grow the interface over time. Another is that
-downstream applications such as \texttt{stdpopsim}~\citep{adrion2019community}
+downstream applications such as \texttt{stdpopsim}~\citep{adrion2020community}
 can be developed.
+
+The \texttt{msp simulate} command also supports demographic models
+specified in Demes format~\citep{gower2021demes}, allowing users with
+no Python experience to run complex demographic simulations.
 
 \subsection*{Data interchange and interoperability}
 The point of simulations is to generate data and the efficiency with
@@ -591,7 +623,7 @@ Modern approaches such as
 ABC-RF~\citep{raynal2019abc,pudlo2016abc} and
 ABC-NN~\citep{csillery2012abc,blum2010abc} can accommodate large numbers of user-specified statistics that are individually weakly informative,
 but jointly close to sufficient for the desired model or parameter.
-However, the computational resources needed to calculate these statistics can be even 
+However, the computational resources needed to calculate these statistics can be even
 greater than those used to generate the simulated datasets.
 Older software such as DIYABC~\citep{cornuet2008inferring}
 or PopABC~\citep{lopes2009popabc} avoid this bottleneck by
@@ -620,12 +652,12 @@ the models and statistics of most interest.
 \item Side note somewhere: with efficient access to branch length
     statistics~\citep{ralph2019efficiently}, maybe we don't need to
     simulate mutations at all.
-[GT: I'm not so sure about this -- the desired statistics/summaries 
+[GT: I'm not so sure about this -- the desired statistics/summaries
 must be calculated on the observed dataset as well as on the many
 simulated datasets.
 Unless the observed dataset is stored as a tree sequence,
 (because it has been through tsinfer, for example),
-it's not clear how branch or node stats could be calculated 
+it's not clear how branch or node stats could be calculated
 from it.
 ]
 
@@ -656,44 +688,6 @@ are automatically run on each pull request on a variety of continuous
 integration testing platforms. For new simulation features, statistical tests
 must also be added, comparing the distribution of results to either analytical
 results or existing simulators.
-
-\subsection*{Computing coalescence rates and lineage location probabilities}
-Many popular approaches in population genetics use the distribution of coalescence rates between
-pairs of lineages in one or more populations to infer effective population sizes over time
-\cite{li2011inference,sheehan2013estimating,schiffels2014inferring}
-or split times
-and subsequent migration rates between populations
-\cite{wang2020tracking}.
-Given a demographic model, the
-\texttt{msprime} DemographyDebugger is able to compute coalescence rates for two or more lineages drawn
-from one or more populations at specified times in the past, providing a ground truth for coalescent rate-based
-inference methods. To compute coalescence rates for a set of times $Ts=(t_0, t_1, \ldots)$ in the
-past, we write
-\begin{lstlisting}[frame=single]
-dbg = demography.debug()
-rates = dbg.coalescence_rate_trajectory(Ts, num_samples)
-\end{lstlisting}
-where \texttt{num\_samples} is a list with length equal to the number of populations that
-specifies the number of sampled lineages from each population. For example,
-to get pairwise rates within the same
-population, this list would contain zeros for all populations except for the population index of interest,
-which would have a $2$. To get the rate of coalescence for two lineages sampled from different
-populations, we would set \texttt{num\_samples} to have ones in those population indices.
-
-More simply, \texttt{msprime} can also compute the probability of a lineage that was in a given
-population at some time to be found in other populations (through continuous or mass migration events).
-For a given sample time $t\geq0$ and any list of times $Ts$ in the past, we write
-\begin{lstlisting}[frame=single]
-prob = dbg.lineage_probabilities(Ts, sample_time=t)
-\end{lstlisting}
-This function is also used to determine the time intervals that lineages can be found in each population,
-given a list of contemporary and/or ancient samples. For a given sampling configuration, by writing
-\begin{lstlisting}[frame=single]
-lineage_dict = dbg.possible_lineage_locations(samples=samples)
-\end{lstlisting}
-we get a dictionary with epoch intervals as keys whose values are a list that indicates True or False for
-whether each population could contain ancestral material to our samples.
-If no sampling configuration is provided, we assume we sample lineages from each population at time zero.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -799,7 +793,7 @@ in the presence of
 recombination~\citep{harris2019database,kelleher2019inferring,
 speidel2019method,tang2019genealogy}
 opens the possibility for new applications of coalescent simulations.
-Also \stdpopsim\ is cool~\citep{adrion2019community}
+Also \stdpopsim\ is cool~\citep{adrion2020community}
 
 \section*{Acknowledgments}
 JK is supported by the Robertson Foundation.
