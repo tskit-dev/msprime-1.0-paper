@@ -576,7 +576,7 @@ The point of simulations is to generate data and the efficiency with
 which simulated data can be incorporated into an overall application
 is an important---if often overlooked---issue.
 For example, Approximate Bayesian Computation
-(ABC)~\citep{beaumont2002approximate,csillery2010approximate}
+(ABC)~\citep{beaumont2002approximate,csillery2010approximate,wegmann2010abctoolbox}
 and more recent machine learning
 methods~\citep{sheehan2016deep,schrider2018supervised,flagel2019unreasonable}
 perform population genetic inference by using large numbers of
@@ -589,24 +589,19 @@ transformed into the specific input required by the inference method.
 In the case of ABC, this is usually a set of summary statistics of the sequence data.
 Modern approaches such as
 ABC-RF~\citep{raynal2019abc,pudlo2016abc} and
-ABC-NN~\citep{csillery2012abc,blum2010abc} can accommodate large numbers of statistics
-that are individually weakly informative, but jointly close to sufficient for the 
-desired model or parameter.
+ABC-NN~\citep{csillery2012abc,blum2010abc} can accommodate large numbers of user-specified statistics that are individually weakly informative,
+but jointly close to sufficient for the desired model or parameter.
 However, the computational resources needed to calculate these statistics can be even 
 greater than those used to generate the simulated datasets.
-[An example would be good here? Hmmm...]
-
-General approaches such as
-ABCtoolbox~\citep{wegmann2010abctoolbox} connect to
-simulation and summary statistic computation programs via text streams
-and are quite flexible, but the overhead involved in processing
-the text is often a computational bottleneck.
-Other methods such as DIYABC~\citep{cornuet2008inferring}
+Older software such as DIYABC~\citep{cornuet2008inferring}
 or PopABC~\citep{lopes2009popabc} avoid this bottleneck by
 developing their own specialised simulators, tightly integrating them
 with the inference method. While this is certainly more efficient,
 there is a great deal of duplication of effort and significant
 room for error.
+As ABC inference has become useful in an ever-widening range of applications,
+these all-in-one methods risk falling behind if they do not allow users to explore
+the models and statistics of most interest.
 
 \jkcomment{Stuff to cover}
 \begin{itemize}
