@@ -233,9 +233,17 @@ all other simulators, including those based on SMC
 approximations~\citep{kelleher2016efficient}. However, it is important
 to note that although the implementation of Hudson's algorithm is
 very efficient, it is still quadratic in the scaled recombination rate
-$\rho$, and therefore for sufficiently large $N_e$, recombination rate
-or long genome, efficient SMC implementations will be faster
-that \msprime.
+$\rho. This is because Hudson's algorithms tracks recombinations not only 
+in segments ancestral to the sample, but also between ancestral segments.     
+Estimates of the number of such "trapped" recombinations grow quadratically 
+with genome length (\cite{Hein, Schierup, Wiuf}, Eq. 5.10). 
+Because they do not track such recombinations, efficient SMC implementations 
+will be faster that \msprime for sufficiently high recombination rate, 
+genome length, or $N_e$. %Until we decide to approximate the recombination process
+%between distant ancestral segment. Hint hint.  
+
+
+
 
 \jkcomment{We want to round out this discussion here by giving some
 sort of rough argument for why Hudson's algorithm is quadratic, and discussing
