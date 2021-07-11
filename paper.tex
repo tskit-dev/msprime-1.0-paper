@@ -233,14 +233,14 @@ all other simulators, including those based on SMC
 approximations~\citep{kelleher2016efficient}. However, it is important
 to note that although the implementation of Hudson's algorithm is
 very efficient, it is still quadratic in the scaled recombination rate
-$\rho. This is because Hudson's algorithms tracks recombinations not only 
-in segments ancestral to the sample, but also between ancestral segments.     
-Estimates of the number of such "trapped" recombinations grow quadratically 
-with genome length (\cite{Hein, Schierup, Wiuf}, Eq. 5.10). 
-Because they do not track such recombinations, efficient SMC implementations 
-will be faster that \msprime for sufficiently high recombination rate, 
+$\rho$. This is because Hudson's algorithms tracks recombinations not only
+in segments ancestral to the sample, but also between ancestral segments.
+Estimates of the number of such ``trapped'' recombinations grow quadratically
+with genome length \citep[Eq.~5.10]{hein2004gene}.
+Because they do not track such recombinations, efficient SMC implementations
+will be faster that \msprime for sufficiently high recombination rate,
 genome length, or $N_e$. %Until we decide to approximate the recombination process
-%between distant ancestral segment. Hint hint.  
+%between distant ancestral segment. Hint hint.
 
 
 
@@ -420,6 +420,10 @@ Pyvolve and Phastsim are implemented in Python, neither provide
 programatic access to the simulated output, outputting instead
 to a series of files which must subsequently be parsed.
 See the Data Model section for more details and discussion.
+
+Things we can do: future work will need to do things like
+Dawg~\citep{cartwright2005dna} and to implement models and
+indels~\citep{fletcher2009indelible}.
 
 \subsection*{Multiple merger coalescents}
 
@@ -717,7 +721,7 @@ and its use in understanding observed patterns of genetic variation.
 The basic model can be simulated for $n$ samples in $O(n)$ time
 and is straightforward to implement---for example, Hudson provided a fully
 functional and highly efficient simulator as a C source code listing in an
-appendix to his seminal review paper~\citep{hudson1990gene}. Because of
+appendix to the seminal review paper~\citep{hudson1990gene}. Because of
 this ease, the dominant approach to producing simulators for extensions
 to this basic model has been to develop them independently. This is
 often seen as a learning opportunity, since those developing extensions
@@ -729,11 +733,43 @@ proposed over the
 years~\citep{hudson1983properties,griffiths1997ancestral,wiuf1999recombination,
 mcvean2005approximating}. It has only recently become clear that it is
 possible to implement the model efficiently, and only through the use
-of sophisticated data structures and an intricate and subtle
-algorithm~\citep{kelleher2016efficient}.
-This efficiency, and the ability to handle recombination in a principled
-way is vital with today's vast numbers of whole genome samples.
+of sophisticated data structures and
+intricate algorithms~\citep{kelleher2016efficient}.
 
+% Making lots of simulators has given us a fragmented and poor
+% quality ecosystem.
+The approach of developing ``in-house'' simulators
+has lead to a huge proliferation of different programs, with
+slightly different feature sets and often incompatible interfaces.
+It is a fragmented ecosystem with significant issues with software
+quality (see, e.g.,~\cite{yang2014critical}),
+and few simulators are actively maintained after publication.
+We have seen that \msprime\ (for larger samples at least)
+has at worst comparable, but usually far superior
+performance to more specialised methods.
+
+% JK: I want to make the point that the established idea that
+% developing your own simulation software is a good learning experience
+% is pretty questionable these days, and tends to produce a lot of
+% crappy unmaintained software. Not sure if the following paragraph
+% does the job that well, though.
+
+There seems to be little point in continuing the huge duplication of effort we
+have seen. It is not possible to achieve the performance levels of \msprime\
+without investing substantially in software engineering. As demonstrated here,
+\msprime\ is extensible and we would argue that developing this simulator as an
+open-source community asset is of more benefit to all. Implementing a
+coalescent simulator may once have been a good way for (e.g.) a student to
+learn about programming and simulation, but it is no longer reasonable to
+expect this. There is simply too much engineering required. For example, as of
+the 1.0.0 release \msprime\ consisted of around 13K lines of C and 11K
+lines of Python, with test suites of 122 C test cases (7K lines of code) and
+1350 Python test cases (22K lines of code), along with a suite of 217
+statistical validation tests (6K lines of code). It requires a sustained effort
+over years to produce well engineered, high-quality software. It may reasonably
+be asked if students would learn more from contributing to an existing project
+with established high-quality engineering standards, or from producing their own
+software in a self-taught manner.
 
 A significant advantage to simulating the coalescent with recombination
 backwards in time using Hudson's algorithm rather than
@@ -754,22 +790,6 @@ add as many extra processes as we like.
 sims in msprime is extensible for the future.}
 
 
-% Making lots of simulators has given us a fragmented and poort
-% quality ecosystem.
-The approach of developing ``in-house'' simulators
-has lead to a huge proliferation of different programs, with
-slightly different feature sets and often incompatible interfaces.
-It is a fragmented ecosystem with significant issues with software
-quality (see, e.g.,~\cite{yang2014critical});
-few simulators are actively maintained after publication.
-There seems to be little point
-in continuing the huge duplication of effort we have seen.
-It is not possible to achieve the performance levels of
-\msprime\ without investing substantially in software engineering.
-As demonstrated here, \msprime\ is extensible and we would argue
-that developing this simulator as an open-source community asset
-is of more benefit to all.
-
 There is also the welcome development of libraries such as
 Quetzal~\citep{becheler2019quetzal} and libsequence~\citep{thornton2014cpp}
 which break this pattern of monolithic simulation software.
@@ -777,21 +797,6 @@ which break this pattern of monolithic simulation software.
 
 Thus, development of \msprime\ is not completed and much remains
 to be done.
-
-
-% We need to acknowledge that for long genomes and for large population
-% sizes msprime's performance does drop off and SMC simulators like
-% scrm become more efficient.
-Msprime's performance for large sample sizes is excellent, but
-simulating species with large population sizes is still challenging.
-An important avenue for future development is to improve performance
-in these scenarios by incorporating data structures such as skip lists
-and implementing more efficient coalescent approximations, as done
-in \texttt{cosi2}~\citep{shlyakhter2014cosi2}.
-
-In terms of mutation simulation, future work will need to do things like
-Dawg~\citep{cartwright2005dna} and to implement
-codon models and indels~\citep{fletcher2009indelible}.
 
 
 % Finish up with a paragraph saying that there loads of exciting
