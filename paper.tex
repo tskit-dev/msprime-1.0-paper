@@ -252,9 +252,9 @@ Griffiths~\citep{griffiths1991two,griffiths1997ancestral} as a graphical
 representation of the coalescent with recombination stochastic process. This
 formulation was complementary to Hudson's earlier
 work~\citep{hudson1983properties}, and substantially increased our theoretical
-understanding of the recombination. In Griffiths' ARG formulation, we
+understanding of recombination. In Griffiths' ARG formulation, we
 regard a realisation of the coalescent with recombination as a graph in which
-nodes represent common ancestor or recombination events, and edges represent
+vertices represent common ancestor or recombination events, and edges represent
 lineages through which ancestral material flows. We may consider the ``big''
 ARG, in which we wait an exponentially large time until all sampled lineages
 coalescence into a single ancestor~\citep{ethier1990two}, or the ``little'' ARG
@@ -272,7 +272,7 @@ individual's pedigree from which they have inherited ancestral material. Such
 imprecision is unfortunate, since there are any number of graphical encodings of
 genetic ancestry, and referring to the original Griffiths papers does little to
 clarify. As we shall see, there are situations in which the precise information
-stored of the graph is important, and conflating a high-level
+stored in the graph is important, and conflating a high-level
 discussion of genetic ancestry with this mathematical object is not
 helpful. One may wonder if a more generic term such as ``genetic pedigree''
 would be a more useful description, in such cases where the precise form of the
@@ -301,7 +301,7 @@ information is of little relevance as it is in principle unknowable,
 but there are occasions such as visualisation or computing likelihoods (see
 below) in which is useful. We therefore provide
 the \texttt{record\_full\_arg} option in \msprime\
-to store a representation of the compete ARG traversed during simulation.
+to store a representation of the complete ARG traversed during simulation.
 This is done by storing extra nodes (marked with specific flags, so they
 can be easily identified later) and edges in the tree sequence.
 Fig.~\ref{fig-recombination-perf}B shows that this extra ARG information
