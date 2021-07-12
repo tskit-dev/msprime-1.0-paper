@@ -255,11 +255,13 @@ work~\citep{hudson1983properties}, and substantially increased our theoretical
 understanding of recombination. In Griffiths' ARG formulation, we
 regard a realisation of the coalescent with recombination as a graph in which
 vertices represent common ancestor or recombination events, and edges represent
-lineages through which ancestral material flows. We may consider the ``big''
-ARG, in which we wait an exponentially large time until all sampled lineages
-coalescence into a single ancestor~\citep{ethier1990two}, or the ``little'' ARG
-in which we wait until all marginal trees have fully coalescenced (like
-Hudson's algorithm).
+lineages through which ancestral material flows.
+We may consider the big ARG, in which we track lineages arising out of
+recombinations regardless of whether they carry ancestral material and
+consequently wait an exponentially large time until all sampled lineages
+coalesce into a single ancestor~\citep{ethier1990two}, or the little ARG in
+which we only track genetic ancestors, and wait until all marginal trees
+have fully coalesced (like Hudson's algorithm).
 
 % Seems somewhat unfair to single out Iain and Aylwyn here, but a systematic
 % review would be long and tedious, and I'm sure they won't be too upset about
@@ -278,8 +280,8 @@ helpful. One may wonder if a more generic term such as ``genetic pedigree''
 would be a more useful description, in such cases where the precise form of the
 encoding is not important.
 
-For our purposes here, an ARG is a realisation of the coalescent with
-recombination, in the Griffiths sense.
+For our purposes, an ARG is a realisation of the coalescent with
+recombination, in the Griffiths (little ARG) sense.
 As described in detail by~\cite{kelleher2016efficient}, Hudson's algorithm
 works by dynamically generating and traversing a little ARG.
 The graph is not explicitly represented in memory, but is partially
@@ -320,53 +322,7 @@ We provide functions to compute the likelihood of ARG realisations
 (encoded using the representation of the \texttt{record\_full\_arg} option)
 and mutational patterns under
 the standard coalescent and infinite sites mutation model.
-
-% We provide two functions to facilitate likelihood-based inference.
-% Both are implemented only for the simplest case of the standard ARG with a
-% constant population size, and require tree sequences compatible with the
-% \texttt{record\_full\_arg} option as their arguments.
-% \begin{itemize}
-% \item \texttt{msprime.log\_arg\_likelihood(ts, r, N)} returns the natural logarithm of
-% the sampling probability of the tree sequence \texttt{ts} under the ARG with per-link,
-% per-generation recombination probability \texttt{r} and population size \texttt{N}.
-% Specifically, the function returns the logarithm of
-% \begin{equation*}
-% \Bigg( \frac{ 1 }{ 2 N } \Bigg)^{ q_c } \Bigg( \prod_{ i : \mathcal{R} } r g_i \Bigg)
-% 	\exp\Bigg( -\sum_{ i = 1 }^q \Big[\frac{ 1 }{ 2 N } \binom{ k_i }{ 2 }
-% 		+ r l_i \Big] t_i  \Bigg),
-% \end{equation*}
-% where $t_i$ is the number of generations between the $(i - 1)$th and $i$th event,
-% $k_i$ is the number of extant ancestors in that interval, $l_i$ is the number of links
-% in that interval that would split ancestral material should they recombine,
-% $q$ is the total number of events in the tree sequence $\texttt{ts}$,
-% $q_c$ is the number of coalescences, $\mathcal{R}$ is the set of indices
-% of time intervals which end in a recombination, and $g_i$ is the corresponding
-% \emph{gap}:  the length of material in which the recombination at the end of the
-% $i$th period could have taken place without affecting the resulting genealogy.
-% A recombination in ancestral material will always have $g_i = 1$, while a recombination
-% in trapped non-ancestral material can result in other values of $g_i$.
-% For a continuous model of the genome and a recombination in ancestral material,
-% we set $g_i = 1$ and interpret the result as a density.
-% \item \texttt{msprime.unnormalised\_log\_mutation\_likelihood(ts, m)} returns the
-% natural logarithm of the probability of the mutations recorded in the tree sequence
-% \texttt{ts} given the corresponding ancestry, assuming the infinite sites model, up to
-% a normalising constant which depends on the pattern of mutations,
-% but not on the tree sequence or the per-site, per-generation mutation
-% probability \texttt{m}.
-% Specifically, the function returns the logarithm of
-% \begin{equation*}
-% e^{ - T m / 2 } \frac{ ( T m / 2 )^M }{ M ! }
-% \prod_{ \gamma \in \mathcal{ M } } \frac{ h_{ \gamma } }{ T },
-% \end{equation*}
-% where $T$ and $\mathcal{M}$ are the total branch length and set of mutations
-% in \texttt{ts}, respectively, and for a mutation $\gamma$, $h_{ \gamma }$ is the
-% total branch length on which $\gamma$ could have arisen while appearing on all
-% of the leaves of \texttt{ts} it does, and on no others.
-% Unary nodes on marginal trees arising from the \texttt{record\_full\_arg} option
-% mean that, in general $h_{ \gamma }$ corresponds to the length of one or more
-% edges.
-% \end{itemize}
-
+See the Appendix for details.
 
 \subsection*{Gene conversion}
 
@@ -838,6 +794,57 @@ Jere Koskela is supported in part by EPSRC grant EP/R044732/1.
 }
 
 \appendix
+
+\label{app-likelihoods}
+\section{Likelihood calculations}
+
+We provide two functions to facilitate likelihood-based inference.
+Both are implemented only for the simplest case of the standard ARG with a
+constant population size, and require tree sequences compatible with the
+\texttt{record\_full\_arg} option as their arguments.
+\begin{itemize}
+\item \texttt{msprime.log\_arg\_likelihood(ts, r, N)} returns the natural logarithm of
+the sampling probability of the tree sequence \texttt{ts} under the ARG with per-link,
+per-generation recombination probability \texttt{r} and population size \texttt{N}.
+Specifically, the function returns the logarithm of
+\begin{equation*}
+\Bigg( \frac{ 1 }{ 2 N } \Bigg)^{ q_c } \Bigg( \prod_{ i : \mathcal{R} } r g_i \Bigg)
+	\exp\Bigg( -\sum_{ i = 1 }^q \Big[\frac{ 1 }{ 2 N } \binom{ k_i }{ 2 }
+		+ r l_i \Big] t_i  \Bigg),
+\end{equation*}
+where $t_i$ is the number of generations between the $(i - 1)$th and $i$th event,
+$k_i$ is the number of extant ancestors in that interval, $l_i$ is the number of links
+in that interval that would split ancestral material should they recombine,
+$q$ is the total number of events in the tree sequence $\texttt{ts}$,
+$q_c$ is the number of coalescences, $\mathcal{R}$ is the set of indices
+of time intervals which end in a recombination, and $g_i$ is the corresponding
+\emph{gap}:  the length of material in which the recombination at the end of the
+$i$th period could have taken place without affecting the resulting genealogy.
+A recombination in ancestral material will always have $g_i = 1$, while a recombination
+in trapped non-ancestral material can result in other values of $g_i$.
+For a continuous model of the genome and a recombination in ancestral material,
+we set $g_i = 1$ and interpret the result as a density.
+\item \texttt{msprime.unnormalised\_log\_mutation\_likelihood(ts, m)} returns the
+natural logarithm of the probability of the mutations recorded in the tree sequence
+\texttt{ts} given the corresponding ancestry, assuming the infinite sites model, up to
+a normalising constant which depends on the pattern of mutations,
+but not on the tree sequence or the per-site, per-generation mutation
+probability \texttt{m}.
+Specifically, the function returns the logarithm of
+\begin{equation*}
+e^{ - T m / 2 } \frac{ ( T m / 2 )^M }{ M ! }
+\prod_{ \gamma \in \mathcal{ M } } \frac{ h_{ \gamma } }{ T },
+\end{equation*}
+where $T$ and $\mathcal{M}$ are the total branch length and set of mutations
+in \texttt{ts}, respectively, and for a mutation $\gamma$, $h_{ \gamma }$ is the
+total branch length on which $\gamma$ could have arisen while appearing on all
+of the leaves of \texttt{ts} it does, and on no others.
+Unary nodes on marginal trees arising from the \texttt{record\_full\_arg} option
+mean that, in general $h_{ \gamma }$ corresponds to the length of one or more
+edges.
+\end{itemize}
+
+
 \label{app-multiple-mergers}
 \section{Multiple merger coalescent model}
 
@@ -1038,7 +1045,6 @@ leaves in the block, i.e.\ the block $\{i_1, \ldots, i_k\}$ in a given
 partition of $[n]$ is an ancestor of the $k$ leaves $i_1, \ldots, i_k \in [n]$,
 and the leaves  correspond to arbitrarily labelled DNA sequences in the sample.
 \end{comment}
-
 
 
 \end{document}
