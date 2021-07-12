@@ -7,6 +7,7 @@
 \usepackage{amsmath,amssymb,amsfonts}%
 \usepackage{geometry}%
 \usepackage{color}
+\usepackage{graphicx}
 \usepackage{dsfont}
 \usepackage{verbatim}%
 \usepackage{environ}%
@@ -205,8 +206,10 @@ zheng2014bayesian,
 terhorst2017robust}.
 
 \begin{figure}
-\caption{\label{fig-recombination-perf}Approximate run time for \msprime\
-simulations as a function of scaled recombination rate.}
+\includegraphics[width=\textwidth]{figures/recombination}
+\caption{\label{fig-recombination-perf}(A) Approximate run time for \msprime\
+simulations as a function of scaled recombination rate.
+(B) Comparison of the ARG simulations vs minimal tree sequence representation.}
 \end{figure}
 
 In human-like parameter regimes, \msprime's implementation of the
@@ -223,8 +226,6 @@ Because they do not track such recombinations, efficient SMC implementations
 will be faster that \msprime for sufficiently high recombination rate,
 genome length, or $N_e$. %Until we decide to approximate the recombination process
 %between distant ancestral segment. Hint hint.
-
-
 
 
 \jkcomment{We want to round out this discussion here by giving some
