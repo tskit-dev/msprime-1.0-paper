@@ -55,6 +55,7 @@ def plot_arg_data():
     ax2.legend()
 
     plt.savefig("figures/recombination.pdf")
+    plt.savefig("figures/recombination.png")
 
 
 if __name__ == "__main__":
