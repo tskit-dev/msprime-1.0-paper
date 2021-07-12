@@ -22,24 +22,6 @@
 
 \newcommand{\jkcomment}[1]{\textcolor{red}{#1}}
 
-%% local definitions for section multiple merger coalescents
- \newcommand{\be}{\begin{equation}}
- \newcommand{\ee}{\end{equation}}
- \newcommand{\bd}{\begin{displaymath}}
- \newcommand{\ed}{\end{displaymath}}
-\newcommand{\IN}{\ensuremath{\mathds{N}}}%
-\newcommand{\EE}[1]{\ensuremath{\mathds{E}\left[ #1 \right]}}%
-\newcommand{\one}[1]{\ensuremath{\mathds{1}_{\left\{ #1 \right\}}}}%
-\newcommand{\prb}[1]{\ensuremath{\mathds{P}\left( #1 \right) } }%
-
-\NewEnviron{esplit}[1]{%
-\begin{equation}
-\label{#1}
-\begin{split}
-  \BODY
-\end{split}\end{equation}
-}
-
 
 
 \begin{document}
@@ -261,6 +243,113 @@ efficient SMC-like models, perhaps based on the approaches used
 in \texttt{cosi2}~\citep{shlyakhter2014cosi2}, to facilitate
 simulation of organisms such as \textit{Drosophila melagaster}.
 
+
+\subsection*{Ancestral recombination graphs}
+
+The \msprime~simulator generates tree sequences by simulating realisations of the
+Ancestral Recombination Graph (ARG).
+By default, only the marginal genealogy at each site is recorded in the tree sequence
+output.
+Marginal genealogies are sufficient for e.g.~simulating and storing sequence data,
+and involve fewer edges than nodes than storing a realisation of the full ARG.
+However, the mapping from ARG realisations to marginal tree sequences is not lossless.
+For example, times of recombination events can be recovered from the former
+but not the latter.
+The same is true of the number of extant ancestors at each time in the past.
+In addition to the default behaviour, we support the retention of the full
+ARG realisation using the \texttt{record\_full\_arg} option.
+This option augments the default tree sequence data structure with three
+new kinds of nodes:
+\begin{itemize}
+\item Each recombination event is marked by two nodes with identical birth times
+given by the time of the recombination event, and marked with the
+\texttt{NODE\_IS\_RE\_EVENT} flag.
+Each node represents an ancestor of the recombinant child node, and edges connect
+the relevant segments of genome from the child node to these two ancestors.
+\item We store common ancestor nodes even when the corresponding merger event
+does not result in coalescence of ancestral material.
+The resulting nodes are marked with the \texttt{NODE\_IS\_CA\_EVENT} flag.
+\item When multiple populations are simulated, migration events are depicted by nodes
+with the \texttt{NODE\_IS\_MIG\_EVENT} flag, and with birth times equal to the time of
+the migration.
+The population flag of the migration node identifies the population to which the lineage
+belongs after the reverse time migration event.
+\end{itemize}
+
+The likelihood, i.e.~the joint sampling probability of the ancestry and mutations,
+is an example of a function which is intractable when the ancestry is stored as a
+marginal tree sequence, but tractable when the ancestry is given by a full
+ARG realisation.
+The likelihood is a central quantity in evaluating the plausibility of a putative
+ancestry as an explanation of DNA sequence data, both directly through
+e.g.~approaches based on maximum likelihood, and as an ingredient of
+methods such as Metropolis-Hastings
+\citep{kuhner2000maximum, nielsen2000estimation, wang2008bayesian}.
+
+We provide two functions to facilitate likelihood-based inference.
+Both are implemented only for the simplest case of the standard ARG with a
+constant population size, and require tree sequences compatible with the
+\texttt{record\_full\_arg} option as their arguments.
+\begin{itemize}
+\item \texttt{msprime.log\_arg\_likelihood(ts, r, N)} returns the natural logarithm of
+the sampling probability of the tree sequence \texttt{ts} under the ARG with per-link,
+per-generation recombination probability \texttt{r} and population size \texttt{N}.
+Specifically, the function returns the logarithm of
+\begin{equation*}
+\Bigg( \frac{ 1 }{ 2 N } \Bigg)^{ q_c } \Bigg( \prod_{ i : \mathcal{R} } r g_i \Bigg)
+	\exp\Bigg( -\sum_{ i = 1 }^q \Big[\frac{ 1 }{ 2 N } \binom{ k_i }{ 2 }
+		+ r l_i \Big] t_i  \Bigg),
+\end{equation*}
+where $t_i$ is the number of generations between the $(i - 1)$th and $i$th event,
+$k_i$ is the number of extant ancestors in that interval, $l_i$ is the number of links
+in that interval that would split ancestral material should they recombine,
+$q$ is the total number of events in the tree sequence $\texttt{ts}$,
+$q_c$ is the number of coalescences, $\mathcal{R}$ is the set of indices
+of time intervals which end in a recombination, and $g_i$ is the corresponding
+\emph{gap}:  the length of material in which the recombination at the end of the
+$i$th period could have taken place without affecting the resulting genealogy.
+A recombination in ancestral material will always have $g_i = 1$, while a recombination
+in trapped non-ancestral material can result in other values of $g_i$.
+For a continuous model of the genome and a recombination in ancestral material,
+we set $g_i = 1$ and interpret the result as a density.
+\item \texttt{msprime.unnormalised\_log\_mutation\_likelihood(ts, m)} returns the
+natural logarithm of the probability of the mutations recorded in the tree sequence
+\texttt{ts} given the corresponding ancestry, assuming the infinite sites model, up to
+a normalising constant which depends on the pattern of mutations,
+but not on the tree sequence or the per-site, per-generation mutation
+probability \texttt{m}.
+Specifically, the function returns the logarithm of
+\begin{equation*}
+e^{ - T m / 2 } \frac{ ( T m / 2 )^M }{ M ! }
+\prod_{ \gamma \in \mathcal{ M } } \frac{ h_{ \gamma } }{ T },
+\end{equation*}
+where $T$ and $\mathcal{M}$ are the total branch length and set of mutations
+in \texttt{ts}, respectively, and for a mutation $\gamma$, $h_{ \gamma }$ is the
+total branch length on which $\gamma$ could have arisen while appearing on all
+of the leaves of \texttt{ts} it does, and on no others.
+Unary nodes on marginal trees arising from the \texttt{record\_full\_arg} option
+mean that, in general $h_{ \gamma }$ corresponds to the length of one or more
+edges.
+\end{itemize}
+
+\begin{comment}
+Previous draft of the ARG feature retained here as a comment.
+
+The definition of ARGs is vague and confusing.
+\cite{minichiello2006mapping} define it as the data structure
+rather than the original stochastic
+process~\citep{griffiths1991two,griffiths1997ancestral}.
+\cite{rasmussen2014genome} have a slightly different approach.
+Sometimes the ARG is useful.
+The tree sequence output for \msprime\ can be turned into
+an ARG using the \texttt{record\_full\_arg} option, where we store
+recombination nodes.
+
+We also provide an interface to compute the likelihood of a given ARG
+under the~\cite{kuhner2000maximum} model.
+\end{comment}
+
+
 \subsection*{Gene conversion}
 
 Gene conversion is \jkcomment{A couple of sentences describing gene
@@ -464,111 +553,6 @@ analytical results from the site frequency
 spectrum~\citep{birkner2013statistical,blath2016site,hobolth2019phase}
  as well as more general properties of coalescent processes.
 Please see the Appendix for more details and model derivations.
-
-\subsection*{Ancestral recombination graphs}
-
-The \msprime~simulator generates tree sequences by simulating realisations of the
-Ancestral Recombination Graph (ARG).
-By default, only the marginal genealogy at each site is recorded in the tree sequence
-output.
-Marginal genealogies are sufficient for e.g.~simulating and storing sequence data,
-and involve fewer edges than nodes than storing a realisation of the full ARG.
-However, the mapping from ARG realisations to marginal tree sequences is not lossless.
-For example, times of recombination events can be recovered from the former
-but not the latter.
-The same is true of the number of extant ancestors at each time in the past.
-In addition to the default behaviour, we support the retention of the full
-ARG realisation using the \texttt{record\_full\_arg} option.
-This option augments the default tree sequence data structure with three
-new kinds of nodes:
-\begin{itemize}
-\item Each recombination event is marked by two nodes with identical birth times
-given by the time of the recombination event, and marked with the
-\texttt{NODE\_IS\_RE\_EVENT} flag.
-Each node represents an ancestor of the recombinant child node, and edges connect
-the relevant segments of genome from the child node to these two ancestors.
-\item We store common ancestor nodes even when the corresponding merger event
-does not result in coalescence of ancestral material.
-The resulting nodes are marked with the \texttt{NODE\_IS\_CA\_EVENT} flag.
-\item When multiple populations are simulated, migration events are depicted by nodes
-with the \texttt{NODE\_IS\_MIG\_EVENT} flag, and with birth times equal to the time of
-the migration.
-The population flag of the migration node identifies the population to which the lineage
-belongs after the reverse time migration event.
-\end{itemize}
-
-The likelihood, i.e.~the joint sampling probability of the ancestry and mutations,
-is an example of a function which is intractable when the ancestry is stored as a
-marginal tree sequence, but tractable when the ancestry is given by a full
-ARG realisation.
-The likelihood is a central quantity in evaluating the plausibility of a putative
-ancestry as an explanation of DNA sequence data, both directly through
-e.g.~approaches based on maximum likelihood, and as an ingredient of
-methods such as Metropolis-Hastings
-\citep{kuhner2000maximum, nielsen2000estimation, wang2008bayesian}.
-
-We provide two functions to facilitate likelihood-based inference.
-Both are implemented only for the simplest case of the standard ARG with a
-constant population size, and require tree sequences compatible with the
-\texttt{record\_full\_arg} option as their arguments.
-\begin{itemize}
-\item \texttt{msprime.log\_arg\_likelihood(ts, r, N)} returns the natural logarithm of
-the sampling probability of the tree sequence \texttt{ts} under the ARG with per-link,
-per-generation recombination probability \texttt{r} and population size \texttt{N}.
-Specifically, the function returns the logarithm of
-\begin{equation*}
-\Bigg( \frac{ 1 }{ 2 N } \Bigg)^{ q_c } \Bigg( \prod_{ i : \mathcal{R} } r g_i \Bigg)
-	\exp\Bigg( -\sum_{ i = 1 }^q \Big[\frac{ 1 }{ 2 N } \binom{ k_i }{ 2 }
-		+ r l_i \Big] t_i  \Bigg),
-\end{equation*}
-where $t_i$ is the number of generations between the $(i - 1)$th and $i$th event,
-$k_i$ is the number of extant ancestors in that interval, $l_i$ is the number of links
-in that interval that would split ancestral material should they recombine,
-$q$ is the total number of events in the tree sequence $\texttt{ts}$,
-$q_c$ is the number of coalescences, $\mathcal{R}$ is the set of indices
-of time intervals which end in a recombination, and $g_i$ is the corresponding
-\emph{gap}:  the length of material in which the recombination at the end of the
-$i$th period could have taken place without affecting the resulting genealogy.
-A recombination in ancestral material will always have $g_i = 1$, while a recombination
-in trapped non-ancestral material can result in other values of $g_i$.
-For a continuous model of the genome and a recombination in ancestral material,
-we set $g_i = 1$ and interpret the result as a density.
-\item \texttt{msprime.unnormalised\_log\_mutation\_likelihood(ts, m)} returns the
-natural logarithm of the probability of the mutations recorded in the tree sequence
-\texttt{ts} given the corresponding ancestry, assuming the infinite sites model, up to
-a normalising constant which depends on the pattern of mutations,
-but not on the tree sequence or the per-site, per-generation mutation
-probability \texttt{m}.
-Specifically, the function returns the logarithm of
-\begin{equation*}
-e^{ - T m / 2 } \frac{ ( T m / 2 )^M }{ M ! }
-\prod_{ \gamma \in \mathcal{ M } } \frac{ h_{ \gamma } }{ T },
-\end{equation*}
-where $T$ and $\mathcal{M}$ are the total branch length and set of mutations
-in \texttt{ts}, respectively, and for a mutation $\gamma$, $h_{ \gamma }$ is the
-total branch length on which $\gamma$ could have arisen while appearing on all
-of the leaves of \texttt{ts} it does, and on no others.
-Unary nodes on marginal trees arising from the \texttt{record\_full\_arg} option
-mean that, in general $h_{ \gamma }$ corresponds to the length of one or more
-edges.
-\end{itemize}
-
-\begin{comment}
-Previous draft of the ARG feature retained here as a comment.
-
-The definition of ARGs is vague and confusing.
-\cite{minichiello2006mapping} define it as the data structure
-rather than the original stochastic
-process~\citep{griffiths1991two,griffiths1997ancestral}.
-\cite{rasmussen2014genome} have a slightly different approach.
-Sometimes the ARG is useful.
-The tree sequence output for \msprime\ can be turned into
-an ARG using the \texttt{record\_full\_arg} option, where we store
-recombination nodes.
-
-We also provide an interface to compute the likelihood of a given ARG
-under the~\cite{kuhner2000maximum} model.
-\end{comment}
 
 \subsection*{Instantaneous bottlenecks}
 
@@ -815,6 +799,25 @@ Jere Koskela is supported in part by EPSRC grant EP/R044732/1.
 
 \bibliographystyle{plainnat}
 \bibliography{paper}
+
+
+%% local definitions for section multiple merger coalescents
+ \newcommand{\be}{\begin{equation}}
+ \newcommand{\ee}{\end{equation}}
+ \newcommand{\bd}{\begin{displaymath}}
+ \newcommand{\ed}{\end{displaymath}}
+\newcommand{\IN}{\ensuremath{\mathds{N}}}%
+\newcommand{\EE}[1]{\ensuremath{\mathds{E}\left[ #1 \right]}}%
+\newcommand{\one}[1]{\ensuremath{\mathds{1}_{\left\{ #1 \right\}}}}%
+\newcommand{\prb}[1]{\ensuremath{\mathds{P}\left( #1 \right) } }%
+
+\NewEnviron{esplit}[1]{%
+\begin{equation}
+\label{#1}
+\begin{split}
+  \BODY
+\end{split}\end{equation}
+}
 
 \appendix
 \label{app-multiple-mergers}
