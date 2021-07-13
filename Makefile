@@ -1,7 +1,12 @@
-paper.pdf: paper.tex paper.bib
+FIGURES=figures/recombination.pdf
+
+paper.pdf: paper.tex paper.bib ${FIGURES}
 	pdflatex paper.tex
 	bibtex paper
 	pdflatex paper.tex
+
+figures/recombination.pdf:
+	python3 evaluation/recombination.py
 
 paper.ps: paper.dvi
 	dvips paper
