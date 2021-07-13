@@ -100,7 +100,7 @@ far more challenging.
 Programs such as Hudson's classical \ms~\citep{hudson2002generating}
 can only simulate short segments under the influence of recombination,
 and, until recently, approximate models of
-recombination~\citep{mcvean2005approximating,staab2014scrm}
+recombination~\citep{mcvean2005approximating,staab2015scrm}
 were necessary to simulate whole chromosomes.
 
 The second development that has made the majority of
@@ -192,7 +192,7 @@ genomes~\citep{hobolth2014markovian,wilton2015smc}, but the
 effects of the approximation are less well understood for larger
 sample sizes and several approaches have been proposed to
 allow simulations more closely approximate the coalescent
-with recombination~\citep{chen2009fast,wang2014new,staab2014scrm}.
+with recombination~\citep{chen2009fast,wang2014new,staab2015scrm}.
 The SMC is an important analytical approximation
 and has allowed the development of numerous inference
 methods~\citep{
@@ -566,15 +566,54 @@ against analytical expectations for coalescence times and the
 site frequency spectrum~\citep{bunnefeld2015inferring}.
 
 \subsection*{Simulation interface}
-The primary interface for \msprime\ is through a Python application
-programming interface (API). This has many advantages. One is
-that we can grow the interface over time. Another is that
-downstream applications such as \texttt{stdpopsim}~\citep{adrion2020community}
-can be developed.
+The majority of simulation packages are controlled either through
+a command line interface~\citep[e.g.][]{hudson2002generating,kern2016discoal},
+a text-based input file
+format~\citep[e.g.][]{guillaume2006nemo,excoffier2011fastsimcoal,shlyakhter2014cosi2},
+or a mixture of both.
+Command line interfaces such as \ms\ make it very easy to run simple
+simulations, but as model complexity and the number of parameters specified increases
+they become difficult to understand and
+error-prone~\citep{ragsdale2020lessons,gower2021demes}.
+Specifying parameters through a text file alleviates this problem to a degree,
+but lacks flexibility, for example, when running simulations with parameters
+drawn from some distribution. In practice, for any significant simulation
+project (or at least, any reproducible one), users will write a script
+to generate the required command lines or input parameter files,
+invoke the simulation engine, and process the results in some way.
+This process is cumbersome and labour intensive, and packages
+such \texttt{coala}~\citep{staab2016coala} have been developed
+to allow simulations be run directly in a high-level
+scripting language.
 
-The \texttt{msp simulate} command also supports demographic models
-specified in Demes format~\citep{gower2021demes}, allowing users with
-no Python experience to run complex demographic simulations.
+The more recent trend has been to move away from this file and command-line
+driven approach and to instead provide direct interfaces to the simulation
+engines via an Application Programming Interface (API)~\citep[e.g.][]{
+thornton2014cpp,kelleher2016efficient,becheler2019quetzal,haller2019slim}. This
+approach greatly increases the flexibility of simulations, and allows all
+processing for many simulation analyses to be performed in a single script. The
+primary interface for \msprime\ is through a well documented and stable Python
+API, which has allowed a number of downstream tools to be built on
+% JK: must be more, right?
+top of it~\citep{adrion2020community,rivera2021simulation}
+as well as numerous easily reproducible simulation
+% TODO: more papers with exemplorary reproducible simulation pipelines based
+% on msprime!
+pipelines~\citep[e.g.][]{martin2017human}.
+We also provide an \ms\ compatible
+command line interface to support existing workflows, as well as the
+\texttt{msp simulate} command that supports specifying demographic models in
+Demes format~\citep{gower2021demes}.
+
+A major change for the 1.0 release is the introduction of a new set of APIs,
+designed in part to avoid sources of error (see the Demography section) but
+also to provide more appropriate defaults while keeping compatibility with
+existing code. In the new APIs, ancestry and mutation simulation are fully
+separated, with the \texttt{sim\_ancestry} and \texttt{sim\_mutations}
+functions replacing the legacy \texttt{simulate} function. Among other changes,
+the new APIs default to discrete genome coordinates and finite sites mutations,
+resolving a major source of confusion and error. The 0.x APIs are fully
+supported and tested, and will be maintained for the foreseeable future.
 
 \subsection*{Data interchange and interoperability}
 The point of simulations is to generate data and the efficiency with
@@ -735,7 +774,7 @@ software in a self-taught manner.
 A significant advantage to simulating the coalescent with recombination
 backwards in time using Hudson's algorithm rather than
 left-to-right
-approaches~\citep{wiuf1999recombination,chen2009fast,staab2014scrm}
+approaches~\citep{wiuf1999recombination,chen2009fast,staab2015scrm}
 is the ease with which additional processes can be integrated.
 We have seen that processes such as gene conversion, complex
 demography, instantaneous bottlenecks, multiple merger caolescents
