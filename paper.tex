@@ -589,25 +589,27 @@ scripting language.
 The more recent trend has been to move away from this file and command-line
 driven approach and to instead provide direct interfaces to the simulation
 engines via an Application Programming Interface (API)~\citep[e.g.][]{
-thornton2014cpp,kelleher2016efficient,becheler2019quetzal,haller2019slim}. This
-approach greatly increases the flexibility of simulations, and allows all
-processing for many simulation analyses to be performed in a single script. The
-primary interface for \msprime\ is through a well documented and stable Python
-API, which has allowed a number of downstream tools to be built on
-top of
+thornton2014cpp,kelleher2016efficient,becheler2019quetzal,haller2019slim}.
+The primary interface for \msprime\ is through a thoroughly documented and
+stable Python
+API, which has allowed a number of downstream tools to be built on top of
 % Found these through the Dependent packages on GitHub
-it~\citep{kamm2020efficiently,adrion2020predicting,adrion2020community,
-rivera2021simulation,de2021geonomics}
-as well as numerous easily reproducible simulation
-% TODO: more papers with exemplorary reproducible simulation pipelines based
-% on msprime!
-pipelines~\citep[e.g.][]{martin2017human}.
-We also provide an \ms\ compatible
-command line interface to support existing workflows, as well as the
-\texttt{msp simulate} command that supports specifying demographic models in
-Demes format~\citep{gower2021demes}.
+it~\citep{terhorst2017robust,chan2018likelihood,spence2019inference,
+adrion2020community,adrion2020predicting, kamm2020efficiently,
+mckenzie2020ipcoal, montinaro2020revisiting,
+de2021geonomics,rivera2021simulation}.
+As well as providing a stable and efficient platform for building
+downstream applications, \msprime's Python API makes it much easier to
+build reproducible simulation pipelines, as the entire workflow can
+be encapsulated in a single script, and package and version
+dependencies can be explicitly stated using the \texttt{pip}
+or \texttt{conda} package managers.
+For example, the errors made~\citep{ragsdale2020lessons,martin2020erratum}
+in the influential simulation analysis of
+\cite{martin2017human} were only detected because the pipeline
+could be easily run and reanalysed.
 
-A major change for the 1.0 release is the introduction of a new set of APIs,
+A major change for the \msprime\ 1.0 release is the introduction of a new set of APIs,
 designed in part to avoid sources of error (see the Demography section) but
 also to provide more appropriate defaults while keeping compatibility with
 existing code. In the new APIs, ancestry and mutation simulation are fully
@@ -616,6 +618,11 @@ functions replacing the legacy \texttt{simulate} function. Among other changes,
 the new APIs default to discrete genome coordinates and finite sites mutations,
 resolving a major source of confusion and error. The 0.x APIs are fully
 supported and tested, and will be maintained for the foreseeable future.
+We also provide an \ms\ compatible
+command line interface to support existing workflows, and the
+\texttt{msp} program that supports specifying demographic models in
+Demes format~\citep{gower2021demes} from the command line.
+
 
 \subsection*{Data interchange and interoperability}
 The point of simulations is to generate data and the efficiency with
