@@ -206,6 +206,12 @@ zheng2014bayesian,
 terhorst2017robust}.
 
 \begin{figure}
+% \begin{center}
+% \begin{tabular}{cc}
+% % \includegraphics[width=5cm]{msprime-scaling.png} &
+% % \includegraphics[width=5cm]{figures/recombination} \\
+% \end{tabular}
+% \end{center}
 \includegraphics[width=\textwidth]{figures/recombination}
 \caption{\label{fig-recombination-perf}(A) Approximate run time for \msprime\
 simulations as a function of scaled recombination rate.
@@ -263,12 +269,12 @@ coalesce into a single ancestor~\citep{ethier1990two}, or the little ARG in
 which we only track genetic ancestors, and wait until all marginal trees
 have fully coalesced (like Hudson's algorithm).
 
-% Seems somewhat unfair to single out Iain and Aylwyn here, but a systematic
-% review would be long and tedious, and I'm sure they won't be too upset about
-% it.
+\jkcomment{If we're going to have this paragraph of ARG bashing then
+I guess we'll have to do more than just single out Iain and Aylwyn.}
 However, this original definition of the ARG in terms of a stochastic process
 is rarely what is meant when the term is currently used. The term has come to
-essentially mean a representation of genetic ancestry as a graph; for example,
+essentially mean any representation of genetic ancestry in the presence
+of recombination as a graph-like structure; for example,
 \cite{mathieson2020ancestry} informally define an ARG as the subset of an
 individual's pedigree from which they have inherited ancestral material. Such
 imprecision is unfortunate, since there are any number of graphical encodings of
@@ -276,11 +282,11 @@ genetic ancestry, and referring to the original Griffiths papers does little to
 clarify. As we see below, there are situations in which the precise information
 stored in the graph is important, and conflating a high-level
 discussion of genetic ancestry with this mathematical object is not
-helpful. One may wonder if a more generic term such as ``genetic pedigree''
-would be a more useful description, in such cases where the precise form of the
-encoding is not important. \jkcomment{Genetic pedigree is probably
-just as confusing, on reflection. We can either come up with a different
-term, or delete this sentence.}
+helpful. The point of technical terms is to provide clarity and
+precision on what is being discussed, and it is now essentially
+impossible to know what is meant by the term ``ARG'';
+we therefore use the term ``genetic ancestry'' in high-level
+discussions.
 
 For our purposes, an ARG is a realisation of the coalescent with
 recombination, in the Griffiths (little ARG) sense.
@@ -337,6 +343,9 @@ conversion in \msprime\ 1.0, and validated the output against
 \ms\ and analytical results~\citep{wiuf2000coalescent}.
 
 \begin{figure}
+\begin{center}
+% \includegraphics[width=6cm]{simbac.png}
+\end{center}
 \caption{\label{fig-gc-perf}Comparison of the running time
 for E-coli simulations using \msprime\ and SimBac for varying
 sample sizes. The parameters used are [] based on [references].}
@@ -412,10 +421,17 @@ msms~\citep{ewing2010msms},
 Cosi2~\citep{shlyakhter2014cosi2},
 and discoal~\citep{kern2016discoal}.
 
+\begin{figure}
+\Large{A FIGURE SHOWING DISCOAL AND MSPRIME}
+% \includegraphics[width=\textwidth]{figures/recombination}
+\caption{\label{fig-selection-perf}Comparison of the runtime for
+\msprime\ and \texttt{discoal} for simulating selective sweeps.
+}
+\end{figure}
+
 We have implemented the basic infrastructure exists for the structured
 coalescent, which makes adding support for, e.g.,
 inversions straightforward~\citep{peischl2013sequential}
-
 
 \subsection*{Discrete time Wright-Fisher}
 The coalescent is a good approximation for ancient history, but
@@ -425,8 +441,19 @@ sizes~\citep{wakeley2012gene,bhaskar2014distortion,nelson2020accounting}.
 Describe basic
 approach [DOM, can you fill in please].
 See ~\cite{nelson2020accounting} for more details.
-We compare the performance of this simulation in Fig X
+We compare the performance of this simulation in Fig.~\ref{fig-dtwf-perf}
 with ARGON~\citep{palamara2016argon}, a specialised DTWF simulator.
+
+\begin{figure}
+\begin{center}
+% \includegraphics[width=6cm]{msprime-argon-runtimes.png}
+\end{center}
+\caption{\label{fig-dtwf-perf} Comparison of \msprime's DTWF
+simulations with ARGON. To ensure the comparison with ARGON is
+as fair as possible we run it with a mutation rate of 0 and with
+the minimum output options (so that it writes out only an empty VCF file)}
+\end{figure}
+
 
 We support changing the simulation model, so that we can easily
 run hybrid simulations like described by~\cite{bhaskar2014distortion}
