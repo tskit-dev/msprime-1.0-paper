@@ -12,6 +12,7 @@
 \usepackage{verbatim}%
 \usepackage{environ}%
 \usepackage[right]{lineno}%
+\usepackage{microtype}
 %\usepackage{showkeys}
 
 % local definitions
@@ -229,7 +230,7 @@ in segments ancestral to the sample, but also between ancestral segments.
 Estimates of the number of such ``trapped'' recombinations grow quadratically
 with genome length \citep[Eq.~5.10]{hein2004gene}.
 Because they do not track such recombinations, efficient SMC implementations
-will be faster that \msprime for sufficiently high recombination rate,
+will be faster than \msprime\ for sufficiently high recombination rate,
 genome length, or $N_e$. %Until we decide to approximate the recombination process
 %between distant ancestral segment. Hint hint.
 
@@ -335,20 +336,61 @@ See the Appendix for details.
 
 \subsection*{Gene conversion}
 
-Gene conversion is \jkcomment{A couple of sentences describing gene
-conversion, and what the model is. What other simulators simulate
-gc? }
+%introduction
+Gene conversion is a unidirectional transfer of a short segment of genetic material,
+for example between homologous chromosomes~\citep{Chen2007}.
+%description of ancestral process
+Just as recombination, gene conversion events split the ancestral material
+for some lineage, creating two independent lineages.
+In contrast to the previously described recombination process, where the ancestral
+material to the left and right of a recombination breakpoint follows two
+different ancestral lineages, gene conversion events distribute the genetic material
+of a short segment to one ancestral lineage and the part to the left and right of this
+segment to another lineage.
+%Franz Baumdicker: Not sure if this next sentence is necessary,
+% but it might be of interest for some people?
+The resulting distribution of ancestral material after a gene conversion event
+equals the distribution after two recombination events at the left and right position
+of the gene conversion tract, followed by a common ancestor event.
+%Impact on LD
+However, gene conversions impact much shorter segments than crossover recombinations,
+typically below 1kb, and thus affects linkage pattern differently than
+recombination~\citep{Korunes2017}.
+
+% other simulators
+Hudson's \ms\ optionally includes gene conversion and so does
+MaCS~\citep{chen2009fast}, while scrm~\citep{staab2014scrm} does not
+support gene conversions.
+As bacterial recombination can be modeled analogously to eukaryotic allelic
+gene conversion, simulators for microbial evolution often include gene conversion
+instead of recombination.
+This includes the backward simulator SimBac~\citep{brown2016simbac},
+the SMC based approach used in FastSimBac~\citep{DeMaio2017},
+and forward in time tools within the SLiM framework~\citep{Cury2020}.
+
+In \msprime\ 1.0 we implemented the coalescent with gene conversion as defined by
+\cite{wiuf2000coalescent}, where gene conversion events are initiated between any
+two sites in the sequence at a constant (scaled) rate $\gamma$ and
+the length of the transferred segment is given by a geometric distributed
+random variable with mean length $L$.
+% Above I used the discrete case, but we could easily switch to a description for the
+% continuous case.
 We have implemented this model of gene
 conversion in \msprime\ 1.0, and validated the output against
 \ms\ and analytical results~\citep{wiuf2000coalescent}.
 
 \begin{figure}
-\begin{center}
-% \includegraphics[width=6cm]{simbac.png}
-\end{center}
+\includegraphics[width = \textwidth]{figures/gene_conversion/gc_perf_log.pdf}
+% \includegraphics[width = \textwidth]{figures/gene_conversion/gc_perf.pdf}
 \caption{\label{fig-gc-perf}Comparison of the running time
 for E-coli simulations using \msprime\ and SimBac for varying
-sample sizes. The parameters used are [] based on [references].}
+sample sizes. The parameters used are chosen to mimic the simulation
+of \textit{E. coli} genomes. The genome length was set to 4.5 mb, the scaled per site
+gene conversion rate was set to $N_e g = \gamma = 0.015$ and
+the mean gene conversion tract length was set to $L = 500$, which is close to
+estimated parameters for \textit{E.\ coli}, i.e.\ an effective populations size
+$N_e = 1.8e^8$ and a per site per generation conversion rate $g = 8.9e^{-11}$
+with mean tract length $L = 542$~\citep{Lapierre2016}.}
 \end{figure}
 
 Gene conversion is particularly useful to model homologous recombination in
@@ -356,8 +398,13 @@ bacterial evolution.
 We compare the performance of \msprime\ with gene conversion to
 SimBac~\citep{brown2016simbac}, a simulator developed specifically to
 simulate bacterial evolution. Although \msprime\ is missing some features
-relevant to this case, it is far more efficient at simulating the basic
-processes. An important avenue for future work
+relevant to this case, e.g.\ the simulation of circular genomes, it is far
+more efficient at simulating the basic processes.
+Furthermore, gene conversion can be considered in combination
+with other current and future features of \msprime\ 1.0,
+including varying recombination rates and complex demographies.
+
+An important avenue for future work
 will be to add further features to model bacterial
 evolution. In particular, we aim to include bacterial gene transfer and utilize
 the succinct tree sequence structure to represent the resulting ancestral gene
