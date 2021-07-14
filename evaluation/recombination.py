@@ -44,10 +44,10 @@ def run_arg_sim():
 def plot_arg_data():
     df = pd.read_csv("data/arg.csv")
     print(df)
-    # fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
-    fig, ax2 = plt.subplots(1, 1, figsize=(6, 6))
-    # ax1.set_title("(A)")
-    # ax1.set_xlabel("Scaled recombination rate")
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+    # fig, ax2 = plt.subplots(1, 1, figsize=(6, 6))
+    ax1.set_title("(A)")
+    ax1.set_xlabel("Scaled recombination rate")
 
     ax2.set_title("(B)")
     ax2.plot(df.L, df.arg_nodes, label="Fraction of ARG nodes")
