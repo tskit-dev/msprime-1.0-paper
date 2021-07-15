@@ -549,15 +549,30 @@ coalescent, which makes adding support for, e.g.,
 inversions straightforward~\citep{peischl2013sequential}
 
 \subsection*{Discrete time Wright-Fisher}
-The coalescent is a good approximation for ancient history, but
-is bad for the recent past and in particular when we have large
-sample
+
+The assumptions of the classical coalescent model are that both sample size and
+the simulated sequence length are small. As modern datasets often include
+whole-genome sequences for tens or hundreds of thousands of samples, simulating
+such data requires breaking these assumptions. While the coalescent remains a
+good approximation to the Wright-Fisher model in the distant past, it can
+exhibit large biases in the recent history. Identity-by-descent (IBD),
+long-range linkage disequilibrium (LD), and ancestry patterns deviate from
+Wright-Fisher expectations, and this bias grows considerably when simulating
+larger sample
 sizes~\citep{wakeley2012gene,bhaskar2014distortion,nelson2020accounting}.
-Describe basic
-approach [DOM, can you fill in please].
-See ~\cite{nelson2020accounting} for more details.
-We compare the performance of this simulation in Fig.~\ref{fig-dtwf-perf}
-with ARGON~\citep{palamara2016argon}, a specialised DTWF simulator.
+
+A backwards-in-time Wright-Fisher model is supported in \msprime, which is
+shown to properly capture the expected distributions of IBD and long-range LD,
+as well as ancestry patterns in admixed
+populations~\citep{nelson2020accounting}. In short, the classical coalescent
+draws recombination events from exponential waiting times, which are continuous
+in time, and each recombination then splits a segment into two distinct
+ancestors. For large sequence lengths, this can dramatically overestimate the
+number of genealogical ancestors of a given sample. Instead, the Wright-Fisher
+model iterates through discrete generations so that each gamete has a unique
+diploid parent, and multiple recombinations within a generation results in
+crossover events between the same two parental haploid copies.  This method is
+described in more detail in~\cite{nelson2020accounting}.
 
 \begin{figure}
 \begin{center}
@@ -569,12 +584,18 @@ as fair as possible we run it with a mutation rate of 0 and with
 the minimum output options (so that it writes out only an empty VCF file)}
 \end{figure}
 
-
-We support changing the simulation model, so that we can easily
-run hybrid simulations like described by~\cite{bhaskar2014distortion}
-This ia a powerful approach because it lets us combine any
-number of different simulation models.
-
+We support changing the simulation model at specified times so that we can
+easily run hybrid simulations, as proposed by~\cite{bhaskar2014distortion}. We
+can combine any number of different simulation models, allowing for the
+flexible choice of simulation scenarios without severely damaging efficiency.
+As the discrete time Wright-Fisher model improves accuracy of genealogical
+patterns in the recent past, we can simulate the recent history using this
+model and then switch to the standard coalescent to more efficiently simulate
+the more ancient history. Fig.~\ref{fig-dtwf-perf} compares the perfomance of
+this approach with ARGON~\citep{palamara2016argon}, a specialised DTWF
+simulator.  The Wright-Fisher approach in \msprime\ is more efficient at
+simulating chromosome-scale sequences (larger than $\approx10$Mb), while the
+hybrid approach provides large efficiency gains.
 
 \subsection*{Finite sites mutations}
 Version 0.x of \texttt{msprime} provided a very simple mutation model,
