@@ -264,14 +264,17 @@ coalesce into a single ancestor~\citep{ethier1990two}, or the little ARG in
 which we only track genetic ancestors, and wait until all marginal trees
 have fully coalesced (like Hudson's algorithm).
 
-\jkcomment{If we're going to have this paragraph of ARG bashing then
-I guess we'll have to do more than just single out Iain and Aylwyn.}
 However, this original definition of the ARG in terms of a stochastic process
 is rarely what is meant when the term is currently used. The term has come to
 essentially mean any representation of genetic ancestry in the presence
 of recombination as a graph-like structure; for example,
 \cite{mathieson2020ancestry} informally define an ARG as the subset of an
-individual's pedigree from which they have inherited ancestral material. Such
+individual's pedigree from which they have inherited ancestral material.
+Others state that an ARG is equivalent to the sequence of marginal
+% Also SARGE paper
+trees along the genome~\citep{mirzaei2016rent}
+
+Such
 imprecision is unfortunate, since there are any number of graphical encodings of
 genetic ancestry, and referring to the original Griffiths papers does little to
 clarify. As we see below, there are situations in which the precise information
@@ -920,7 +923,9 @@ The ability to infer trees at scale for the first time
 in the presence of
 recombination~\citep{harris2019database,kelleher2019inferring,
 speidel2019method,tang2019genealogy}
+% also SARGE
 opens the possibility for new applications of coalescent simulations.
+With lots of applications, e.g., [cite Osmond and Coop].
 Also \stdpopsim\ is cool~\citep{adrion2020community}
 
 \section*{Acknowledgments}
