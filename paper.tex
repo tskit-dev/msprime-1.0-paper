@@ -15,21 +15,6 @@
 \usepackage{microtype}
 %\usepackage{showkeys}
 
-\usepackage[]{hyperref}
-\hypersetup{
-    pdftitle={Msprime 1.0: an efficient and extensible coalescent simulation framework},
-    pdfauthor={Msprime developers},
-    pdfsubject={Coalescent simulation},
-    pdfkeywords={coalescent, mutation, simulation, genetic ancestry, genealogy, evolution},
-    bookmarksnumbered=true,     
-    bookmarksopen=true,
-    bookmarksopenlevel=3,
-    colorlinks=true,
-    pdfstartview=Fit,
-    pdfpagemode=UseOutlines,
-    pdfpagelayout=TwoPageRight
-}
-
 % local definitions
 \newcommand{\msprime}[0]{\texttt{msprime}}
 \newcommand{\tskit}[0]{\texttt{tskit}}
@@ -39,8 +24,6 @@
 
 \newcommand{\jkcomment}[1]{\textcolor{red}{#1}}
 
-\setcounter{secnumdepth}{0} %Do not print out section numbers
-
 \begin{document}
 
 \title{Msprime 1.0: an efficient and extensible coalescent simulation framework}
@@ -48,7 +31,7 @@
 }
 % \address{
 
-% \section{Contact:} \href{jerome.kelleher@bdi.ox.ac.uk}{jerome.kelleher@bdi.ox.ac.uk}
+% \section*{Contact:} \href{jerome.kelleher@bdi.ox.ac.uk}{jerome.kelleher@bdi.ox.ac.uk}
 
 \maketitle
 
@@ -86,7 +69,7 @@ the quality of simulation software.
 % overview of the software or resource, and describe how researchers can access it.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Introduction}
+\section*{Introduction}
 
 The coalescent
 process~\citep{kingman1982coalescent,hudson1983testing,tajima1983evolutionary}
@@ -171,7 +154,7 @@ This paper marks the release of \msprime\ 1.0.
 % examples illustrating the use of the software.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Methods}
+\section*{Methods}
 
 In this section we describe the main features of \msprime\ 1.0. Methodologically,
 there exists a logical separation between simulating coalescent genealogies and
@@ -191,7 +174,7 @@ to be extended by addition of new features while ensuring robustness and
 maintainability of the core codebase.
 
 
-\subsection{Recombination}
+\subsection*{Recombination}
 
 Recombination is implemented in \msprime\ using Hudson's algorithm, which
 works backwards in time tracking the
@@ -283,7 +266,7 @@ in \texttt{cosi2}~\citep{shlyakhter2014cosi2}, to facilitate
 simulation of organisms such as \textit{Drosophila melagaster}.
 
 
-\subsection{Ancestral recombination graphs}
+\subsection*{Ancestral recombination graphs}
 
 The Ancestral Recombination Graph (ARG) was introduced by
 Griffiths~\citep{griffiths1991two,griffiths1997ancestral} as a graphical
@@ -365,7 +348,7 @@ and mutational patterns under
 the standard coalescent and infinite sites mutation model.
 See the Appendix for details.
 
-\subsection{Gene conversion}
+\subsection*{Gene conversion}
 
 %introduction
 Gene conversion is a unidirectional transfer of a short segment of genetic material,
@@ -441,7 +424,7 @@ evolution. In particular, we aim to include bacterial gene transfer and utilize
 the succinct tree sequence structure to represent the resulting ancestral gene
 transfer graph~\citep{baumdicker2014AGTG}.
 
-\subsection{Demography}
+\subsection*{Demography}
 % TODO should we put in some citations here for the models? Hardly seems
 % necessary.
 One of the key applications of population genetic simulations is to generate
@@ -490,7 +473,7 @@ drawn from populations at specified times in the past. This provides a valuable
 ground-truth when evaluating such inference methods, as illustrated by
 \cite{adrion2020community}.
 
-\subsection{Instantaneous bottlenecks}
+\subsection*{Instantaneous bottlenecks}
 
 A common approach to modelling the effect of demographic history on genealogies
 is to assume that effective population size ($N_e$) changes in discrete steps
@@ -524,7 +507,7 @@ features. We have validated the results of these simulations by comparing
 against analytical expectations for coalescence times and the
 site frequency spectrum~\citep{bunnefeld2015inferring}.
 
-\subsection{Multiple merger coalescents}
+\subsection*{Multiple merger coalescents}
 
 Kingman's coalescent assumes that only two ancestral lineages can merge at
 each merger event. Although this is generally a reasonable approximation there
@@ -564,7 +547,7 @@ spectrum~\citep{birkner2013statistical,blath2016site,hobolth2019phase}
  as well as more general properties of coalescent processes.
 Please see the Appendix for more details and model derivations.
 
-\subsection{Selection}
+\subsection*{Selection}
 Selection was added to the coalescent ... Lots of simulators exist:
 SelSim~\citep{spencer2004selsim}
 mbs~\citep{teshima2009mbs},
@@ -585,7 +568,7 @@ We have implemented the basic infrastructure exists for the structured
 coalescent, which makes adding support for, e.g.,
 inversions straightforward~\citep{peischl2013sequential}
 
-\subsection{Discrete time Wright-Fisher}
+\subsection*{Discrete time Wright-Fisher}
 The coalescent is a good approximation for ancient history, but
 is bad for the recent past and in particular when we have large
 sample
@@ -613,7 +596,7 @@ This ia a powerful approach because it lets us combine any
 number of different simulation models.
 
 
-\subsection{Finite sites mutations}
+\subsection*{Finite sites mutations}
 Version 0.x of \texttt{msprime} provided a very simple mutation model,
 supporting only the infinite sites model.
 With version 1.0, we now support a large number of mutation models,
@@ -670,7 +653,7 @@ Things we can do: future work will need to do things like
 Dawg~\citep{cartwright2005dna} and to implement models and
 indels~\citep{fletcher2009indelible}.
 
-\subsection{Simulation interface}
+\subsection*{Simulation interface}
 
 The majority of simulation packages are controlled either through
 a command line interface~\citep[e.g.][]{hudson2002generating,kern2016discoal},
@@ -730,7 +713,7 @@ command line interface to support existing workflows, and the
 Demes format~\citep{gower2021demes} from the command line.
 
 
-\subsection{Data interchange and interoperability}
+\subsection*{Data interchange and interoperability}
 The point of simulations is to generate data and the efficiency with
 which simulated data can be incorporated into an overall application
 is an important---if often overlooked---issue.
@@ -806,7 +789,7 @@ from it.
 
 \end{itemize}
 
-\subsection{Development model}
+\subsection*{Development model}
 The community development process for \msprime\ is enabled by following an
 open source development practise with a strong emphasis on code quality
 and correctness. To ensure a consistent style, we require that all code
@@ -825,9 +808,9 @@ results or existing simulators.
 % than the one presented in the examples are also encouraged.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Results and Discussion}
+\section*{Results and Discussion}
 
-\subsection{Discussion}
+\subsection*{Discussion}
 % Simulation is useful, and it's really easy for a single locus.
 % This has lead to a culture of developing lots of simulators
 % rather than focusing on one
@@ -923,7 +906,7 @@ speidel2019method,tang2019genealogy}
 opens the possibility for new applications of coalescent simulations.
 Also \stdpopsim\ is cool~\citep{adrion2020community}
 
-\section{Acknowledgments}
+\section*{Acknowledgments}
 JK is supported by the Robertson Foundation.
 Jere Koskela is supported in part by EPSRC grant EP/R044732/1.
 [Others fill in their ACKs please]
@@ -955,7 +938,7 @@ Jere Koskela is supported in part by EPSRC grant EP/R044732/1.
 \appendix
 
 \label{app-likelihoods}
-\section{Likelihood calculations}
+\section*{Likelihood calculations}
 
 We provide two functions to facilitate likelihood-based inference.
 Both are implemented only for the simplest case of the standard ARG with a
@@ -1005,7 +988,7 @@ edges.
 
 
 \label{app-multiple-mergers}
-\section{Multiple merger coalescent model}
+\section*{Multiple merger coalescent model}
 
 Multiple-merger coalescents, in which a random number of ancestral
 lineages may merge at a given time in one group, and only one such
