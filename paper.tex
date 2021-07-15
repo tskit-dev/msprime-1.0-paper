@@ -459,6 +459,80 @@ drawn from populations at specified times in the past. This provides a valuable
 ground-truth when evaluating such inference methods, as illustrated by
 \cite{adrion2020community}.
 
+\subsection*{Instantaneous bottlenecks}
+
+A common approach to modelling the effect of demographic history on genealogies
+is to assume that effective population size ($N_e$) changes in discrete steps
+which define a series of epochs~\citep{griffiths1994sampling, marth2004allele,
+keightley2007joint,li2011inference}. In this setting of piecewise constant
+$N_e$, capturing a population bottleneck requires three epochs: $N_e$ is
+reduced by some fraction $b$ at the start of the bottleneck, $T_{start}$, and
+recovers to its initial value at time $T_{end}$~\citep{marth2004allele}. If
+bottlenecks are short both on the timescale of coalescence and mutations,
+there may be little information about the duration of a bottleneck
+($T_{end}-T_{start}$) in sequence data. Thus a simpler, alternative model is to
+assume that bottlenecks are instantaneous ($T_{end}-T_{start} \rightarrow 0$)
+and generate a sudden burst of coalescence events (a multiple merger event) in
+the genealogy. The strength of the bottleneck $B$ can be thought of as an
+(imaginary) time period during which coalescence events are collapsed,
+i.e.\ there is no growth in genealogical branches during $B$ and the probability that a
+single pair of lineages entering the bottleneck coalesce during the bottleneck
+is $1-e^{-B}$. Although this simple two parameter model of bottlenecks is
+attractive and both analytic results and empirical
+inference~\citep{griffiths1994sampling, galtier2000detecting,
+bunnefeld2015inferring} have been developed under this model, there has
+been no software available to simulate data under instantaneous
+bottleneck histories.
+
+We have implemented instantaneous bottlenecks in \msprime~1.0
+using a variant of Hudson's linear time single-locus coalescent
+algorithm~\citep{hudson1990gene}. Instantaneous bottlenecks are specified
+by adding events to the Demography object (see the Demography section)
+and can be used in combination with any other demographic modelling
+features. We have validated the results of these simulations by comparing
+against analytical expectations for coalescence times and the
+site frequency spectrum~\citep{bunnefeld2015inferring}.
+
+\subsection*{Multiple merger coalescents}
+
+Kingman's coalescent assumes that only two ancestral lineages can merge at
+each merger event. Although this is generally a reasonable approximation there
+are certain situations in which the underlying mathematical assumptions are
+violated. For example in certain highly fecund organisms
+\citep{hedgecock_94,B94,HP11,A04,irwin16}, where individuals have the ability
+to produce numbers of offspring on the order of the population size and
+therefore a few individuals may produce the bulk of the offspring in any given
+generation~\citep{hedgecock_94}. These population dynamics violate basic
+assumptions of the Kingman coalescent, and are better modelled by
+`multiple-merger' coalescents \citep{DK99,P99,S99,S00,MS01}, in which more than
+two lineages can merge in a given event. Multiple-merger coalescent processes
+have also been shown to be relevant for modeling the effects of selection on
+gene genealogies \citep{Gillespie909,DS04}.
+
+Although multiple merger coalescents have been of significant theoretical
+interest for around two decades, there has been little practical software
+available to simulate these models.
+\cite{kelleher2013coalescent,kelleher2014coalescent} developed packages to
+simulate a related spatial continuum model~\citep{barton2010new},
+\cite{zhu2015hybrid} simulate genealogies within a species tree
+based on a multiple-merger model, and
+\cite{becheler2020occupancy} provide a general method for simulating
+multiple merger processes
+as part of the Quetzal framework~\citep{becheler2019quetzal}.
+The \texttt{Beta-Xi-Sim} simulator~\citep{koskela2018multi,koskela2019robust}
+includes a number of extensions to the Beta-coalescent.
+None of these methods work with large genomes, and very little work
+has been performed on simulating multiple merger processes with recombination.
+
+We have added two multiple merger coalescent models in \msprime\ 1.0, the
+Beta-coalescent and ``dirac''-coalescent, allowing us to simulate
+such models with recombination efficiently for the first time.
+These simulation models have been extensively validated against
+analytical results from the site frequency
+spectrum~\citep{birkner2013statistical,blath2016site,hobolth2019phase}
+ as well as more general properties of coalescent processes.
+Please see the Appendix for more details and model derivations.
+
 \subsection*{Selection}
 Selection was added to the coalescent ... Lots of simulators exist:
 SelSim~\citep{spencer2004selsim}
@@ -565,81 +639,8 @@ Things we can do: future work will need to do things like
 Dawg~\citep{cartwright2005dna} and to implement models and
 indels~\citep{fletcher2009indelible}.
 
-\subsection*{Multiple merger coalescents}
-
-Kingman's coalescent assumes that only two ancestral lineages can merge at
-each merger event. Although this is generally a reasonable approximation there
-are certain situations in which the underlying mathematical assumptions are
-violated. For example in certain highly fecund organisms
-\citep{hedgecock_94,B94,HP11,A04,irwin16}, where individuals have the ability
-to produce numbers of offspring on the order of the population size and
-therefore a few individuals may produce the bulk of the offspring in any given
-generation~\citep{hedgecock_94}. These population dynamics violate basic
-assumptions of the Kingman coalescent, and are better modelled by
-`multiple-merger' coalescents \citep{DK99,P99,S99,S00,MS01}, in which more than
-two lineages can merge in a given event. Multiple-merger coalescent processes
-have also been shown to be relevant for modeling the effects of selection on
-gene genealogies \citep{Gillespie909,DS04}.
-
-Although multiple merger coalescents have been of significant theoretical
-interest for around two decades, there has been little practical software
-available to simulate these models.
-\cite{kelleher2013coalescent,kelleher2014coalescent} developed packages to
-simulate a related spatial continuum model~\citep{barton2010new},
-\cite{zhu2015hybrid} simulate genealogies within a species tree
-based on a multiple-merger model, and
-\cite{becheler2020occupancy} provide a general method for simulating
-multiple merger processes
-as part of the Quetzal framework~\citep{becheler2019quetzal}.
-The \texttt{Beta-Xi-Sim} simulator~\citep{koskela2018multi,koskela2019robust}
-includes a number of extensions to the Beta-coalescent.
-None of these methods work with large genomes, and very little work
-has been performed on simulating multiple merger processes with recombination.
-
-We have added two multiple merger coalescent models in \msprime\ 1.0, the
-Beta-coalescent and ``dirac''-coalescent, allowing us to simulate
-such models with recombination efficiently for the first time.
-These simulation models have been extensively validated against
-analytical results from the site frequency
-spectrum~\citep{birkner2013statistical,blath2016site,hobolth2019phase}
- as well as more general properties of coalescent processes.
-Please see the Appendix for more details and model derivations.
-
-\subsection*{Instantaneous bottlenecks}
-
-A common approach to modelling the effect of demographic history on genealogies
-is to assume that effective population size ($N_e$) changes in discrete steps
-which define a series of epochs~\citep{griffiths1994sampling, marth2004allele,
-keightley2007joint,li2011inference}. In this setting of piecewise constant
-$N_e$, capturing a population bottleneck requires three epochs: $N_e$ is
-reduced by some fraction $b$ at the start of the bottleneck, $T_{start}$, and
-recovers to its initial value at time $T_{end}$~\citep{marth2004allele}. If
-bottlenecks are short both on the timescale of coalescence and mutations,
-there may be little information about the duration of a bottleneck
-($T_{end}-T_{start}$) in sequence data. Thus a simpler, alternative model is to
-assume that bottlenecks are instantaneous ($T_{end}-T_{start} \rightarrow 0$)
-and generate a sudden burst of coalescence events (a multiple merger event) in
-the genealogy. The strength of the bottleneck $B$ can be thought of as an
-(imaginary) time period during which coalescence events are collapsed,
-i.e.\ there is no growth in genealogical branches during $B$ and the probability that a
-single pair of lineages entering the bottleneck coalesce during the bottleneck
-is $1-e^{-B}$. Although this simple two parameter model of bottlenecks is
-attractive and both analytic results and empirical
-inference~\citep{griffiths1994sampling, galtier2000detecting,
-bunnefeld2015inferring} have been developed under this model, there has
-been no software available to simulate data under instantaneous
-bottleneck histories.
-
-We have implemented instantaneous bottlenecks in \msprime~1.0
-using a variant of Hudson's linear time single-locus coalescent
-algorithm~\citep{hudson1990gene}. Instantaneous bottlenecks are specified
-by adding events to the Demography object (see the Demography section)
-and can be used in combination with any other demographic modelling
-features. We have validated the results of these simulations by comparing
-against analytical expectations for coalescence times and the
-site frequency spectrum~\citep{bunnefeld2015inferring}.
-
 \subsection*{Simulation interface}
+
 The majority of simulation packages are controlled either through
 a command line interface~\citep[e.g.][]{hudson2002generating,kern2016discoal},
 a text-based input file
