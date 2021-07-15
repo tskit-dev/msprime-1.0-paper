@@ -332,7 +332,7 @@ See the Appendix for details.
 
 %introduction
 Gene conversion is a unidirectional transfer of a short segment of genetic material,
-for example between homologous chromosomes~\citep{Chen2007}.
+for example between homologous chromosomes~\citep{chen2007gene}.
 %description of ancestral process
 Just as recombination, gene conversion events split the ancestral material
 for some lineage, creating two independent lineages.
@@ -349,7 +349,7 @@ of the gene conversion tract, followed by a common ancestor event.
 %Impact on LD
 However, gene conversions impact much shorter segments than crossover recombinations,
 typically below 1kb, and thus affects linkage pattern differently than
-recombination~\citep{Korunes2017}.
+recombination~\citep{korunes2017gene}.
 
 % other simulators
 Hudson's \ms\ optionally includes gene conversion and so does
@@ -359,8 +359,8 @@ As bacterial recombination can be modeled analogously to eukaryotic allelic
 gene conversion, simulators for microbial evolution often include gene conversion
 instead of recombination.
 This includes the backward simulator SimBac~\citep{brown2016simbac},
-the SMC based approach used in FastSimBac~\citep{DeMaio2017},
-and forward in time tools within the SLiM framework~\citep{Cury2020}.
+the SMC based approach used in FastSimBac~\citep{demaio2017the},
+and forward in time tools within the SLiM framework~\citep{cury2020simulation}.
 
 In \msprime\ 1.0 we implemented the coalescent with gene conversion as defined by
 \cite{wiuf2000coalescent}, where gene conversion events are initiated between any
@@ -384,7 +384,7 @@ gene conversion rate was set to $N_e g = \gamma = 0.015$ and
 the mean gene conversion tract length was set to $L = 500$, which is close to
 estimated parameters for \textit{E.\ coli}, i.e.\ an effective populations size
 $N_e = 1.8e^8$ and a per site per generation conversion rate $g = 8.9e^{-11}$
-with mean tract length $L = 542$~\citep{Lapierre2016}.}
+with mean tract length $L = 542$~\citep{lapierre2016the}.}
 \end{figure}
 
 Gene conversion is particularly useful to model homologous recombination in
