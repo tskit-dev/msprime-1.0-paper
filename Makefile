@@ -4,6 +4,7 @@ paper.pdf: paper.tex paper.bib ${FIGURES}
 	pdflatex paper.tex
 	bibtex paper
 	pdflatex paper.tex
+	pdflatex paper.tex
 
 figures/recombination.pdf:
 	python3 evaluation/recombination.py
