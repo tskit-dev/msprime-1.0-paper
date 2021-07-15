@@ -1,6 +1,7 @@
 FIGURES=figures/recombination.pdf
+GCFIGURES=figures/gene_conversion/gc_perf.pdf
 
-paper.pdf: paper.tex paper.bib ${FIGURES}
+paper.pdf: paper.tex paper.bib ${FIGURES} ${GCFIGURES}
 	pdflatex paper.tex
 	bibtex paper
 	pdflatex paper.tex
@@ -8,6 +9,9 @@ paper.pdf: paper.tex paper.bib ${FIGURES}
 
 figures/recombination.pdf:
 	python3 evaluation/recombination.py
+
+figures/gene_conversion/gc_perf.pdf:
+	Rscript figures/gene_conversion/plot_performance_gene_conversion.R
 
 paper.ps: paper.dvi
 	dvips paper

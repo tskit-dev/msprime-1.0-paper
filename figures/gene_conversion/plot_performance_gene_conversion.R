@@ -3,12 +3,12 @@
 # Rscript plot_performance_gene_conversion.R
 
 
-df = read.csv(file = "../../data/simbac.csv")
+df = read.csv(file = "./data/simbac.csv")
 
 library(ggplot2)
 
 
-pdf(file = "gc_perf.pdf", width = 6, height = 3)
+pdf(file = "./figures/gene_conversion/gc_perf.pdf", width = 6, height = 3)
 ggplot(data = df, aes(x = sample_size, y = time, color = tool)) +
   geom_point() + 
   labs(x = "sample size") +
@@ -22,8 +22,8 @@ ggplot(data = df, aes(x = sample_size, y = time, color = tool)) +
 dev.off()
 
 
-pdf(file = "gc_perf_log.pdf", width = 6, height = 3)
-ggplot(data = df_long, aes(x = sample_size, y = time, color = tool)) +
+pdf(file = "./figures/gene_conversion/gc_perf_log.pdf", width = 6, height = 3)
+ggplot(data = df, aes(x = sample_size, y = time, color = tool)) +
   geom_point() +
   labs(x = "sample size") +
   xlim(0,500) +
