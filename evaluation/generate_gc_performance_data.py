@@ -26,8 +26,9 @@ def run_simbac():
     def simbac(sample_size):
         return simbac_run(sample_size, L)
     def msp(sample_size):
-        return msp_run(samples=sample_size, sequence_length=L, population_size=1, recombination_rate=0, 
-gene_conversion_rate=0.015/2.0, gene_conversion_tract_length=500)
+        return msp_run(samples=sample_size, sequence_length=L, population_size=1,
+                       ploidy = 1, recombination_rate=0,
+                       gene_conversion_rate=0.015, gene_conversion_tract_length=500)
 
     create_data(sample_sizes, [msp, simbac], ["msprime", "simbac"], "simbac")
 
