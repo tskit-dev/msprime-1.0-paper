@@ -158,7 +158,23 @@ This paper marks the release of \msprime\ 1.0.
 
 \section*{Methods}
 
-In this section we describe the main features of \msprime\ 1.0.
+In this section we describe the main features of \msprime\ 1.0. Methodologically,
+there exists a logical separation between simulating coalescent genealogies and
+adding neutral mutations onto these genealogies. Simulating genetic ancestry
+requires methods that model the underlying reproductive process (e.g. Moran,
+Wright-Fisher, etc.) as well as accounting for recombination of various sorts
+(including gene conversion), demography, and selection. These methods are
+discussed in the first N subsections below. One of the strengths of the
+approach taken in msprime is that neutral mutations can be retrospectively
+added to simulated genealogies. Methods to generate mutations, and thereby
+generate genetic variation, are therefore discussed in a separate and subsequent
+subsection. Finally, we describe the \msprime\ API, which is designed to enforce
+the distinction between simulating genealogies and mutations; discuss the
+interoperability provided by the use of \tskit\, the tree sequence toolkit;
+and highlight the open source development process which allows for \msprime\
+to be extended by addition of new features while ensuring robustness and
+maintainability of the core codebase.
+
 
 \subsection*{Recombination}
 
