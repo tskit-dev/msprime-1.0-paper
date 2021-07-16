@@ -20,11 +20,11 @@ def save(name):
     plt.savefig(f"figures/{name}.pdf")
 
 @click.command()
-def mutation_perf():
+def mutations_perf():
     """
     Plot the mutations benchmark.
     """
-    df = pd.read_csv("data/mutations.csv")
+    df = pd.read_csv("data/mutations_perf.csv")
     df.L /= 1e6
     rates = np.unique(df.rate)
 
@@ -47,7 +47,7 @@ def mutation_perf():
     print(dfn[dfn.L == 100])
 
     ax1.legend()
-    save("mutation-perf")
+    save("mutations-perf")
 
 
 @click.command()
@@ -84,7 +84,7 @@ def arg():
     save("arg")
 
 
-cli.add_command(mutation_perf)
+cli.add_command(mutations_perf)
 cli.add_command(gc_perf)
 cli.add_command(arg)
 

@@ -1,7 +1,7 @@
-DATA=data/arg.csv
+DATA=data/arg.csv\
+     data/mutations_perf.csv
 
-FIGURES=figures/recombination.pdf\
-	figures/mutation-perf.pdf\
+FIGURES=figures/mutations-perf.pdf\
 	figures/arg.pdf\
 	figures/gc-perf.pdf
 
@@ -11,14 +11,15 @@ paper.pdf: paper.tex paper.bib ${DATA} ${FIGURES}
 	pdflatex paper.tex
 	pdflatex paper.tex
 
-figures/recombination.pdf:
-	python3 evaluation/recombination.py
-
 figures/%.pdf:
 	python3 evaluation/plot.py $*
 
 data/arg.csv:
 	python3 evaluation/generate_arg_data.py
+
+data/mutations_perf.csv:
+	python3 evaluation/generate_mutations_perf_data.py generate-trees
+	python3 evaluation/generate_mutations_perf_data.py benchmark-on-trees
 
 paper.ps: paper.dvi
 	dvips paper

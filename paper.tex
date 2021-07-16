@@ -636,8 +636,8 @@ Seq-Gen~\citep{rambaut1997seq} and
 Pyvolve~\citep{spielman2015pyvolve}.
 
 \begin{figure}
-\includegraphics[width=\textwidth]{figures/mutation-perf}
-\caption{\label{fig-mutation-perf} Time required to run
+\includegraphics[width=\textwidth]{figures/mutations-perf}
+\caption{\label{fig-mutations-perf} Time required to run
 \texttt{sim\_mutations} on tree sequences generated
 by \texttt{sim\_ancestry} (with a population size of $10^4$
 and recombination rate of $10^{-8}$) for varying (haploid) sample
@@ -658,11 +658,11 @@ and so it is very difficult to disentangle the time required to
 read in the tree file and output the sequences from the actual
 time required to perform the simulation.
 
-Fig.~\ref{fig-mutation-perf} shows that the mutation generation
+Fig.~\ref{fig-mutations-perf} shows that the mutation generation
 machinery in \msprime\ is extremely efficient, requiring
 fractions of a second to generate mutations for most simulations.
 For example, the longest running simulation in
-Fig.~\ref{fig-mutation-perf}B required less than 2 seconds to
+Fig.~\ref{fig-mutations-perf}B required less than 2 seconds to
 generate an average of 1.5 million mutations over 137,081 trees
 in a tree sequence with 508,125 edges.
 Generating mutations for a tree sequence is particularly efficient
