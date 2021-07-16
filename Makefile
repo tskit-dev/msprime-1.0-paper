@@ -1,6 +1,6 @@
 FIGURES=figures/recombination.pdf\
-	figures/mutation_perf.pdf\
-	#figures/gene_conversion/gc_perf.pdf
+	figures/mutation-perf.pdf\
+	figures/gc-perf.pdf
 
 paper.pdf: paper.tex paper.bib ${FIGURES}
 	pdflatex paper.tex
@@ -11,11 +11,8 @@ paper.pdf: paper.tex paper.bib ${FIGURES}
 figures/recombination.pdf:
 	python3 evaluation/recombination.py
 
-figures/mutation_perf.pdf:
-	python3 evaluation/mutations.py plot
-
-figures/gene_conversion/gc_perf.pdf:
-	Rscript figures/gene_conversion/plot_performance_gene_conversion.R
+figures/%.pdf:
+	python3 evaluation/plot.py $*
 
 paper.ps: paper.dvi
 	dvips paper
@@ -25,7 +22,6 @@ paper.dvi: paper.tex paper.bib
 	bibtex paper
 	latex paper.tex
 	latex paper.tex
-
 
 clean:
 	rm -f *.log *.dvi *.aux

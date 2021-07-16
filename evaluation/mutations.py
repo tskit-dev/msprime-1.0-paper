@@ -133,46 +133,11 @@ def benchmark_on_trees():
         df.to_csv("data/mutations.csv")
 
 
-@click.command()
-def plot():
-    """
-    Plot the mutations benchmark. TODO move this to another
-    file.
-    """
-    df = pd.read_csv("data/mutations.csv")
-    df.L /= 1e6
-    rates = np.unique(df.rate)
-
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6), sharey=True)
-    ax1.set_title("(A)")
-    ax1.set_xlabel("Sample size")
-    dfL = df[df.L == 10]
-    for rate in rates:
-        dfr = dfL[dfL.rate == rate].sort_values("n")
-        ax1.plot(dfr.n, dfr.time, label=f"rate={rate}")
-
-
-    ax2.set_title("(B)")
-    ax2.set_xlabel("Sequence length (Megabases)")
-    ax1.set_ylabel("Time (seconds)")
-
-    dfn = df[df.n == 1000].sort_values("L")
-    for rate in rates:
-        dfr = dfn[dfn.rate == rate]
-        ax2.plot(dfr.L, dfr.time, label=f"rate={rate}")
-    print(dfn[dfn.L == 100])
-
-    ax1.legend()
-    plt.savefig("figures/mutation_perf.png")
-    plt.savefig("figures/mutation_perf.pdf")
-
-
 cli.add_command(benchmark_pyvolve)
 cli.add_command(benchmark_msprime)
 cli.add_command(convert_newick)
 cli.add_command(generate_trees)
 cli.add_command(benchmark_on_trees)
-cli.add_command(plot)
 
 if __name__ == "__main__":
     cli()
