@@ -620,6 +620,21 @@ against both theoretical expectations and output from
 Seq-Gen~\citep{rambaut1997seq} and
 Pyvolve~\citep{spielman2015pyvolve}.
 
+\begin{figure}
+\includegraphics[width=\textwidth]{figures/mutation_perf}
+\caption{\label{fig-mutation-perf} Time required to run
+\texttt{sim\_mutations} on tree sequences generated
+by \texttt{sim\_ancestry} (with a population size of $10^4$
+and recombination rate of $10^{-8}$) for varying (haploid) sample
+size and sequence length. We run 10 replicate mutation simulations
+each for three different mutation rates, and report the average
+CPU time required (Intel Core i7-9700).
+(A) Holding sequence length fixed at 10 megabases and varying the
+number of samples (tree tips) from 10 to 100,000.
+(B) Holding number of samples fixed at 1000, and varying the sequence
+length from 1 to 100 megabases.}
+\end{figure}
+
 Comparing the performance of mutation generation methods is problematic.
 Because there is no standard format for representing trees and
 the accompanying mutations, all existing methods are focused on
@@ -628,8 +643,19 @@ and so it is very difficult to disentangle the time required to
 read in the tree file and output the sequences from the actual
 time required to perform the simulation.
 
-The mutation generation machinery in \msprime\ is extremely
-efficient. For example, we simulated mutations under the JC69
+Fig.~\ref{fig-mutation-perf} shows that the mutation generation
+machinery in \msprime\ is extremely efficient, requiring
+fractions of a second to generate mutations for most simulations.
+For example, the longest running simulation in
+Fig.~\ref{fig-mutation-perf}B required less than 2 seconds to
+generate an average of 1.5 million mutations over 137,081 trees
+in a tree sequence with 508,125 edges.
+Generating mutations for a tree sequence is particularly efficient
+because we can work edge-by-edge rather than having to
+consider each tree independently.
+
+\jkcomment{We probably want to keep a version of this narrative too.}
+For example, we simulated mutations under the JC69
 model for a tree with $10^6$ leaves over $10^4$ sites (resulting
 in $\sim 280000$ mutations) in less that 1.5 seconds, including
 the time required for file input and output. While a systematic
