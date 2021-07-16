@@ -1,14 +1,12 @@
 """
-Generate data for the ARG and recombination performance figures.
+Generate data for the ARG figure.
 """
 import numpy as np
 import msprime
-import matplotlib.pyplot as plt
 import pandas as pd
 
 
 def run_arg_sim():
-
 
     L_col = []
     size_col = []
@@ -41,24 +39,5 @@ def run_arg_sim():
     df.to_csv("data/arg.csv")
 
 
-def plot_arg_data():
-    df = pd.read_csv("data/arg.csv")
-    print(df)
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
-    # fig, ax2 = plt.subplots(1, 1, figsize=(6, 6))
-    ax1.set_title("(A)")
-    ax1.set_xlabel("Scaled recombination rate")
-
-    ax2.set_title("(B)")
-    ax2.plot(df.L, df.arg_nodes, label="Fraction of ARG nodes")
-    ax2.plot(df.L, df.size_ratio, label="size(tree sequence) / size(ARG)")
-    ax2.set_xlabel("Sequence length")
-    ax2.legend()
-
-    plt.savefig("figures/recombination.pdf")
-    plt.savefig("figures/recombination.png")
-
-
 if __name__ == "__main__":
-    # run_arg_sim()
-    plot_arg_data()
+    run_arg_sim()

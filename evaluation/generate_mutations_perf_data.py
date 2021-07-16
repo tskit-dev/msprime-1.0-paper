@@ -130,7 +130,7 @@ def benchmark_on_trees():
             )
         df = pd.DataFrame(data)
         print(data[-1])
-        df.to_csv("data/mutations.csv")
+        df.to_csv("data/mutations_perf.csv")
 
 
 cli.add_command(benchmark_pyvolve)

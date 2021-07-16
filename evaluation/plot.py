@@ -15,13 +15,16 @@ import cpuinfo
 def cli():
     pass
 
+def save(name):
+    plt.savefig(f"figures/{name}.png")
+    plt.savefig(f"figures/{name}.pdf")
 
 @click.command()
-def mutation_perf():
+def mutations_perf():
     """
     Plot the mutations benchmark.
     """
-    df = pd.read_csv("data/mutations.csv")
+    df = pd.read_csv("data/mutations_perf.csv")
     df.L /= 1e6
     rates = np.unique(df.rate)
 
@@ -44,8 +47,7 @@ def mutation_perf():
     print(dfn[dfn.L == 100])
 
     ax1.legend()
-    plt.savefig("figures/mutation-perf.png")
-    plt.savefig("figures/mutation-perf.pdf")
+    save("mutations-perf")
 
 
 @click.command()
@@ -64,12 +66,27 @@ def gc_perf():
     ax1.set_ylabel("Time (seconds)")
 
     ax1.legend()
-    plt.savefig("figures/gc-perf.png")
-    plt.savefig("figures/gc-perf.pdf")
+    save("gc-perf")
 
 
-cli.add_command(mutation_perf)
+@click.command()
+def arg():
+    """
+    Plot the ARG size illustration figure.
+    """
+    df = pd.read_csv("data/arg.csv")
+
+    fig, ax1 = plt.subplots(1, 1)
+    ax1.plot(df.L, df.arg_nodes, label="Fraction of ARG nodes")
+    ax1.plot(df.L, df.size_ratio, label="size(tree sequence) / size(ARG)")
+    ax1.set_xlabel("Sequence length")
+    ax1.legend()
+    save("arg")
+
+
+cli.add_command(mutations_perf)
 cli.add_command(gc_perf)
+cli.add_command(arg)
 
 if __name__ == "__main__":
     cli()
