@@ -1,4 +1,4 @@
-all: ms discoal argon seq-gen
+all: ms discoal argon seq-gen simbac
 
 ms:
 	make -C msdir
@@ -17,6 +17,12 @@ discoal:
 	rm v0.1.4.tar.gz
 	cd discoal-0.1.4/ && make
 	cp discoal-0.1.4/discoal ./
+
+
+simbac:
+	git clone https://github.com/tbrown91/SimBac.git
+	cd SimBac && g++ *.cpp -lgsl -lgslcblas -lm -O2 -o SimBac
+	cp SimBac/SimBac ./simbac
 
 argon:
 	git clone https://github.com/pierpal/ARGON.git
