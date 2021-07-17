@@ -12,11 +12,13 @@ seq-gen:
 	cp Seq-Gen-1.3.4/source/seq-gen ./
 
 discoal:
-	wget https://github.com/kern-lab/discoal/archive/v0.1.4.tar.gz
-	tar -xf v0.1.4.tar.gz
-	rm v0.1.4.tar.gz
-	cd discoal-0.1.4/ && make
-	cp discoal-0.1.4/discoal ./
+	wget https://github.com/kr-colab/discoal/archive/v0.1.5.tar.gz
+	tar -xf v0.1.5.tar.gz
+	rm v0.1.5.tar.gz
+	sed -e 's/makeGametesMS/\/\/makeGametesMS/' discoal-0.1.5/discoal_multipop.c > tmp
+	mv tmp discoal-0.1.5/discoal_multipop.c
+	cd discoal-0.1.5/ &&  make 
+	cp discoal-0.1.5/discoal ./
 
 
 simbac:
