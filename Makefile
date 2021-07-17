@@ -3,6 +3,7 @@ DATA=data/arg.csv\
 
 FIGURES=figures/mutations-perf.pdf\
 	figures/arg.pdf\
+	figures/sweeps-perf.pdf\
 	figures/gc-perf.pdf
 
 paper.pdf: paper.tex paper.bib ${DATA} ${FIGURES}

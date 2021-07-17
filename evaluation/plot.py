@@ -68,6 +68,24 @@ def gc_perf():
     ax1.legend()
     save("gc-perf")
 
+@click.command()
+def sweeps_perf():
+    """
+    Plot the sweeps benchmark.
+    """
+    df = pd.read_csv("data/sweeps_perf.csv")
+
+    fig, ax1 = plt.subplots(1, 1)
+    for tool in set(df.tool):
+        dft = df[df.tool == tool]
+        ax1.plot(dft.L, dft.time, label=tool)
+
+    ax1.set_xlabel("Sequence length")
+    ax1.set_ylabel("Time (seconds)")
+
+    ax1.legend()
+    save("sweeps-perf")
+
 
 @click.command()
 def arg():
@@ -86,6 +104,7 @@ def arg():
 
 cli.add_command(mutations_perf)
 cli.add_command(gc_perf)
+cli.add_command(sweeps_perf)
 cli.add_command(arg)
 
 if __name__ == "__main__":
