@@ -26,6 +26,11 @@ simbac:
 	cd SimBac && g++ *.cpp -lgsl -lgslcblas -lm -O2 -o SimBac
 	cp SimBac/SimBac ./simbac
 
+fastSimBac:
+	git clone https://bitbucket.org/nicofmay/fastsimbac.git
+	cd fastsimbac/fastSimBac_linux && make
+	cp fastsimbac/fastSimBac_linux/fastSimBac ./
+
 argon:
 	git clone https://github.com/pierpal/ARGON.git
 	cp ARGON/ARGON.0.1.jar ./ARGON.jar
