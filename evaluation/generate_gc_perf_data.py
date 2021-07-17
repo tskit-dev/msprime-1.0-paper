@@ -24,13 +24,36 @@ def run_simbac(*, sample_size, L, gc_rate, gc_tract_length, count_trees=False):
         args += " -l " + outfile
 
     # print("running", args)
-    subprocess.check_call(
-        "./tools/simbac " + args, shell=True, stdout=subprocess.DEVNULL
+    subprocess.run(
+        "./tools/simbac " + args, shell=True, stdout=subprocess.DEVNULL, check=True
     )
     num_trees = 0
     if count_trees:
         with open(outfile) as f:
             for line in f:
+                num_trees += 1
+
+    return num_trees
+
+
+def run_fastsimbac(*, sample_size, L, gc_rate, gc_tract_length, count_trees=False):
+
+    # using R=2*gc_rate as gene conversion/recombination rate as SimBac uses R/2
+    R = gc_rate * 2
+    # Set theta to 0 to remove mutations (defaults to 0.01)
+    args = f"{sample_size} {int(L)} -r {R} {gc_tract_length} -t 0"
+    if count_trees:
+        args += " -T "
+
+    # print("running", args)
+    output = subprocess.run(
+        "./tools/fastSimBac " + args, shell=True, check=True, capture_output=True
+    )
+    # print(output.stdout)
+    num_trees = 0
+    if count_trees:
+        for line in output.stdout.splitlines():
+            if line.startswith(b"["):
                 num_trees += 1
 
     return num_trees
@@ -51,10 +74,9 @@ def run_msprime(*, sample_size, L, gc_rate, gc_tract_length):
 
 
 @click.command()
-@click.option("--output", type=click.Path(), default="tmp/gc_validation.png")
 @click.option("--replicates", type=int, default=1000)
 @click.option("--sample-size", type=int, default=10)
-def validate(output, replicates, sample_size):
+def validate(replicates, sample_size):
     """
     Validate that we are simulating the same things in the simulators
     by running some replicates and plotting the distributions of the
@@ -65,11 +87,19 @@ def validate(output, replicates, sample_size):
     gc_tract_length = 10
 
     nt_simbac = np.zeros(replicates)
+    nt_fastsimbac = np.zeros(replicates)
     nt_msprime = np.zeros(replicates)
 
     with click.progressbar(range(replicates)) as bar:
         for j in bar:
             nt_simbac[j] = run_simbac(
+                sample_size=sample_size,
+                L=L,
+                gc_rate=gc_rate,
+                gc_tract_length=gc_tract_length,
+                count_trees=True,
+            )
+            nt_fastsimbac[j] = run_fastsimbac(
                 sample_size=sample_size,
                 L=L,
                 gc_rate=gc_rate,
@@ -83,15 +113,28 @@ def validate(output, replicates, sample_size):
                 gc_tract_length=gc_tract_length,
             )
     print(
-        "mean number of trees: simbac=",
+        "mean number of trees:",
+        "simbac=",
         np.mean(nt_simbac),
+        "fastsimbac=",
+        np.mean(nt_fastsimbac),
         "msprime=",
         np.mean(nt_msprime),
     )
 
     sm.graphics.qqplot(nt_simbac)
     sm.qqplot_2samples(nt_simbac, nt_msprime, line="45")
-    plt.savefig(output)
+    plt.xlabel("simbac")
+    plt.ylabel("msprime")
+    plt.savefig("figures/verify_simbac_v_msprime.png")
+
+    plt.close("all")
+
+    sm.graphics.qqplot(nt_fastsimbac)
+    sm.qqplot_2samples(nt_fastsimbac, nt_msprime, line="45")
+    plt.xlabel("fastsimbac")
+    plt.ylabel("msprime")
+    plt.savefig("figures/verify_fastsimbac_v_msprime.png")
 
 
 @click.command()
