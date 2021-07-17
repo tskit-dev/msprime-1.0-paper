@@ -1,114 +1,149 @@
 import subprocess
 import sys
+import tempfile
 import time
 
-
-#import sys
-#sys.path.insert(0, "/home/franz/syncedprojects/msprime_performance/msprime")
-
+import pandas as pd
+import numpy as np
+import click
 import msprime
-
-REPLICATES = 1
-
-Ne = 1
-mu = 1e-9
-r = 0
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
 
 
-def run_simbac():
-    L = mb(4.5)
-    #L = 10000
-    #sample_sizes = list(range(10, 100 + 1, 10)) + list(range(200, 900 + 1, 100)) + list(range(1000, 10000 + 1, 1000))
-    sample_sizes = list(range(10,10+1,1)) + list(range(50,500 + 1, 50))
-    #sample_sizes = range(10, 100 + 1, 10)
-    #sample_sizes = range(200, 900 + 1, 100)
+def run_simbac(*, sample_size, L, gc_rate, gc_tract_length, count_trees=False):
 
-    def simbac(sample_size):
-        return simbac_run(sample_size, L)
-    def msp(sample_size):
-        return msp_run(samples=sample_size, sequence_length=L, population_size=1,
-                       ploidy = 1, recombination_rate=0,
-                       gene_conversion_rate=0.015, gene_conversion_tract_length=500)
+    # using R=2*gc_rate as gene conversion/recombination rate as SimBac uses R/2
+    R = gc_rate * 2
+    # Set theta to 0 to remove mutations (defaults to 0.01)
+    args = f"-N {sample_size} -B {int(L)} -R {R} -D {gc_tract_length} -T 0"
+    if count_trees:
+        # This is cleaned up automatically when the variable goes out of scope
+        tempdir = tempfile.TemporaryDirectory()
+        outfile = tempdir.name + "/out.newick"
+        args += " -l " + outfile
 
-    create_data(sample_sizes, [msp, simbac], ["msprime", "simbac"], "simbac")
+    # print("running", args)
+    subprocess.check_call(
+        "./tools/simbac " + args, shell=True, stdout=subprocess.DEVNULL
+    )
+    num_trees = 0
+    if count_trees:
+        with open(outfile) as f:
+            for line in f:
+                num_trees += 1
 
-
-def ms_run(sample_size, L):
-    args = ms_style_args(sample_size, L)
-    exec_cli("./sims/ms", args)
-
-
-def simbac_run(sample_size, L):
-    ms_args = f"-N {sample_size} -B {int(L)}"
-    # using R=2*0.015 as gene conversion/recombination rate as SimBac uses R/2
-    simbac_args = "-R 0.03"
-    args = ms_args + " " + simbac_args
-    for _ in range(REPLICATES):
-        exec_cli("./sims/SimBac", args)
+    return num_trees
 
 
-def msp_run(**kwargs):
-    if "population_size" not in kwargs:
-        kwargs["population_size"] = Ne
-    if "recombination_rate" not in kwargs:
-        kwargs["recombination_rate"] = r
-    kwargs["num_replicates"] = REPLICATES
-
-    replicates = msprime.sim_ancestry(**kwargs)
-    for ts in replicates:
-        pass
-
-
-def exec_cli(command, args_str):
-    arg_list = [command] + args_str.split()
-    print(" ".join(arg_list))
-    subprocess.call(arg_list, stdout=subprocess.DEVNULL)
+def run_msprime(*, sample_size, L, gc_rate, gc_tract_length):
+    # We use an internal msprime API here because we want to get at the
+    # number of breakpoints, not the distinct trees.
+    sim = msprime.ancestry._parse_sim_ancestry(
+        samples=sample_size,
+        sequence_length=L,
+        ploidy=1,
+        gene_conversion_rate=gc_rate,
+        gene_conversion_tract_length=gc_tract_length,
+    )
+    sim.run()
+    return sim.num_breakpoints
 
 
-def exec_jar(jar_path, sim_args_str):
-    args = f"-jar {jar_path} {sim_args_str}"
-    exec_cli("java", args)
+@click.command()
+@click.option("--output", type=click.Path(), default="tmp/gc_validation.png")
+@click.option("--replicates", type=int, default=1000)
+@click.option("--sample-size", type=int, default=10)
+def validate(output, replicates, sample_size):
+    """
+    Validate that we are simulating the same things in the simulators
+    by running some replicates and plotting the distributions of the
+    number of output trees.
+    """
+    L = 1000
+    gc_rate = 0.015
+    gc_tract_length = 10
+
+    nt_simbac = np.zeros(replicates)
+    nt_msprime = np.zeros(replicates)
+
+    with click.progressbar(range(replicates)) as bar:
+        for j in bar:
+            nt_simbac[j] = run_simbac(
+                sample_size=sample_size,
+                L=L,
+                gc_rate=gc_rate,
+                gc_tract_length=gc_tract_length,
+                count_trees=True,
+            )
+            nt_msprime[j] = run_msprime(
+                sample_size=sample_size,
+                L=L,
+                gc_rate=gc_rate,
+                gc_tract_length=gc_tract_length,
+            )
+    print(
+        "mean number of trees: simbac=",
+        np.mean(nt_simbac),
+        "msprime=",
+        np.mean(nt_msprime),
+    )
+
+    sm.graphics.qqplot(nt_simbac)
+    sm.qqplot_2samples(nt_simbac, nt_msprime, line="45")
+    plt.savefig(output)
 
 
-def ms_style_args(sample_size, L):
-    rho = 4 * Ne * r * L
-    return f"{sample_size} {REPLICATES} -t 10 -r {rho} {int(L)}"
+@click.command()
+@click.option("--replicates", type=int, default=5)
+def benchmark_ecoli(replicates):
+    """
+    Runs the benchmarks for E-coli simulations.
+    """
+    L = 4_500_000
+    # Make this run in a reasonable amount of time, change this when
+    # we're doing final runs.
+    L /= 100
+    gc_rate = 0.015
+    gc_tract_length = 500
 
-
-def create_data(sample_sizes, tools, tool_names, fname):
-    runtimes = run_sims(sample_sizes, tools, tool_names)
-    with open(f"{fname}.csv", "w") as f:
-        f.write(f"sample_size,tool,time\n")
-        for sample_size, runtime_row in zip(sample_sizes, runtimes):
-            for tool_name, tool_time in zip(tool_names, runtime_row):
-                row = f"{sample_size},{tool_name},{tool_time}\n"
-                f.write(row)
-        f.close()
-
-
-def run_sims(sample_sizes, tools, tool_names):
-    runtimes = []
+    sample_sizes = np.linspace(10, 500, 20).astype(int)
+    tool_map = {
+        "msprime": run_msprime,
+        "SimBac": run_simbac,
+    }
+    data = []
     for sample_size in sample_sizes:
-        times = []
-        for tool, name in zip(tools, tool_names):
-            print(f"Running {name} on {sample_size} samples...")
-            times.append(time_tool(tool, sample_size))
-        runtimes.append(times)
-    return runtimes
+        for name, func in tool_map.items():
+            print(name, "n =", sample_size)
+            before = time.perf_counter()
+            for _ in range(replicates):
+                func(
+                    sample_size=sample_size,
+                    L=L,
+                    gc_rate=gc_rate,
+                    gc_tract_length=gc_tract_length,
+                )
+            duration = time.perf_counter() - before
+            data.append(
+                {
+                    "sample_size": sample_size,
+                    "tool": name,
+                    "time": duration / replicates,
+                }
+            )
+            df = pd.DataFrame(data)
+            print(data[-1])
+            df.to_csv("data/gc-perf.csv")
 
 
-def time_tool(tool, sample_size):
-    start = time.time()
-    tool(sample_size)
-    end = time.time()
-    print(f"Took {round(end - start, 3)} seconds to complete {REPLICATES} replicates")
-    return (end - start) / REPLICATES
+@click.group()
+def cli():
+    pass
 
 
-def mb(L):
-    return L * 1e6
-
+cli.add_command(validate)
+cli.add_command(benchmark_ecoli)
 
 if __name__ == "__main__":
-    if "simbac" in sys.argv:
-        run_simbac()
+    cli()

@@ -55,7 +55,7 @@ def gc_perf():
     """
     Plot the gene-conversion benchmark.
     """
-    df = pd.read_csv("data/gc.csv")
+    df = pd.read_csv("data/gc-perf.csv")
 
     fig, ax1 = plt.subplots(1, 1)
     for tool in set(df.tool):
