@@ -3,6 +3,7 @@ import sys
 import tempfile
 import time
 
+import cpuinfo
 import pandas as pd
 import numpy as np
 import click
@@ -150,6 +151,7 @@ def validate(replicates, sample_size):
 
     plt.close("all")
 
+
     sm.graphics.qqplot(nt_fastsimbac)
     sm.qqplot_2samples(nt_fastsimbac, nt_msprime, line="45")
     plt.xlabel("fastsimbac")
@@ -163,10 +165,13 @@ def benchmark_ecoli(replicates):
     """
     Runs the benchmarks for E-coli simulations.
     """
+
+    cpu = cpuinfo.get_cpu_info()
+    with open("data/gc_perf_cpu.txt", "w") as f:
+        for k, v in cpu.items():
+            print(k, "\t", v, file=f)
+
     L = 4_500_000
-    # Make this run in a reasonable amount of time, change this when
-    # we're doing final runs.
-    L /= 100
     gc_rate = 0.015
     gc_tract_length = 500
 
@@ -174,10 +179,15 @@ def benchmark_ecoli(replicates):
     tool_map = {
         "msprime": run_msprime,
         "SimBac": run_simbac,
+        "fastSimBac": run_fastsimbac,
     }
     data = []
-    for sample_size in sample_sizes:
+    for j, sample_size in enumerate(sample_sizes):
         for name, func in tool_map.items():
+            if j > 1 and name == "SimBac":
+                continue
+            if j > 3 and name == "fastSimBac":
+                continue
             print(name, "n =", sample_size)
             before = time.perf_counter()
             for _ in range(replicates):
