@@ -12,7 +12,7 @@
 \usepackage{verbatim}%
 \usepackage{environ}%
 \usepackage[right]{lineno}%
-\usepackage{microtype}
+\usepackage{nameref}
 %\usepackage{showkeys}
 
 % local definitions
@@ -163,6 +163,7 @@ point in listing it out section by section.}
 % to be extended by addition of new features while ensuring robustness and
 % maintainability of the core codebase.
 
+\label{sec-ts}
 \subsection*{Tree sequences}
 One of the key reasons for \msprime's significiant performance advantage
 over other simulators is its usage of the ``succinct tree sequence''
@@ -182,8 +183,47 @@ for four samples at ten sites.
 }
 \end{figure}
 
-\jkcomment{Paragraph describing what a tree sequence is, referring to
-Fig.~\ref{fig-ts-example}.}
+The succinct tree sequence is a data structure for concisely encoding
+genetic ancestry. Given a set of sample chromosomes, the topology
+of their genetic ancestry is described by a set of \emph{nodes}
+and \emph{edges}. A node in tree sequence terminology corresponds
+to a single chromosome strand, and is associated with its birth time,
+birth population and other metadata. A node may optionally be
+associated with an \emph{individual}, so that, for example, a diploid
+individual will be associated with two separate nodes (we omit
+the individual table in Fig.~\ref{fig-ts-example} as it is optional).
+Nodes define haplotypes that exist at a specific time within a
+specific individual, and edges define genetic inheritence
+relationships between these nodes. An edge consists of a
+parent node, a child node and the left and right coordinates
+of the contiguous genomic interval over which
+the child inherited genetic material from the parent.
+Critically, edges can span multiple marginal trees: for
+example, in Fig.~\ref{fig-ts-example} the branch from node
+0 to 4 is present in both marginal trees, and represented
+by a single edge (the first row in the example edge table).
+This simple device, of explicitly associating tree nodes
+with specific ancestral chromosomes and recording the
+genomic intervals over which parent/child relationships exist,
+is a generalisation from the original concept  of
+``coalescence records''~\citep{kelleher2016efficient}, and
+is the key to the efficiency of tree sequences.
+\jkcomment{Summarise and add references?}
+As discussed in the \ref{sec-mutations} section, tree sequences
+can also store genetic variation data very efficiently.
+
+The term Ancestral Recombination Graph (ARG) is often understood
+to mean the complete record of a sample's genetic
+ancestry~\citep[e.g.][]{mathieson2020ancestry}, and in this sense a tree
+sequence \emph{is} an ARG. More technically, an ARG is a particular
+graphical representation of genetic ancestry based on the
+flow of ancestral material through recombination and common
+ancestor events~\citep{griffiths1991two,griffiths1997ancestral}.
+In this sense, tree sequences can be used to \emph{encode}
+ARGs without loss of information---although we do not store
+the additional ARG information by default
+in \msprime\ because the minimal tree sequence encoding is
+much more concise (see the \nameref{sec-arg} section for more details).
 
 
 The point of simulations is to generate data and the efficiency with
@@ -264,6 +304,7 @@ the models and statistics of most interest.
 \end{itemize}
 
 
+\label{sec-mutations}
 \subsection*{Finite sites mutations}
 Version 0.x of \texttt{msprime} provided a very simple mutation model,
 supporting only the infinite sites model.
@@ -640,8 +681,8 @@ spectrum~\citep{birkner2013statistical,blath2016site,hobolth2019phase}
  as well as more general properties of coalescent processes.
 Please see the Appendix for more details and model derivations.
 
-
-\subsection*{Ancestral recombination graphs}
+\subsection*{Ancestral Recombination Graphs}
+\label{sec-arg}
 
 The Ancestral Recombination Graph (ARG) was introduced by
 Griffiths~\citep{griffiths1991two,griffiths1997ancestral} as a graphical
