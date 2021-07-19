@@ -12,7 +12,7 @@
 \usepackage{verbatim}%
 \usepackage{environ}%
 \usepackage[right]{lineno}%
-\usepackage{microtype}
+\usepackage{nameref}
 %\usepackage{showkeys}
 
 % local definitions
@@ -118,7 +118,7 @@ This data structure has
 also lead to major advances in forwards-time
 simulation~\citep{kelleher2018efficient,haller2018tree},
 ancestry inference~\citep{kelleher2019inferring,wohns2021unified}
-and calculation of population genetic statistics~\citep{ralph2019efficiently}.
+and calculation of population genetic statistics~\citep{ralph2020efficiently}.
 Through a rigorous open-source community development process,
 \msprime\ has gained a large number of features since its introduction,
 making a highly efficient and flexible platform for population
@@ -136,23 +136,277 @@ This paper marks the release of \msprime\ 1.0.
 
 \section*{Results}
 
-In this section we describe the main features of \msprime\ 1.0. Methodologically,
-there exists a logical separation between simulating coalescent genealogies and
-adding neutral mutations onto these genealogies. Simulating genetic ancestry
-requires methods that model the underlying reproductive process (e.g. Moran,
-Wright-Fisher, etc.) as well as accounting for recombination of various sorts
-(including gene conversion), demography, and selection. These methods are
-discussed in the first N subsections below. One of the strengths of the
-approach taken in msprime is that neutral mutations can be retrospectively
-added to simulated genealogies. Methods to generate mutations, and thereby
-generate genetic variation, are therefore discussed in a separate and subsequent
-subsection. Finally, we describe the \msprime\ API, which is designed to enforce
-the distinction between simulating genealogies and mutations; discuss the
-interoperability provided by the use of \tskit\, the tree sequence toolkit;
-and highlight the open source development process which allows for \msprime\
-to be extended by addition of new features while ensuring robustness and
-maintainability of the core codebase.
+\jkcomment{Give a quick roadmap,
+like, we discuss the underlying tree sequence object,
+then mutations (because it's quite separate from the rest)
+and then a bunch of new features for ancestry simulation. There's no
+point in listing it out section by section.}
 
+% JK: commented out this text as it's misleading and would confuse
+% people. We should adapt it when writing the roadmap when the structure
+% has settled down.
+
+% In this section we describe the main features of \msprime\ 1.0. Methodologically,
+% there exists a logical separation between simulating coalescent genealogies and
+% adding neutral mutations onto these genealogies. Simulating genetic ancestry
+% requires methods that model the underlying reproductive process (e.g. Moran,
+% Wright-Fisher, etc.) as well as accounting for recombination of various sorts
+% (including gene conversion), demography, and selection. These methods are
+% discussed in the first N subsections below. One of the strengths of the
+% approach taken in msprime is that neutral mutations can be retrospectively
+% added to simulated genealogies. Methods to generate mutations, and thereby
+% generate genetic variation, are therefore discussed in a separate and subsequent
+% subsection. Finally, we describe the \msprime\ API, which is designed to enforce
+% the distinction between simulating genealogies and mutations; discuss the
+% interoperability provided by the use of \tskit\, the tree sequence toolkit;
+% and highlight the open source development process which allows for \msprime\
+% to be extended by addition of new features while ensuring robustness and
+% maintainability of the core codebase.
+
+\subsection*{Tree sequences}
+\label{sec-ts}
+One of the key reasons for \msprime's significiant performance advantage
+over other simulators is its usage of the ``succinct tree sequence''
+(usually, tree sequence) data stucture and the supporting \tskit\
+library~\citep{tskit2021tskit}.
+While a full discussion of tree sequences and the capabilities
+of \tskit\ is beyond the scope of this article, we briefly summarise
+here.
+\jkcomment{We need to mention that tree sequences and tskit are
+derived from the 2016 paper and have been extracted from msprime
+into a separate C/Python library.}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=6cm]{figures/example_tree_sequence}
+\end{center}
+\caption{\label{fig-ts-example} Example tree sequence.
+An example tree sequence describing genealogies and genotypes
+for four samples at ten sites.
+Figure based on~\citet{kelleher2018efficient}.
+}
+\end{figure}
+
+The succinct tree sequence is a data structure for concisely encoding
+genetic ancestry. Given a set of sample chromosomes, the topology
+of their genetic ancestry is described by a set of \emph{nodes}
+and \emph{edges}. A node in tree sequence terminology corresponds
+to a single chromosome strand, and is associated with its birth time,
+birth population and other metadata. A node may optionally be
+associated with an \emph{individual}, so that, for example, a diploid
+individual will be associated with two separate nodes (we omit
+the individual table in Fig.~\ref{fig-ts-example} as it is optional).
+Nodes define haplotypes that exist at a specific time within a
+specific individual, and edges define genetic inheritence
+relationships between these nodes. An edge consists of a
+parent node, a child node and the left and right coordinates
+of the contiguous genomic interval over which
+the child inherited genetic material from the parent.
+Critically, edges can span multiple marginal trees: for
+example, in Fig.~\ref{fig-ts-example} the branch from node
+0 to 4 is present in both marginal trees, and represented
+by a single edge (the first row in the example edge table).
+This simple device, of explicitly associating tree nodes
+with specific ancestral chromosomes and recording the
+genomic intervals over which parent/child relationships exist,
+is a generalisation from the original concept  of
+``coalescence records''~\citep{kelleher2016efficient}, and
+is the key to the efficiency of tree sequences.
+\jkcomment{Summarise and add references?}
+
+The term Ancestral Recombination Graph (ARG) is often understood
+to mean the complete record of a sample's genetic
+ancestry~\citep[e.g.][]{mathieson2020ancestry}, and in this sense a tree
+sequence \emph{is} an ARG. More technically, an ARG is a particular
+graphical representation of genetic ancestry based on the
+flow of ancestral material through recombination and common
+ancestor events~\citep{griffiths1991two,griffiths1997ancestral}.
+In this sense, tree sequences can be used to \emph{encode}
+ARGs without loss of information---although we do not store
+the additional ARG information by default
+in \msprime\ because the minimal tree sequence encoding is
+much more concise (see the \nameref{sec-arg} section for more details).
+It should be noted that, despite efforts to
+standardise~\citep{cardona2008extended,mcgill2013graphml}, there is
+no shared format for interchanging ARG data, and no supporting software
+libraries.
+
+Tree sequences encode a complete and concise description of a set of sampled
+chromosome's genetic ancestry, and they can also efficiently represent
+the genetic variation (extant and ancestral).
+As illustrated in Fig.~\ref{fig-ts-example}, the \tskit\ tree
+sequence encoding includes \emph{site} and \emph{mutation} tables. Each
+row in the site table represents some position along the genome, and
+each row in the mutation table represents a change of allelic state
+at a particular site and node. Since the number of mutations is typically
+small, we can usually store the genetic variation for a given variant
+site in constant space. This approach of storing the genetic variation
+via the genetic ancestry is both very concise and extremely efficient
+to process---for example, computing Tajima's $D$ using \tskit\
+is several orders of magnitude faster for large sample sizes than
+efficient libraries working with the variant matrix
+representation~\citep{ralph2020efficiently}.
+\jkcomment{Mention Phastsim/USHER~\citep{demaio2021phastsim,turakhia2021ultrafast}
+here. Same basic idea, but much cruder.}
+
+\jkcomment{We need a link paragraph here between what this paper is
+about (what we can simulate) and what the rest of this section is about
+(efficiently using the \emph{results} of simulations). This is where
+we should review the classical approaches. Then lead into the
+the discussion of why we need simulations to be efficiently processable,
+most importantly, in inference methods like ABC and ML.}
+
+The abilily to efficiently process simulation results is
+particularly important in simulation-based inference methods
+such as Approximate Bayesian Computation
+(ABC)~\citep{beaumont2002approximate,csillery2010approximate,wegmann2010abctoolbox}
+and machine learning based
+approaches~\citep{sheehan2016deep,schrider2018supervised,flagel2019unreasonable,
+sanchez2020deep}. Clearly, simulation efficiency is
+crucial since the size and number of simulations that can be performed determines
+the depth to which the model and parameter space can be sampled from.
+Equally important,
+however, is the efficiency with which the simulation results can be
+transformed into the specific input required by the inference method.
+In the case of ABC, this is usually a set of summary statistics of the sequence
+data, and methods avoid the bottleneck of parsing
+text-based file formats to compute these statistics
+by either developing their own
+simulators~\citep[e.g.][]{cornuet2008inferring,lopes2009popabc}
+or creating forked versions of existing
+simulators~\cite[e.g.][]{pavlidis2010msabc,quinto2018modeling},
+tightly integrated with the inference method.
+While this is certainly more efficient,
+there is a great deal of duplication of effort and significant
+room for error (and propagation of bugs).
+Modern approaches to ABC such as
+ABC-RF~\citep{raynal2019abc,pudlo2016abc} and
+ABC-NN~\citep{csillery2012abc,blum2010abc} use large
+numbers of weakly informative statistics,
+making the need to efficiently compute statistics from simulation
+results even more acute.
+
+Classical text based output formats like \ms\ are inefficient to process,
+but also lacking a great deal of important information.
+The tree-by-tree topology information output by simulators in Newick
+format lacks any concept of node (in the tree sequence sense) identity,
+and means that we cannot reliably infer information about ancestors
+from the output \jkcomment{Also there's the inherent limitation of
+newick using branch lenghts; I think there's some citations for
+the issues this causes. Probably in the original msprime paper.}.
+This has been worked around by using approximate definitions of
+concepts like identity by descent (cite carmi paper) \jkcomment{
+any other computation methods developed just to work around the
+crappiness of ms output?}
+Numerous forks
+of simulators have been created to access information not provided
+in the output. For example, \ms\  has been forked to
+output information about migrating segments~\citep{rosenzweig2016powerful},
+information about ancestral lineages~\citep{chen2013asymptotic},
+% Any more?
+and \ms's fork \texttt{msHOT}~\citep{hellenthal2007mshot},
+has in turn been forked to output information on local
+ancestry~\citep{racimo2017archaic}.
+All of this information
+is either directly available by default in \msprime, or can be optionally
+stored via options such as \texttt{record\_migrations} or
+\texttt{record\_full\_arg} (see the \nameref{sec-arg} section) and
+can be efficiently and conveniently processed via \tskit\ APIs.
+
+
+\jkcomment{Fit this in somewhere? Or maybe it should be a discussion point?}
+Tskit has facilited unprecedented interoperability between simulators:
+Forward simulations can also use tree
+sequences~\citep{kelleher2018efficient,haller2018tree}. In particular, SLiM
+3.0~\citep{haller2019slim} and fwdpp~\citep{thornton2014cpp} can now output
+tree sequences. Msprime can take tree sequences simulated by these forward
+simulators as input and complete the simulation (``recapitation'').
+See \cite{haller2018tree} for more details.
+
+
+\subsection*{Finite sites mutations}
+\label{sec-mutations}
+Version 0.x of \texttt{msprime} provided a very simple mutation model,
+supporting only the infinite sites model.
+With version 1.0, we now support a large number of mutation models,
+including
+JC69~\citep{jukes1969evolution},
+F84~\citep{felsenstein1996hidden},
+and GTR~\citep{tavare1986some} nucleotide models
+and the BLOSUM62~\citep{henikoff1992amino}
+and PAM~\citep{dayhoff1978} amino acid models.
+The general model accepts an arbitrary transition matrix between
+any number of alleles (which can be arbitrary unicode strings),
+and so other models such as the Kimura two and three
+parameter models~\citep{kimura1980simple,kimura1981estimation}
+parameters models can be easily
+and efficiently defined in user code.
+Full support for the original infinite sites model is also maintained.
+The results of mutation simulations across a range of models are
+extensively validated
+against both theoretical expectations and output from
+Seq-Gen~\citep{rambaut1997seq} and
+Pyvolve~\citep{spielman2015pyvolve}.
+
+\begin{figure}
+\includegraphics[width=\textwidth]{figures/mutations-perf}
+\caption{\label{fig-mutations-perf} Time required to run
+\texttt{sim\_mutations} on tree sequences generated
+by \texttt{sim\_ancestry} (with a population size of $10^4$
+and recombination rate of $10^{-8}$) for varying (haploid) sample
+size and sequence length. We run 10 replicate mutation simulations
+each for three different mutation rates, and report the average
+CPU time required (Intel Core i7-9700).
+(A) Holding sequence length fixed at 10 megabases and varying the
+number of samples (tree tips) from 10 to 100,000.
+(B) Holding number of samples fixed at 1000, and varying the sequence
+length from 1 to 100 megabases.}
+\end{figure}
+
+Comparing the performance of mutation generation methods is problematic.
+Because there is no standard format for representing trees and
+the accompanying mutations, all existing methods are focused on
+writing out the resulting sequences. Methods are also not modular,
+and so it is very difficult to disentangle the time required to
+read in the tree file and output the sequences from the actual
+time required to perform the simulation.
+
+Fig.~\ref{fig-mutations-perf} shows that the mutation generation
+machinery in \msprime\ is extremely efficient, requiring
+fractions of a second to generate mutations for most simulations.
+For example, the longest running simulation in
+Fig.~\ref{fig-mutations-perf}B required less than 2 seconds to
+generate an average of 1.5 million mutations over 137,081 trees
+in a tree sequence with 508,125 edges.
+Generating mutations for a tree sequence is particularly efficient
+because we can work edge-by-edge rather than having to
+consider each tree independently.
+
+\jkcomment{We probably want to keep a version of this narrative too.}
+For example, we simulated mutations under the JC69
+model for a tree with $10^6$ leaves over $10^4$ sites (resulting
+in $\sim 280000$ mutations) in less that 1.5 seconds, including
+the time required for file input and output. While a systematic
+comparison of run-times is not feasible here, this is orders
+of magnitude faster than methods such as
+Seq-Gen~\citep{rambaut1997seq} and
+Pyvolve~\citep{spielman2015pyvolve}
+and at least competitive with the recent method from
+\cite{demaio2021phastsim}.
+
+\textbf{TODO: would love to do a like-for-like comparison, but quite hard}
+
+Another substantial advantage of our approach is that the simulated
+mutations are stored directly in the output data format with
+a defined API. Although
+Pyvolve and Phastsim are implemented in Python, neither provide
+programatic access to the simulated output, outputting instead
+to a series of files which must subsequently be parsed.
+See the Data Model section for more details and discussion.
+
+Things we can do: future work will need to do things like
+Dawg~\citep{cartwright2005dna} and to implement models and
+indels~\citep{fletcher2009indelible}.
 
 \subsection*{Recombination}
 
@@ -447,8 +701,8 @@ spectrum~\citep{birkner2013statistical,blath2016site,hobolth2019phase}
  as well as more general properties of coalescent processes.
 Please see the Appendix for more details and model derivations.
 
-
-\subsection*{Ancestral recombination graphs}
+\subsection*{Ancestral Recombination Graphs}
+\label{sec-arg}
 
 The Ancestral Recombination Graph (ARG) was introduced by
 Griffiths~\citep{griffiths1991two,griffiths1997ancestral} as a graphical
@@ -611,88 +865,6 @@ simulator.  The Wright-Fisher approach in \msprime\ is more efficient at
 simulating chromosome-scale sequences (larger than $\approx10$Mb), while the
 hybrid approach provides large efficiency gains.
 
-\subsection*{Finite sites mutations}
-Version 0.x of \texttt{msprime} provided a very simple mutation model,
-supporting only the infinite sites model.
-With version 1.0, we now support a large number of mutation models,
-including
-JC69~\citep{jukes1969evolution},
-F84~\citep{felsenstein1996hidden},
-and GTR~\citep{tavare1986some} nucleotide models
-and the BLOSUM62~\citep{henikoff1992amino}
-and PAM~\citep{dayhoff1978} amino acid models.
-The general model accepts an arbitrary transition matrix between
-any number of alleles (which can be arbitrary unicode strings),
-and so other models such as the Kimura two and three
-parameter models~\citep{kimura1980simple,kimura1981estimation}
-parameters models can be easily
-and efficiently defined in user code.
-Full support for the original infinite sites model is also maintained.
-The results of mutation simulations across a range of models are
-extensively validated
-against both theoretical expectations and output from
-Seq-Gen~\citep{rambaut1997seq} and
-Pyvolve~\citep{spielman2015pyvolve}.
-
-\begin{figure}
-\includegraphics[width=\textwidth]{figures/mutations-perf}
-\caption{\label{fig-mutations-perf} Time required to run
-\texttt{sim\_mutations} on tree sequences generated
-by \texttt{sim\_ancestry} (with a population size of $10^4$
-and recombination rate of $10^{-8}$) for varying (haploid) sample
-size and sequence length. We run 10 replicate mutation simulations
-each for three different mutation rates, and report the average
-CPU time required (Intel Core i7-9700).
-(A) Holding sequence length fixed at 10 megabases and varying the
-number of samples (tree tips) from 10 to 100,000.
-(B) Holding number of samples fixed at 1000, and varying the sequence
-length from 1 to 100 megabases.}
-\end{figure}
-
-Comparing the performance of mutation generation methods is problematic.
-Because there is no standard format for representing trees and
-the accompanying mutations, all existing methods are focused on
-writing out the resulting sequences. Methods are also not modular,
-and so it is very difficult to disentangle the time required to
-read in the tree file and output the sequences from the actual
-time required to perform the simulation.
-
-Fig.~\ref{fig-mutations-perf} shows that the mutation generation
-machinery in \msprime\ is extremely efficient, requiring
-fractions of a second to generate mutations for most simulations.
-For example, the longest running simulation in
-Fig.~\ref{fig-mutations-perf}B required less than 2 seconds to
-generate an average of 1.5 million mutations over 137,081 trees
-in a tree sequence with 508,125 edges.
-Generating mutations for a tree sequence is particularly efficient
-because we can work edge-by-edge rather than having to
-consider each tree independently.
-
-\jkcomment{We probably want to keep a version of this narrative too.}
-For example, we simulated mutations under the JC69
-model for a tree with $10^6$ leaves over $10^4$ sites (resulting
-in $\sim 280000$ mutations) in less that 1.5 seconds, including
-the time required for file input and output. While a systematic
-comparison of run-times is not feasible here, this is orders
-of magnitude faster than methods such as
-Seq-Gen~\citep{rambaut1997seq} and
-Pyvolve~\citep{spielman2015pyvolve}
-and at least competitive with the recent method from
-\cite{demaio2021phastsim}.
-
-\textbf{TODO: would love to do a like-for-like comparison, but quite hard}
-
-Another substantial advantage of our approach is that the simulated
-mutations are stored directly in the output data format with
-a defined API. Although
-Pyvolve and Phastsim are implemented in Python, neither provide
-programatic access to the simulated output, outputting instead
-to a series of files which must subsequently be parsed.
-See the Data Model section for more details and discussion.
-
-Things we can do: future work will need to do things like
-Dawg~\citep{cartwright2005dna} and to implement models and
-indels~\citep{fletcher2009indelible}.
 
 \subsection*{Simulation interface}
 
@@ -753,82 +925,6 @@ command line interface to support existing workflows, and the
 \texttt{msp} program that supports specifying demographic models in
 Demes format~\citep{gower2021demes} from the command line.
 
-
-\subsection*{Data interchange and interoperability}
-The point of simulations is to generate data and the efficiency with
-which simulated data can be incorporated into an overall application
-is an important---if often overlooked---issue.
-For example, Approximate Bayesian Computation
-(ABC)~\citep{beaumont2002approximate,csillery2010approximate,wegmann2010abctoolbox}
-and more recent machine learning
-methods~\citep{sheehan2016deep,schrider2018supervised,flagel2019unreasonable}
-perform population genetic inference by using large numbers of
-simulations as training data. Clearly, simulation efficiency is
-crucial since the size and number of simulations that can be performed determines
-the depth to which the model and parameter space can be sampled from.
-Equally important,
-however, is the efficiency with which the simulation results can be
-transformed into the specific input required by the inference method.
-In the case of ABC, this is usually a set of summary statistics of the sequence data.
-Modern approaches such as
-ABC-RF~\citep{raynal2019abc,pudlo2016abc} and
-ABC-NN~\citep{csillery2012abc,blum2010abc} can accommodate large numbers of user-specified statistics that are individually weakly informative,
-but jointly close to sufficient for the desired model or parameter.
-However, the computational resources needed to calculate these statistics can be even
-greater than those used to generate the simulated datasets.
-Older software such as DIYABC~\citep{cornuet2008inferring}
-or PopABC~\citep{lopes2009popabc} avoid this bottleneck by
-developing their own specialised simulators, tightly integrating them
-with the inference method. While this is certainly more efficient,
-there is a great deal of duplication of effort and significant
-room for error.
-As ABC inference has become useful in an ever-widening range of applications,
-these all-in-one methods risk falling behind if they do not allow users to explore
-the models and statistics of most interest.
-
-\jkcomment{Stuff to cover}
-\begin{itemize}
-
-\item The core problem is that the field lacks an efficient mechanism for
-    interchanging simulated data, and so developers are forced to choose
-    between efficiency and duplication of effort.
-
-\item What are the output formats of simulators? Newick, or sequence data
-    basically. What's the problem with this? We don't have mutations.
-    Much more efficient to have the tree and mutations than the
-    sequence data. Fundamentally, the output of coalescent simulations
-    should be trees, otherwise we are throwing a lot of information
-    away.
-
-\item Side note somewhere: with efficient access to branch length
-    statistics~\citep{ralph2019efficiently}, maybe we don't need to
-    simulate mutations at all.
-[GT: I'm not so sure about this -- the desired statistics/summaries
-must be calculated on the observed dataset as well as on the many
-simulated datasets.
-Unless the observed dataset is stored as a tree sequence,
-(because it has been through tsinfer, for example),
-it's not clear how branch or node stats could be calculated
-from it.
-]
-
-\item Msprime uses the \tskit\ library~\citep{tskit2021tskit}, which provides
-    extremely efficient interchange and data processing. A quick example
-    of how efficient.
-
-\item Tskit has facilited unprecedented interoperability between simulators:
-    Forward simulations can also use tree
-    sequences~\citep{kelleher2018efficient,haller2018tree}. In particular, SLiM
-    3.0~\citep{haller2019slim} and fwdpp~\citep{thornton2014cpp} can now output
-    tree sequences. Msprime can take tree sequences simulated by these forward
-    simulators as input and complete the simulation (``recapitation'').
-    See \cite{haller2018tree} for more details.
-
-\item Recently, Phastsim/USHER~\cite{demaio2021phastsim,turakhia2021ultrafast}
-    have used this idea of storing the
-    tree plus mutations, but approach is crude compared to tskit.
-
-\end{itemize}
 
 \subsection*{Development model}
 The community development process for \msprime\ is enabled by following an
