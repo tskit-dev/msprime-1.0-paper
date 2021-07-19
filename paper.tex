@@ -248,73 +248,79 @@ representation~\citep{ralph2020efficiently}.
 \jkcomment{Mention Phastsim/USHER~\citep{demaio2021phastsim,turakhia2021ultrafast}
 here. Same basic idea, but much cruder.}
 
-\jkcomment{Make some sort of link here between this paper, which is
-about msprime simulations, but that we can't really disentangle
-simulations from their downstream processing.}
-The point of simulations is to generate data and the efficiency with
-which simulated data can be incorporated into an overall application
-is an important issue.
-For example, Approximate Bayesian Computation
+\jkcomment{We need a link paragraph here between what this paper is
+about (what we can simulate) and what the rest of this section is about
+(efficiently using the \emph{results} of simulations). This is where
+we should review the classical approaches. Then lead into the
+the discussion of why we need simulations to be efficiently processable,
+most importantly, in inference methods like ABC and ML.}
+
+The abilily to efficiently process simulation results is
+particularly important in simulation-based inference methods
+such as Approximate Bayesian Computation
 (ABC)~\citep{beaumont2002approximate,csillery2010approximate,wegmann2010abctoolbox}
-and more recent machine learning
-methods~\citep{sheehan2016deep,schrider2018supervised,flagel2019unreasonable}
-perform population genetic inference by using large numbers of
-simulations as training data. Clearly, simulation efficiency is
+and machine learning based
+approaches~\citep{sheehan2016deep,schrider2018supervised,flagel2019unreasonable,
+sanchez2020deep}. Clearly, simulation efficiency is
 crucial since the size and number of simulations that can be performed determines
 the depth to which the model and parameter space can be sampled from.
 Equally important,
 however, is the efficiency with which the simulation results can be
 transformed into the specific input required by the inference method.
-In the case of ABC, this is usually a set of summary statistics of the sequence data.
-Modern approaches such as
-ABC-RF~\citep{raynal2019abc,pudlo2016abc} and
-ABC-NN~\citep{csillery2012abc,blum2010abc} can accommodate large
-numbers of user-specified statistics that are individually weakly informative,
-but jointly close to sufficient for the desired model or parameter.
-However, the computational resources needed to calculate these statistics can be even
-greater than those used to generate the simulated datasets.
-Older software such as DIYABC~\citep{cornuet2008inferring}
-or PopABC~\citep{lopes2009popabc} avoid this bottleneck by
-developing their own specialised simulators, tightly integrating them
-with the inference method. While this is certainly more efficient,
+In the case of ABC, this is usually a set of summary statistics of the sequence
+data, and methods avoid the bottleneck of parsing
+text-based file formats to compute these statistics
+by either developing their own
+simulators~\citep[e.g.][]{cornuet2008inferring,lopes2009popabc}
+or creating forked versions of existing
+simulators~\cite[e.g.][]{pavlidis2010msabc,quinto2018modeling},
+tightly integrated with the inference method.
+While this is certainly more efficient,
 there is a great deal of duplication of effort and significant
-room for error.
-As ABC inference has become useful in an ever-widening range of applications,
-these all-in-one methods risk falling behind if they do not allow users to explore
-the models and statistics of most interest.
+room for error (and propagation of bugs).
+Modern approaches to ABC such as
+ABC-RF~\citep{raynal2019abc,pudlo2016abc} and
+ABC-NN~\citep{csillery2012abc,blum2010abc} use large
+numbers of weakly informative statistics,
+making the need to efficiently compute statistics from simulation
+results even more acute.
 
-\jkcomment{Other potential stuff to cover}
-\begin{itemize}
+Classical text based output formats like \ms\ are inefficient to process,
+but also lacking a great deal of important information.
+The tree-by-tree topology information output by simulators in Newick
+format lacks any concept of node (in the tree sequence sense) identity,
+and means that we cannot reliably infer information about ancestors
+from the output \jkcomment{Also there's the inherent limitation of
+newick using branch lenghts; I think there's some citations for
+the issues this causes. Probably in the original msprime paper.}.
+This has been worked around by using approximate definitions of
+concepts like identity by descent (cite carmi paper) \jkcomment{
+any other computation methods developed just to work around the
+crappiness of ms output?}
+Numerous forks
+of simulators have been created to access information not provided
+in the output. For example, \ms\  has been forked to
+output information about migrating segments~\citep{rosenzweig2016powerful},
+information about ancestral lineages~\citep{chen2013asymptotic},
+% Any more?
+and \ms's fork \texttt{msHOT}~\citep{hellenthal2007mshot},
+has in turn been forked to output information on local
+ancestry~\citep{racimo2017archaic}.
+All of this information
+is either directly available by default in \msprime, or can be optionally
+stored via options such as \texttt{record\_migrations} or
+\texttt{record\_full\_arg} (see the \nameref{sec-arg} section) and
+can be efficiently and conveniently processed via \tskit\ APIs.
 
-\item What are the output formats of simulators? Newick, or sequence data
-    basically. What's the problem with this? We don't have mutations.
-    Much more efficient to have the tree and mutations than the
-    sequence data. Fundamentally, the output of coalescent simulations
-    should be trees, otherwise we are throwing a lot of information
-    away.
 
-\item Lots of examples of papers where people have been forced to
-    create a modified fork of some simulator so that they can get
-    access to some internal details, not exposed by the simulators
-    interface. Tree sequences provide a complete record of the
-    ancestral process, so we can do things like compute IBD
-    segments and introgressed tracts directly on the output. See
-    also ARG section for recording more information, though.
-
-\item Side note somewhere: with efficient access to branch length
-    statistics~\citep{ralph2020efficiently}, maybe we don't need to
-    simulate mutations at all. (not in the ABC context, but elsewhere)
-
-\item Tskit has facilited unprecedented interoperability between simulators:
-    Forward simulations can also use tree
-    sequences~\citep{kelleher2018efficient,haller2018tree}. In particular, SLiM
-    3.0~\citep{haller2019slim} and fwdpp~\citep{thornton2014cpp} can now output
-    tree sequences. Msprime can take tree sequences simulated by these forward
-    simulators as input and complete the simulation (``recapitation'').
-    See \cite{haller2018tree} for more details.
-    (Although, this could be a discussion point?)
-
-\end{itemize}
+\jkcomment{Fit this in somewhere? Or maybe it should be a discussion point?}
+Tskit has facilited unprecedented interoperability between simulators:
+Forward simulations can also use tree
+sequences~\citep{kelleher2018efficient,haller2018tree}. In particular, SLiM
+3.0~\citep{haller2019slim} and fwdpp~\citep{thornton2014cpp} can now output
+tree sequences. Msprime can take tree sequences simulated by these forward
+simulators as input and complete the simulation (``recapitation'').
+See \cite{haller2018tree} for more details.
 
 
 \subsection*{Finite sites mutations}
