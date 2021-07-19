@@ -36,7 +36,7 @@ def run_simbac(*, sample_size, L, gc_rate, gc_tract_length, count_trees=False):
     return num_trees
 
 
-def run_fastsimbac(*, sample_size, L, gc_rate, gc_tract_length, count_trees=False):
+def run_fastsimbac(*, sample_size, L, gc_rate, gc_tract_length, set_seed=0, count_trees=False):
 
     # using R=2*gc_rate as gene conversion/recombination rate as SimBac uses R/2
     R = gc_rate * 2
@@ -44,6 +44,8 @@ def run_fastsimbac(*, sample_size, L, gc_rate, gc_tract_length, count_trees=Fals
     args = f"{sample_size} {int(L)} -r {R} {gc_tract_length} -t 0"
     if count_trees:
         args += " -T "
+    if set_seed > 0:
+        args += " -s " + str(set_seed)
 
     # print("running", args)
     output = subprocess.run(
@@ -104,6 +106,7 @@ def validate(replicates, sample_size):
                 L=L,
                 gc_rate=gc_rate,
                 gc_tract_length=gc_tract_length,
+                set_seed = j,
                 count_trees=True,
             )
             nt_msprime[j] = run_msprime(
