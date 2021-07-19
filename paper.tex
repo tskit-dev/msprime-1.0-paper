@@ -118,7 +118,7 @@ This data structure has
 also lead to major advances in forwards-time
 simulation~\citep{kelleher2018efficient,haller2018tree},
 ancestry inference~\citep{kelleher2019inferring,wohns2021unified}
-and calculation of population genetic statistics~\citep{ralph2019efficiently}.
+and calculation of population genetic statistics~\citep{ralph2020efficiently}.
 Through a rigorous open-source community development process,
 \msprime\ has gained a large number of features since its introduction,
 making a highly efficient and flexible platform for population
@@ -163,8 +163,8 @@ point in listing it out section by section.}
 % to be extended by addition of new features while ensuring robustness and
 % maintainability of the core codebase.
 
-\label{sec-ts}
 \subsection*{Tree sequences}
+\label{sec-ts}
 One of the key reasons for \msprime's significiant performance advantage
 over other simulators is its usage of the ``succinct tree sequence''
 (usually, tree sequence) data stucture and the supporting \tskit\
@@ -172,6 +172,9 @@ library~\citep{tskit2021tskit}.
 While a full discussion of tree sequences and the capabilities
 of \tskit\ is beyond the scope of this article, we briefly summarise
 here.
+\jkcomment{We need to mention that tree sequences and tskit are
+derived from the 2016 paper and have been extracted from msprime
+into a separate C/Python library.}
 
 \begin{figure}
 \begin{center}
@@ -209,8 +212,6 @@ is a generalisation from the original concept  of
 ``coalescence records''~\citep{kelleher2016efficient}, and
 is the key to the efficiency of tree sequences.
 \jkcomment{Summarise and add references?}
-As discussed in the \ref{sec-mutations} section, tree sequences
-can also store genetic variation data very efficiently.
 
 The term Ancestral Recombination Graph (ARG) is often understood
 to mean the complete record of a sample's genetic
@@ -224,8 +225,32 @@ ARGs without loss of information---although we do not store
 the additional ARG information by default
 in \msprime\ because the minimal tree sequence encoding is
 much more concise (see the \nameref{sec-arg} section for more details).
+It should be noted that, despite efforts to
+standardise~\citep{cardona2008extended,mcgill2013graphml}, there is
+no shared format for interchanging ARG data, and no supporting software
+libraries.
 
+Tree sequences encode a complete and concise description of a set of sampled
+chromosome's genetic ancestry, and they can also efficiently represent
+the genetic variation (extant and ancestral).
+As illustrated in Fig.~\ref{fig-ts-example}, the \tskit\ tree
+sequence encoding includes \emph{site} and \emph{mutation} tables. Each
+row in the site table represents some position along the genome, and
+each row in the mutation table represents a change of allelic state
+at a particular site and node. Since the number of mutations is typically
+small, we can usually store the genetic variation for a given variant
+site in constant space. This approach of storing the genetic variation
+via the genetic ancestry is both very concise and extremely efficient
+to process---for example, computing Tajima's $D$ using \tskit\
+is several orders of magnitude faster for large sample sizes than
+efficient libraries working with the variant matrix
+representation~\citep{ralph2020efficiently}.
+\jkcomment{Mention Phastsim/USHER~\citep{demaio2021phastsim,turakhia2021ultrafast}
+here. Same basic idea, but much cruder.}
 
+\jkcomment{Make some sort of link here between this paper, which is
+about msprime simulations, but that we can't really disentangle
+simulations from their downstream processing.}
 The point of simulations is to generate data and the efficiency with
 which simulated data can be incorporated into an overall application
 is an important issue.
@@ -258,12 +283,8 @@ As ABC inference has become useful in an ever-widening range of applications,
 these all-in-one methods risk falling behind if they do not allow users to explore
 the models and statistics of most interest.
 
-\jkcomment{Stuff to cover}
+\jkcomment{Other potential stuff to cover}
 \begin{itemize}
-
-\item The core problem is that the field lacked an efficient mechanism for
-    interchanging simulated data, and so developers were forced to choose
-    between efficiency and duplication of effort.
 
 \item What are the output formats of simulators? Newick, or sequence data
     basically. What's the problem with this? We don't have mutations.
@@ -281,12 +302,8 @@ the models and statistics of most interest.
     also ARG section for recording more information, though.
 
 \item Side note somewhere: with efficient access to branch length
-    statistics~\citep{ralph2019efficiently}, maybe we don't need to
+    statistics~\citep{ralph2020efficiently}, maybe we don't need to
     simulate mutations at all. (not in the ABC context, but elsewhere)
-
-\item Msprime uses the \tskit\ library~\citep{tskit2021tskit}, which provides
-    extremely efficient interchange and data processing. A quick example
-    of how efficient.
 
 \item Tskit has facilited unprecedented interoperability between simulators:
     Forward simulations can also use tree
@@ -297,15 +314,11 @@ the models and statistics of most interest.
     See \cite{haller2018tree} for more details.
     (Although, this could be a discussion point?)
 
-\item Recently, Phastsim/USHER~\cite{demaio2021phastsim,turakhia2021ultrafast}
-    have used this idea of storing the
-    tree plus mutations, but approach is crude compared to tskit.
-
 \end{itemize}
 
 
-\label{sec-mutations}
 \subsection*{Finite sites mutations}
+\label{sec-mutations}
 Version 0.x of \texttt{msprime} provided a very simple mutation model,
 supporting only the infinite sites model.
 With version 1.0, we now support a large number of mutation models,
