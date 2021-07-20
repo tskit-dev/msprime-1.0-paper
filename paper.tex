@@ -800,13 +800,22 @@ the standard coalescent and infinite sites mutation model.
 See the Appendix for details.
 
 \subsection*{Selection}
-Selection was added to the coalescent ... Lots of simulators exist:
-SelSim~\citep{spencer2004selsim}
-mbs~\citep{teshima2009mbs},
-msms~\citep{ewing2010msms},
-% What about Cosi, did it simulate selection?
-Cosi2~\citep{shlyakhter2014cosi2},
-and discoal~\citep{kern2016discoal}.
+Another ellaboration of the standard neutral coalescent with recombination
+is the addition of selective sweeps~\citep{kaplan1989hitchhiking,braverman1995hitchhiking,kim2002detecting}.
+In the context of the coalescent this amounts to creating a structured population
+during the sojourn of the beneficial mutation through the population (i.e., the sweep phase)
+in which lineages may transit between favored and unfavored backgrounds through 
+recombination. This allows for many selective sweep scenarios, including recurrent, partial, 
+and soft selective sweeps to be simulated efficiently, however in general this
+efficiency comes at the cost of flexibility in comparison to forwards in
+time simulation. 
+
+Currently there are a small number of other simulators that will generate
+coalescent samples with sweeps including, SelSim~\citep{spencer2004selsim}
+mbs~\citep{teshima2009mbs}, msms~\citep{ewing2010msms},
+Cosi2~\citep{shlyakhter2014cosi2}, and discoal~\citep{kern2016discoal}. 
+Each of these packages has their own benefits and possible drawbacks,
+however none of them at present will output tree sequence formatted data.
 
 \begin{figure}
 \includegraphics[width=6cm]{figures/sweeps-perf}
@@ -815,9 +824,16 @@ and discoal~\citep{kern2016discoal}.
 }
 \end{figure}
 
-We have implemented the basic infrastructure exists for the structured
-coalescent, which makes adding support for, e.g.,
-inversions straightforward~\citep{peischl2013sequential}
+We have implemented selective sweeps in \msprime\ similarly to 
+the \texttt{discoal} implementation-- sweep trajectories are 
+generated from a jump process approximation to the conditional diffusion
+of an allele bound for fixation~\citep{coop2004ancestral}.
+This implementation allows us to further generalize sweep models to
+changing population sizes as well as selection from standing variation,
+both of which are features that are planned for the near future.
+Moreover because this implements the basic infrastructure for the structured
+coalescent, adding support for, e.g.,
+inversions is straightforward~\citep{peischl2013sequential}.
 
 \subsection*{Discrete time Wright-Fisher}
 
