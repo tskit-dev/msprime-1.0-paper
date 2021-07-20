@@ -275,7 +275,8 @@ text-based file formats to compute these statistics
 by either developing their own
 simulators~\citep[e.g.][]{cornuet2008inferring,lopes2009popabc}
 or creating forked versions of existing
-simulators~\cite[e.g.][]{pavlidis2010msabc,quinto2018modeling},
+simulators~\cite[e.g.][]{thornton2006approximate,
+hickerson2007msbayes,pavlidis2010msabc,huang2011mtml,quinto2018modeling},
 tightly integrated with the inference method.
 While this is certainly more efficient,
 there is a great deal of duplication of effort and significant
@@ -304,6 +305,7 @@ of simulators have been created to access information not provided
 in the output. For example, \ms\  has been forked to
 output information about migrating segments~\citep{rosenzweig2016powerful},
 information about ancestral lineages~\citep{chen2013asymptotic},
+an array of population genetic statistics~\citep{ramos2007mlcoalsim}
 % Any more?
 and \ms's fork \texttt{msHOT}~\citep{hellenthal2007mshot},
 has in turn been forked to output information on local
@@ -884,12 +886,10 @@ drawn from some distribution. In practice, for any significant simulation
 project (or at least, any reproducible one), users will write a script
 to generate the required command lines or input parameter files,
 invoke the simulation engine, and process the results in some way.
-%% Maybe we can cite simprily below (https://www.sciencedirect.com/science/article/pii/S2352711018301213). Ariella worked on putting
-%% together a pipeline to facilite running simulations for ABC. 
-This process is cumbersome and labour intensive, and packages
-such \texttt{coala}~\citep{staab2016coala} and \texttt{gladstein2018simprily} have been developed
+This process is cumbersome and labour intensive, and
+a number of packages have been developed
 to allow simulations be run directly in a high-level
-scripting language.
+scripting language~\citep{staab2016coala,parobek2017skelesim,gladstein2018simprily}.
 
 The more recent trend has been to move away from this file and command-line
 driven approach and to instead provide direct interfaces to the simulation
