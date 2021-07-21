@@ -15,9 +15,11 @@ import cpuinfo
 def cli():
     pass
 
+
 def save(name):
     plt.savefig(f"figures/{name}.png")
     plt.savefig(f"figures/{name}.pdf")
+
 
 @click.command()
 def mutations_perf():
@@ -68,6 +70,7 @@ def gc_perf():
     ax1.legend()
     save("gc-perf")
 
+
 @click.command()
 def sweeps_perf():
     """
@@ -88,6 +91,65 @@ def sweeps_perf():
 
 
 @click.command()
+def dtwf_perf():
+    """
+    Plot the DTWF benchark.
+    """
+
+    df = pd.read_csv(
+        "data/dtwf-perf.csv", sep="\t", usecols=["length", "program", "runtime"]
+    )
+
+    # Make a new dataframe with just the runtime means.
+    means = df.groupby(["length", "program"]).mean().reset_index()
+    sample_sizes = [0, 1, 2, 3, 4]
+    sample_size_labs = [
+        r"$10^{-2}$",
+        r"$10^{-1}$",
+        r"$10^{0}$",
+        r"$10^{1}$",
+        r"$10^{2}$",
+    ]
+
+    # print(means)
+
+    # # Plot the means
+    plt.plot(
+        sample_sizes,
+        np.log10(means[means["program"] == "msprime-DTWF"]["runtime"]),
+        label="msprime-DTWF",
+        marker="o",
+        color="C1",
+    )
+    plt.plot(
+        sample_sizes,
+        np.log10(means[means["program"] == "msprime-hybrid"]["runtime"]),
+        label="msprime-hybrid",
+        marker="o",
+        color="C1",
+        linestyle="dashed",
+    )
+    plt.plot(
+        sample_sizes,
+        np.log10(means[means["program"] == "argon"]["runtime"]),
+        label="argon",
+        marker="o",
+        color="C0",
+    )
+    plt.legend(loc="upper left")
+    plt.xlabel("Chromosome lengths (Mb)")
+    plt.ylabel("Runtimes (secs)")
+    plt.title("Simulation runtimes for different genome lengths")
+    plt.xticks(sample_sizes, labels=sample_size_labs)
+    plt.yticks(
+        [-2, -1, 0, 1, 2],
+        labels=[r"$10^{-2}$", r"$10^{1}$", r"$10^{0}$", r"$10^{1}$", r"$10^{2}$"],
+    )
+    plt.grid(b=True, linewidth=0.5, linestyle="dotted")
+    save("dtwf-perf")
+
+
+@click.command()
 def arg():
     """
     Plot the ARG size illustration figure.
@@ -105,6 +167,7 @@ def arg():
 cli.add_command(mutations_perf)
 cli.add_command(gc_perf)
 cli.add_command(sweeps_perf)
+cli.add_command(dtwf_perf)
 cli.add_command(arg)
 
 if __name__ == "__main__":
