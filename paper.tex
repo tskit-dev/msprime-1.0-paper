@@ -237,23 +237,26 @@ standardise~\citep{cardona2008extended,mcgill2013graphml}, there is
 no shared format for interchanging ARG data, and no supporting software
 libraries.
 
-Tree sequences encode a complete and concise description of a set of sampled
-chromosome's genetic ancestry, and they can also efficiently represent
-the genetic variation (extant and ancestral).
-As illustrated in Fig.~\ref{fig-ts-example}, the \tskit\ tree
-sequence encoding includes \emph{site} and \emph{mutation} tables. Each
-row in the site table represents some position along the genome, and
-each row in the mutation table represents a change of allelic state
-at a particular site and node. Since the number of mutations is typically
-small, we can usually store the genetic variation for a given variant
-site in constant space. This approach of storing the genetic variation
-via the genetic ancestry is both very concise and extremely efficient
-to process---for example, computing Tajima's $D$ using \tskit\
-is several orders of magnitude faster for large sample sizes than
-efficient libraries working with the variant matrix
-representation~\citep{ralph2020efficiently}.
-\jkcomment{Mention Phastsim/USHER~\citep{demaio2021phastsim,turakhia2021ultrafast}
-here. Same basic idea, but much cruder.}
+% JK: commenting this out for now as we're covering it in the Mutations
+% section.
+
+% Tree sequences encode a complete and concise description of a set of sampled
+% chromosome's genetic ancestry, and they can also efficiently represent
+% the genetic variation (extant and ancestral).
+% As illustrated in Fig.~\ref{fig-ts-example}, the \tskit\ tree
+% sequence encoding includes \emph{site} and \emph{mutation} tables. Each
+% row in the site table represents some position along the genome, and
+% each row in the mutation table represents a change of allelic state
+% at a particular site and node. Since the number of mutations is typically
+% small, we can usually store the genetic variation for a given variant
+% site in constant space. This approach of storing the genetic variation
+% via the genetic ancestry is both very concise and extremely efficient
+% to process---for example, computing Tajima's $D$ using \tskit\
+% is several orders of magnitude faster for large sample sizes than
+% efficient libraries working with the variant matrix
+% representation~\citep{ralph2020efficiently}.
+% \jkcomment{Mention Phastsim/USHER~\citep{demaio2021phastsim,turakhia2021ultrafast}
+% here. Same basic idea, but much cruder.}
 
 \jkcomment{We need a link paragraph here between what this paper is
 about (what we can simulate) and what the rest of this section is about
@@ -321,6 +324,10 @@ stored via options such as \texttt{record\_migrations} or
 \texttt{record\_full\_arg} (see the \nameref{sec-arg} section) and
 can be efficiently and conveniently processed via \tskit\ APIs.
 
+\jkcomment{A point to make somewhere in here: the tskit data model is
+integrated, with all of the information that you need in one file. Not
+splattered across a number of different files, that you have to keep track
+of.}
 
 \jkcomment{Fit this in somewhere? Or maybe it should be a discussion point?}
 Tskit has facilited unprecedented interoperability between simulators:
@@ -335,36 +342,77 @@ See \cite{haller2018tree} for more details.
 \subsection*{Simulating mutations}
 \label{sec-mutations}
 % Explain the background: what have people done classically?
-Because we are usually simulating neutral evolution in coalescent simulations,
-the problem of simulating generating variation can be decomposed into
+Because coalescent simulations are usually concerned with
+neutral evolution (see the \nameref{sec-selection} section, however)
+the problem of generating synthetic genetic variation can be decomposed into
 two independent steps:
-first simulating the genetic ancestry (the trees), and then simulating
-variation by superimposing neutral mutation processes on those trees.
-The classical \texttt{Seq-Gen}~\citep{rambaut1997seq} program allows a range
-of different models of sequence evolution to be imposed on a given
+simulating genetic ancestry (the trees), and then simulating
+variation by superimposing mutation processes on those trees.
+The classical \texttt{Seq-Gen} program~\citep{rambaut1997seq}
+allows a range of different models of sequence evolution to be imposed on a given
 tree in Newick format. Population genetic simulators have tended to
 include their own implementations of mutation simulation, with
 most just supporting the infinite sites
 model~\citep[e.g.][]{hudson2002generating}
-but in several cases including a range of different
-models of sequence evolution
-built-in~\citep[e.g.][]{mailund2005coasim,excoffier2011fastsimcoal}.
-The ultimate output of the simulations of trees and mutations is
-then some representation of the resulting nucleotide sequences,
-and information about the simulated mutations is lost.
+but with several supporting a range of different models
+of sequence
+evolution~\citep[e.g.][]{mailund2005coasim,excoffier2011fastsimcoal,
+virgoulay2021gspace}.
+% Mutations are not treated as first-class data --- the sequences
+% were really all people were after, classically.
+The output of the combined simulations of ancestry and mutations is
+then some representation of the resulting nucleotide sequences
+(or perhaps some derived statistics of those sequences);
+information about the mutations themselves is not typically
+provided to the user.
+
+The approach taken in \msprime\ and \tskit\ is quite different.
+As illustrated in Fig.~\ref{fig-ts-example}, mutations are an
+integral part of the tree sequence data model, and genetic
+variation is encoded by sites and the mutations at those sites.
+This may seem at first inconvenient, but is extremely powerful.
+Firstly, the storage space required for simulations is dramatically
+reduced. For a simulation of $n$ samples with $m$ variant sites,
+we required $O(nm)$ space to store the sequence data as a variant
+matrix. However, if this simulation was of a recombining genome
+with $t$ trees, then the \tskit\ tree sequence encoding
+requires $O(n + t + m)$ space~\citep{kelleher2016efficient}. For
+large sample sizes, this difference is profound, making it
+conceivable, for example, to store the genetic ancestry
+and variation data for the entire human population on a
+laptop~\citep{kelleher2019inferring}. Besides the huge
+difference in storage efficiency, it is also often far more efficient
+to compute statistics of the sequence data from the
+trees and mutations than it is to work with the sequences themselves.
+For example, computing Tajima's $D$ from simulated data using \tskit\
+is several orders of magnitude faster for large
+sample sizes~\citep{ralph2020efficiently}.
+
+
+Motivated by the large numbers of SARS-CoV-2 genomes currently
+available, \cite{turakhia2021ultrafast} propose a similar approach
+to encoding variation data for non-recombining organisms,
+where a Newick tree is annotated by mutations~\citep{mcbroome2021daily}.
+Similarly, the Phastsim~\citep{demaio2021phastsim} mutation simulator,
+developed primarily to support simulation of SARS-CoV-2 trees
+with hundreds of thousands of leaves, can optionally output a
+Newick tree, where nodes are annotated with the mutations.
+However, the dependence on the Newick format for encoding
+topological information means that it suffers from all the
+problems of newick [what?], and there is no software library support
+[confirm].
+
+
 
 \jkcomment{stuff to cover somewhere in this section}
 \begin{itemize}
-\item Tskit's approach of storing the mutations is a very simple idea,
-but has profound computational consequences. We can compute statistics
-about the sequences \emph{without ever seeing those sequences}.
 \item Mutation simulations is only included in msprime for historical reasons.
 It would be better to see msprime's mutation simulation as a separate
 package. The mutation and ancestry code in msprime have no priveledged
 access to each other, and mutation simulation would be no less efficient
 if done in a different package.
 \item Really emphasise this point: you can use msprime's mutation simulation
-on \empH{any} tskit tree sequence, produced by SLiM, fwdpp, etc or
+on \emph{any} tskit tree sequence, produced by SLiM, fwdpp, etc or
 even tsinfer. It's completely modular.
 \end{itemize}
 
@@ -840,6 +888,7 @@ the standard coalescent and infinite sites mutation model.
 See the Appendix for details.
 
 \subsection*{Selection}
+\label{sec-selection}
 Another ellaboration of the standard neutral coalescent with recombination
 is the addition of selective sweeps~\citep{kaplan1989hitchhiking,braverman1995hitchhiking,kim2002detecting}.
 In the context of the coalescent this amounts to creating a structured population
