@@ -58,13 +58,16 @@ def gc_perf():
     Plot the gene-conversion benchmark.
     """
     df = pd.read_csv("data/gc-perf.csv")
+    # Get the mean among replicates
+    dfg = df.groupby(["sample_size", "tool"]).mean().reset_index()
 
     fig, ax1 = plt.subplots(1, 1)
     for tool in set(df.tool):
-        dft = df[df.tool == tool]
+        dft = dfg[dfg["tool"] == tool]
         ax1.plot(dft.sample_size, dft.time, label=tool)
 
     ax1.set_xlabel("Sample size")
+    ax1.set_ylim(0, 3600)
     ax1.set_ylabel("Time (seconds)")
 
     ax1.legend()
