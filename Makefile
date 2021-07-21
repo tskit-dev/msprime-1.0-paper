@@ -5,6 +5,7 @@ FIGURES=figures/mutations-perf.pdf\
 	figures/arg.pdf\
 	figures/sweeps-perf.pdf\
 	figures/gc-perf.pdf\
+	figures/dtwf-perf.pdf\
 	figures/example_tree_sequence.pdf
 
 paper.pdf: paper.tex paper.bib ${DATA} ${FIGURES}
