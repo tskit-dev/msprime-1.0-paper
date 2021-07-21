@@ -1,6 +1,5 @@
 import concurrent.futures
 import subprocess
-import sys
 import tempfile
 import time
 
@@ -42,7 +41,7 @@ def run_fastsimbac(
     *, sample_size, L, gc_rate, gc_tract_length, set_seed=0, count_trees=False
 ):
 
-    # using R=2*gc_rate as gene conversion/recombination rate as SimBac uses R/2
+    # using R=2*gc_rate as gene conversion/recombination rate
     R = gc_rate * 2
     # Set theta to 0 to remove mutations (defaults to 0.01)
     args = f"{sample_size} {int(L)} -r {R} {gc_tract_length} -t 0"
@@ -107,8 +106,8 @@ def run_benchmark(work):
     duration = time.perf_counter() - before
     return {
         "sample_size": sample_size,
-        "tool": name,
-        "time": duration / replicates,
+        "tool": tool,
+        "time": duration,
     }
 
 
@@ -212,11 +211,14 @@ def benchmark_ecoli(replicates, processes):
             work.extend([(name, sample_size)] * replicates)
     data = []
     with concurrent.futures.ProcessPoolExecutor(max_workers=processes) as executor:
-        for datum in executor.map(run_benchmark, work):
-            print(datum)
-            data.append(datum)
+        futures = [executor.submit(run_benchmark, item) for item in work]
+        for future in concurrent.futures.as_completed(futures):
+            data.append(future.result())
+            print(data[-1])
             df = pd.DataFrame(data)
             df.to_csv("data/gc-perf.csv")
+
+
 
 @click.group()
 def cli():
