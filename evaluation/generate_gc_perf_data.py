@@ -1,3 +1,4 @@
+import concurrent.futures
 import subprocess
 import sys
 import tempfile
@@ -37,7 +38,9 @@ def run_simbac(*, sample_size, L, gc_rate, gc_tract_length, count_trees=False):
     return num_trees
 
 
-def run_fastsimbac(*, sample_size, L, gc_rate, gc_tract_length, set_seed=0, count_trees=False):
+def run_fastsimbac(
+    *, sample_size, L, gc_rate, gc_tract_length, set_seed=0, count_trees=False
+):
 
     # using R=2*gc_rate as gene conversion/recombination rate as SimBac uses R/2
     R = gc_rate * 2
@@ -89,6 +92,26 @@ def run_msprime(*, sample_size, L, gc_rate, gc_tract_length, ret_breakpoints = T
     return treenumber
 
 
+def run_benchmark(work):
+    tool, sample_size = work
+
+    L = 4_500_000
+    gc_rate = 0.015
+    gc_tract_length = 500
+
+    func = tool_map[tool]
+    before = time.perf_counter()
+    func(
+        sample_size=sample_size, L=L, gc_rate=gc_rate, gc_tract_length=gc_tract_length,
+    )
+    duration = time.perf_counter() - before
+    return {
+        "sample_size": sample_size,
+        "tool": name,
+        "time": duration / replicates,
+    }
+
+
 @click.command()
 @click.option("--replicates", type=int, default=1000)
 @click.option("--sample-size", type=int, default=10)
@@ -121,7 +144,7 @@ def validate(replicates, sample_size):
                 L=L,
                 gc_rate=gc_rate,
                 gc_tract_length=gc_tract_length,
-                set_seed = j,
+                set_seed=j,
                 count_trees=True,
             )
             nt_msprime[j], nb_msprime[j] = run_msprime(
@@ -151,7 +174,6 @@ def validate(replicates, sample_size):
 
     plt.close("all")
 
-
     sm.graphics.qqplot(nt_fastsimbac)
     sm.qqplot_2samples(nt_fastsimbac, nt_msprime, line="45")
     plt.xlabel("fastsimbac")
@@ -159,9 +181,17 @@ def validate(replicates, sample_size):
     plt.savefig("figures/verify_fastsimbac_v_msprime.png")
 
 
+tool_map = {
+    "msprime": run_msprime,
+    "SimBac": run_simbac,
+    "fastSimBac": run_fastsimbac,
+}
+
+
 @click.command()
 @click.option("--replicates", type=int, default=5)
-def benchmark_ecoli(replicates):
+@click.option("--processes", type=int, default=None)
+def benchmark_ecoli(replicates, processes):
     """
     Runs the benchmarks for E-coli simulations.
     """
@@ -171,44 +201,22 @@ def benchmark_ecoli(replicates):
         for k, v in cpu.items():
             print(k, "\t", v, file=f)
 
-    L = 4_500_000
-    gc_rate = 0.015
-    gc_tract_length = 500
-
     sample_sizes = np.linspace(10, 500, 20).astype(int)
-    tool_map = {
-        "msprime": run_msprime,
-        "SimBac": run_simbac,
-        "fastSimBac": run_fastsimbac,
-    }
+    work = []
+    for sample_size in sample_sizes:
+        for name in tool_map.keys():
+            if sample_size > 50 and name == "SimBac":
+                continue
+            if sample_size > 400 and name == "fastSimBac":
+                continue
+            work.extend([(name, sample_size)] * replicates)
     data = []
-    for j, sample_size in enumerate(sample_sizes):
-        for name, func in tool_map.items():
-            if j > 1 and name == "SimBac":
-                continue
-            if j > 3 and name == "fastSimBac":
-                continue
-            print(name, "n =", sample_size)
-            before = time.perf_counter()
-            for _ in range(replicates):
-                func(
-                    sample_size=sample_size,
-                    L=L,
-                    gc_rate=gc_rate,
-                    gc_tract_length=gc_tract_length,
-                )
-            duration = time.perf_counter() - before
-            data.append(
-                {
-                    "sample_size": sample_size,
-                    "tool": name,
-                    "time": duration / replicates,
-                }
-            )
+    with concurrent.futures.ProcessPoolExecutor(max_workers=processes) as executor:
+        for datum in executor.map(run_benchmark, work):
+            print(datum)
+            data.append(datum)
             df = pd.DataFrame(data)
-            print(data[-1])
             df.to_csv("data/gc-perf.csv")
-
 
 @click.group()
 def cli():
