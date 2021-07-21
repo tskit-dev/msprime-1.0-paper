@@ -64,7 +64,7 @@ def run_fastsimbac(
     return num_trees
 
 
-def run_msprime(*, sample_size, L, gc_rate, gc_tract_length, ret_breakpoints = True):
+def run_msprime(*, sample_size, L, gc_rate, gc_tract_length, ret_breakpoints=True):
     sim = msprime.sim_ancestry(
         samples=sample_size,
         sequence_length=L,
@@ -73,7 +73,7 @@ def run_msprime(*, sample_size, L, gc_rate, gc_tract_length, ret_breakpoints = T
         gene_conversion_tract_length=gc_tract_length,
     )
     treenumber = sim.num_trees
-        
+
     # We use an internal msprime API here because we want to get at the
     # number of breakpoints, not the distinct trees.
     if ret_breakpoints:
@@ -87,7 +87,7 @@ def run_msprime(*, sample_size, L, gc_rate, gc_tract_length, ret_breakpoints = T
         sim.run()
         breakpointnumber = sim.num_breakpoints
         return treenumber, breakpointnumber
-        
+
     return treenumber
 
 
@@ -206,8 +206,6 @@ def benchmark_ecoli(replicates, processes):
         for name in tool_map.keys():
             if sample_size > 50 and name == "SimBac":
                 continue
-            if sample_size > 400 and name == "fastSimBac":
-                continue
             work.extend([(name, sample_size)] * replicates)
     data = []
     with concurrent.futures.ProcessPoolExecutor(max_workers=processes) as executor:
@@ -217,7 +215,6 @@ def benchmark_ecoli(replicates, processes):
             print(data[-1])
             df = pd.DataFrame(data)
             df.to_csv("data/gc-perf.csv")
-
 
 
 @click.group()
