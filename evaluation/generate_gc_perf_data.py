@@ -43,7 +43,7 @@ def run_fastsimbac(*, sample_size, L, gc_rate, gc_tract_length, set_seed=0, coun
     # Set theta to 0 to remove mutations (defaults to 0.01)
     args = f"{sample_size} {int(L)} -r {R} {gc_tract_length} -t 0"
     if count_trees:
-        args += " -T "
+        args += " -T -b 500"
     if set_seed > 0:
         args += " -s " + str(set_seed)
 
@@ -61,18 +61,31 @@ def run_fastsimbac(*, sample_size, L, gc_rate, gc_tract_length, set_seed=0, coun
     return num_trees
 
 
-def run_msprime(*, sample_size, L, gc_rate, gc_tract_length):
-    # We use an internal msprime API here because we want to get at the
-    # number of breakpoints, not the distinct trees.
-    sim = msprime.ancestry._parse_sim_ancestry(
+def run_msprime(*, sample_size, L, gc_rate, gc_tract_length, ret_breakpoints = True):
+    sim = msprime.sim_ancestry(
         samples=sample_size,
         sequence_length=L,
         ploidy=1,
         gene_conversion_rate=gc_rate,
         gene_conversion_tract_length=gc_tract_length,
     )
-    sim.run()
-    return sim.num_breakpoints
+    treenumber = sim.num_trees
+        
+    # We use an internal msprime API here because we want to get at the
+    # number of breakpoints, not the distinct trees.
+    if ret_breakpoints:
+        sim = msprime.ancestry._parse_sim_ancestry(
+            samples=sample_size,
+            sequence_length=L,
+            ploidy=1,
+            gene_conversion_rate=gc_rate,
+            gene_conversion_tract_length=gc_tract_length,
+        )
+        sim.run()
+        breakpointnumber = sim.num_breakpoints
+        return treenumber, breakpointnumber
+        
+    return treenumber
 
 
 @click.command()
@@ -91,6 +104,7 @@ def validate(replicates, sample_size):
     nt_simbac = np.zeros(replicates)
     nt_fastsimbac = np.zeros(replicates)
     nt_msprime = np.zeros(replicates)
+    nb_msprime = np.zeros(replicates)
 
     with click.progressbar(range(replicates)) as bar:
         for j in bar:
@@ -109,11 +123,12 @@ def validate(replicates, sample_size):
                 set_seed = j,
                 count_trees=True,
             )
-            nt_msprime[j] = run_msprime(
+            nt_msprime[j], nb_msprime[j] = run_msprime(
                 sample_size=sample_size,
                 L=L,
                 gc_rate=gc_rate,
                 gc_tract_length=gc_tract_length,
+                ret_breakpoints=True,
             )
     print(
         "mean number of trees:",
@@ -121,12 +136,14 @@ def validate(replicates, sample_size):
         np.mean(nt_simbac),
         "fastsimbac=",
         np.mean(nt_fastsimbac),
-        "msprime=",
+        "msprime trees=",
         np.mean(nt_msprime),
+        "msprime breakpoints=",
+        np.mean(nb_msprime),
     )
 
     sm.graphics.qqplot(nt_simbac)
-    sm.qqplot_2samples(nt_simbac, nt_msprime, line="45")
+    sm.qqplot_2samples(nt_simbac, nb_msprime, line="45")
     plt.xlabel("simbac")
     plt.ylabel("msprime")
     plt.savefig("figures/verify_simbac_v_msprime.png")
