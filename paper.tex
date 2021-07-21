@@ -388,20 +388,35 @@ For example, computing Tajima's $D$ from simulated data using \tskit\
 is several orders of magnitude faster for large
 sample sizes~\citep{ralph2020efficiently}.
 
+The advantages of storing mutations rather than sequences have
+recently become clear in the context of vast genomic
+datasets produced during the SARS-CoV-2 pandemic.
+\cite{turakhia2021ultrafast} propose the
+Mutation Annotated Tree (MAT)
+format~\citep{mcbroome2021daily}---consisting of a Newick tree
+and associated mutations in a binary format---as an efficient way to store
+and process large viral datasets,
+and achieve excellent compression and processing performance.
+Similarly, \texttt{phastsim}~\citep{demaio2021phastsim}
+was developed to simulate sequence evolution on such large SARS-CoV-2
+phylogenies, and also outputs a tree annotated with mutations (not
+in MAT format, however) to avoid the bottleneck of generating
+and storing the simulated sequences.
+While these methods illustate the advantages of the general
+approach of storing ancestry and mutations over sequences,
+they do not generalise beyond their immediate settings, and
+no software library support is available.
 
-Motivated by the large numbers of SARS-CoV-2 genomes currently
-available, \cite{turakhia2021ultrafast} propose a similar approach
-to encoding variation data for non-recombining organisms,
-where a Newick tree is annotated by mutations~\citep{mcbroome2021daily}.
-Similarly, the Phastsim~\citep{demaio2021phastsim} mutation simulator,
-developed primarily to support simulation of SARS-CoV-2 trees
-with hundreds of thousands of leaves, can optionally output a
-Newick tree, where nodes are annotated with the mutations.
-However, the dependence on the Newick format for encoding
-topological information means that it suffers from all the
-problems of newick [what?], and there is no software library support
-[confirm].
-
+% on the other hand, tskit is awesome.
+Sites and mutations are fully integrated into the tree sequence data
+model and the \tskit\ library.
+As illustrated in Fig~\ref{fig-ts-example},
+each site corresponds to some position
+along the genome, and each mutation occurs at a given site, above
+a particular node, with a given derived state (along with other
+information, such as the time the mutation occured).
+% Now talk about why tskit allows us to easily generate mutations
+% on any input tree sequence topology.
 
 
 \jkcomment{stuff to cover somewhere in this section}
