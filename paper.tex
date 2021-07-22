@@ -496,33 +496,20 @@ we would have to consider $273,887,838$ branches
 since there are $137,081$ trees and $1,998$ branches in each
 tree ($\sim500$ times more work).
 
-Even when we consider a single tree, \msprime\ is far more
-efficient than methods such as \SeqGen\ and \Pyvolve,
-and has similar performance to \phastsim.
-
-
-
-Comparing the performance of mutation generation methods is problematic.
-Because there is no standard format for representing trees and
-the accompanying mutations, all existing methods are focused on
-writing out the resulting sequences. Methods are also not modular,
-and so it is very difficult to disentangle the time required to
-read in the tree file and output the sequences from the actual
-time required to perform the simulation.
-
-\jkcomment{We probably want to keep a version of this narrative too.}
-For example, we simulated mutations under the JC69
-model for a tree with $10^6$ leaves over $10^4$ sites (resulting
-in $\sim 280000$ mutations) in less that 1.5 seconds, including
-the time required for file input and output. While a systematic
-comparison of run-times is not feasible here, this is orders
-of magnitude faster than methods such as
-Seq-Gen~\citep{rambaut1997seq} and
-Pyvolve~\citep{spielman2015pyvolve}
-and at least competitive with the recent method from
-\cite{demaio2021phastsim}.
-
-\textbf{TODO: would love to do a like-for-like comparison, but quite hard}
+% python3 evaluation/generate_mutations_perf_data.py benchmark-single-tree
+Even if we consider a single tree, \msprime\ generates mutations
+extremely efficiently.
+For example, we simulated mutations under the BLOSUM62 amino
+acid model for a tree with $10^6$ leaves over $10^4$ sites (resulting
+in $\sim 260,000$ mutations) in about $0.8$ seconds, including
+the time required for file input and output.
+We do not attempt a systematic benchmarking of \msprime's
+mutation generation code against other methods because it is
+difficult to disentangle the effects of inefficient input and
+output formats from the mutation generation algorithms
+at this scale. It seems quite unlikely, however,
+that generating mutations with \msprime\ would be a bottleneck in any
+realistic analysis.
 
 Things we can do: future work will need to do things like
 Dawg~\citep{cartwright2005dna} and to implement models and
