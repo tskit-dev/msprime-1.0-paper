@@ -4,7 +4,6 @@ import pathlib
 import pandas as pd
 import numpy as np
 import click
-import pyvolve
 import tskit
 import msprime
 import cpuinfo
@@ -14,52 +13,33 @@ import cpuinfo
 def cli():
     pass
 
+    print
+
 
 @click.command()
-@click.argument("tree_file", type=click.Path())
-def benchmark_pyvolve(tree_file):
-    click.echo("Benchmarking pyvolve")
-
-    ts = tskit.load(tree_file)
-    tree = ts.first()
-    # node_labels = {u: str(u) for u in ts.samples()}
-    newick = tree.newick()  # node_labels=node_labels)
-    # Not entirely sure this is the correct rate, but pyvolve won't tell
-    # me how many mutations it has generated, so it's not simple.
-    pyvolve_tree = pyvolve.read_tree(tree=newick, scale_tree=1)
-    pyvolve_model = pyvolve.Partition(
-        models=pyvolve.Model("nucleotide"), size=int(ts.sequence_length)
+@click.option("--sample-size", type=int, default=1_000_000)
+def benchmark_single_tree(sample_size):
+    """
+    Benchmark running a simulation on a single large tree.
+    """
+    print("Generating ancestry")
+    ts = msprime.sim_ancestry(
+        sample_size, ploidy=1, sequence_length=10 ** 4, random_seed=1234
     )
-    print("starting sim")
-    sim = pyvolve.Evolver(tree=pyvolve_tree, partitions=pyvolve_model)
-    before = time.perf_counter()
-    sim(ratefile=None, infofile=None, seqfile=None)
-    duration = time.perf_counter() - before
-    print("Ran in duration ", duration)
-    # print(sim)
-    # seqs = sim.get_sequences(anc=True)  # seq-dict is sorted in pre-order
+    print("Done")
 
+    ts.dump("tmp/big_tree.trees")
 
-@click.command()
-@click.argument("tree_file", type=click.Path())
-def benchmark_msprime(tree_file):
-    click.echo("Benchmarking msprime")
-    ts = tskit.load(tree_file)
     before = time.perf_counter()
-    ts = msprime.sim_mutations(ts, rate=1, random_seed=42)
+    # Factor in the time required to load the files
+    ts = tskit.load("tmp/big_tree.trees")
+    ts = msprime.sim_mutations(ts, model="BLOSUM62", rate=1, random_seed=42)
+    ts.dump("tmp/big_tree_mutations.trees")
     duration = time.perf_counter() - before
-    print("Ran in duration ", duration)
+    print(ts)
+
     print("simulated ", ts.num_mutations, "mutations at ", ts.num_sites, "sites")
-    ts.dump("tmp.trees")
-
-
-@click.command()
-@click.argument("tree_file", type=click.Path())
-def convert_newick(tree_file):
-    ts = tskit.load(tree_file)
-    tree = ts.first()
-    newick = tree.newick()
-    print(newick)
+    print("msprime = ", duration)
 
 
 def generate_tree(n, L, random_seed=42):
@@ -132,9 +112,7 @@ def benchmark_on_trees():
         df.to_csv("data/mutations_perf.csv")
 
 
-cli.add_command(benchmark_pyvolve)
-cli.add_command(benchmark_msprime)
-cli.add_command(convert_newick)
+cli.add_command(benchmark_single_tree)
 cli.add_command(generate_trees)
 cli.add_command(benchmark_on_trees)
 
