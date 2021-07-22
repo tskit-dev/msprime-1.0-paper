@@ -44,9 +44,11 @@ def run_fastsimbac(
     # using R=2*gc_rate as gene conversion/recombination rate
     R = gc_rate * 2
     # Set theta to 0 to remove mutations (defaults to 0.01)
-    args = f"{sample_size} {int(L)} -r {R} {gc_tract_length} -t 0"
+    # We need the -b 500 to set the burn-in so we get the correct distribution
+    # of trees.
+    args = f"{sample_size} {int(L)} -r {R} {gc_tract_length} -t 0 -b 500"
     if count_trees:
-        args += " -T -b 500"
+        args += " -T "
     if set_seed > 0:
         args += " -s " + str(set_seed)
 
