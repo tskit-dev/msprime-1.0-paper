@@ -124,7 +124,7 @@ introduced as part of \msprime\, makes it possible to store simulations
 of millions of whole chromosomes in a few gigabytes, several orders
 of magnitude smaller than the standard
 Newick~\citep{felsenstein1989phylip} or
-VCF~\citep{danecek2011variant} based formats formats.
+VCF~\citep{danecek2011variant} based formats.
 This data structure has
 also lead to major advances in forwards-time
 simulation~\citep{kelleher2018efficient,haller2018tree},
@@ -177,15 +177,16 @@ point in listing it out section by section.}
 \subsection*{Tree sequences}
 \label{sec-ts}
 One of the key reasons for \msprime's significiant performance advantage
-over other simulators is its usage of the ``succinct tree sequence''
-(usually, tree sequence) data stucture and the supporting \tskit\
-library~\citep{tskit2021tskit}.
+over other simulators~\citep{kelleher2016efficient}
+is its usage of the ``succinct tree sequence''
+(usually, tree sequence) data stucture
+The basic concepts were introduced by \cite{kelleher2016efficient}
+and originally developed as part of \msprime. We have subsequently
+extracted the tree sequence code from \msprime\ into
+\tskit~\citep{tskit2021tskit}, a standalone Python and C library.
 While a full discussion of tree sequences and the capabilities
-of \tskit\ is beyond the scope of this article, we briefly summarise
-here.
-\jkcomment{We need to mention that tree sequences and tskit are
-derived from the 2016 paper and have been extracted from msprime
-into a separate C/Python library.}
+of \tskit\ is beyond the scope of this article, we summarise
+the aspects that are important for simulation here.
 
 \begin{figure}
 \begin{center}
@@ -194,21 +195,21 @@ into a separate C/Python library.}
 \caption{\label{fig-ts-example} Example tree sequence.
 An example tree sequence describing genealogies and genotypes
 for four samples at ten sites.
-Figure based on~\citet{kelleher2018efficient}.
 }
 \end{figure}
 
 The succinct tree sequence is a data structure for concisely encoding
-genetic ancestry. Given a set of sample chromosomes, the topology
+genetic ancestry and variation. Given a set of sample chromosomes, the topology
 of their genetic ancestry is described by a set of \emph{nodes}
-and \emph{edges}. A node in tree sequence terminology corresponds
+and \emph{edges} (Fig.~\ref{fig-ts-example}).
+A node in tree sequence terminology corresponds
 to a single chromosome strand, and is associated with its birth time,
-birth population and other metadata. A node may optionally be
+population and other metadata. A node may optionally be
 associated with an \emph{individual}, so that, for example, a diploid
 individual will be associated with two separate nodes (we omit
 the individual table in Fig.~\ref{fig-ts-example} as it is optional).
 Nodes define haplotypes that exist at a specific time within a
-specific individual, and edges define genetic inheritence
+some individual, and edges define genetic inheritence
 relationships between these nodes. An edge consists of a
 parent node, a child node and the left and right coordinates
 of the contiguous genomic interval over which
@@ -222,55 +223,44 @@ with specific ancestral chromosomes and recording the
 genomic intervals over which parent/child relationships exist,
 is a generalisation from the original concept  of
 ``coalescence records''~\citep{kelleher2016efficient}, and
-is the key to the efficiency of tree sequences.
-\jkcomment{Summarise and add references?}
-
+is the key to the efficiency of tree
+sequences~\citep{
+kelleher2018efficient,kelleher2019inferring,ralph2020efficiently}.
 The term Ancestral Recombination Graph (ARG) is often understood
-to mean the complete record of a sample's genetic
-ancestry~\citep[e.g.][]{mathieson2020ancestry}, and in this sense a tree
+to mean the complete record of the genetic
+ancestry of a set of sampled
+genomes~\citep[e.g.][]{mathieson2020ancestry},
+and in this sense a tree
 sequence \emph{is} an ARG. More technically, an ARG is a particular
 graphical representation of genetic ancestry based on the
 flow of ancestral material through recombination and common
 ancestor events~\citep{griffiths1991two,griffiths1997ancestral}.
 In this sense, tree sequences can be used to \emph{encode}
-ARGs without loss of information---although we do not store
+ARGs without loss of information (although we do not store
 the additional ARG information by default
 in \msprime\ because the minimal tree sequence encoding is
-much more concise (see the \nameref{sec-arg} section for more details).
+much more concise; see the \nameref{sec-arg} section for more details).
 It should be noted that, despite efforts to
 standardise~\citep{cardona2008extended,mcgill2013graphml}, there is
 no shared format for interchanging ARG data, and no supporting software
 libraries.
 
-% JK: commenting this out for now as we're covering it in the Mutations
-% section.
+The point of running simulations is to generate data, and there
+are two important ways in which the tree sequences output by
+\msprime\ are more useful than classical approaches: (1) tree
+sequences are more efficient; and (2) tree sequences contain
+more information. We will consider these points in turn.
 
-% Tree sequences encode a complete and concise description of a set of sampled
-% chromosome's genetic ancestry, and they can also efficiently represent
-% the genetic variation (extant and ancestral).
-% As illustrated in Fig.~\ref{fig-ts-example}, the \tskit\ tree
-% sequence encoding includes \emph{site} and \emph{mutation} tables. Each
-% row in the site table represents some position along the genome, and
-% each row in the mutation table represents a change of allelic state
-% at a particular site and node. Since the number of mutations is typically
-% small, we can usually store the genetic variation for a given variant
-% site in constant space. This approach of storing the genetic variation
-% via the genetic ancestry is both very concise and extremely efficient
-% to process---for example, computing Tajima's $D$ using \tskit\
-% is several orders of magnitude faster for large sample sizes than
-% efficient libraries working with the variant matrix
-% representation~\citep{ralph2020efficiently}.
-% \jkcomment{Mention Phastsim/USHER~\citep{demaio2021phastsim,turakhia2021ultrafast}
-% here. Same basic idea, but much cruder.}
-
-\jkcomment{We need a link paragraph here between what this paper is
-about (what we can simulate) and what the rest of this section is about
-(efficiently using the \emph{results} of simulations). This is where
-we should review the classical approaches. Then lead into the
-the discussion of why we need simulations to be efficiently processable,
-most importantly, in inference methods like ABC and ML.}
-
-The abilily to efficiently process simulation results is
+The classical approach to generating simulation data is
+to render the results in some text format. For example,
+\ms~\citep{hudson2002generating} outputs a set of sequences
+and can also optionally output the marginal trees along
+the genome in Newick format,
+and variants of this approach are used by many simulators.
+Text files have many advantages, but are slow to process
+at scale. With sample sizes becoming ever larger, processing
+text output can become a significant bottleneck in many analyses.
+The ability to efficiently process simulation results is
 particularly important in simulation-based inference methods
 such as Approximate Bayesian Computation
 (ABC)~\citep{beaumont2002approximate,csillery2010approximate,wegmann2010abctoolbox}
@@ -306,13 +296,15 @@ but also lacking a great deal of important information.
 The tree-by-tree topology information output by simulators in Newick
 format lacks any concept of node (in the tree sequence sense) identity,
 and means that we cannot reliably infer information about ancestors
-from the output \jkcomment{Also there's the inherent limitation of
-newick using branch lenghts; I think there's some citations for
-the issues this causes. Probably in the original msprime paper.}.
-This has been worked around by using approximate definitions of
-concepts like identity by descent (cite carmi paper) \jkcomment{
-any other computation methods developed just to work around the
-crappiness of ms output?}
+from the output. Because Newick stores branch lengths rather
+than node times, numerical precision issues also arise when summing
+over many short branches~\citep{mcgill2013graphml}.
+% JK: not sure this is worth leaving in tbh
+This lack of reliable information about ancestors in simulation data
+has lead, for example, to the definition of segments of
+identity by descent as a set of samples having the same time
+to their most recent common ancestor along some section of the
+genome~\citep{yang2016rapidly}.
 Numerous forks
 of simulators have been created to access information not provided
 in the output. For example, \ms\  has been forked to
@@ -329,19 +321,13 @@ stored via options such as \texttt{record\_migrations} or
 \texttt{record\_full\_arg} (see the \nameref{sec-arg} section) and
 can be efficiently and conveniently processed via \tskit\ APIs.
 
-\jkcomment{A point to make somewhere in here: the tskit data model is
-integrated, with all of the information that you need in one file. Not
-splattered across a number of different files, that you have to keep track
-of.}
+\jkcomment{Summary paragraph: tskit gives us complete information
+about the genetic ancestry. and is very efficient}
 
-\jkcomment{Fit this in somewhere? Or maybe it should be a discussion point?}
-Tskit has facilited unprecedented interoperability between simulators:
-Forward simulations can also use tree
-sequences~\citep{kelleher2018efficient,haller2018tree}. In particular, SLiM
-3.0~\citep{haller2019slim} and fwdpp~\citep{thornton2014cpp} can now output
-tree sequences. Msprime can take tree sequences simulated by these forward
-simulators as input and complete the simulation (``recapitation'').
-See \cite{haller2018tree} for more details.
+% \jkcomment{A point to make somewhere in here: the tskit data model is
+% integrated, with all of the information that you need in one file. Not
+% splattered across a number of different files, that you have to keep track
+% of.}
 
 
 \subsection*{Simulating mutations}
@@ -849,7 +835,7 @@ of recombination as a graph-like structure; for example,
 individual's pedigree from which they have inherited ancestral material.
 Others state that an ARG is equivalent to the sequence of marginal
 % Also SARGE paper
-trees along the genome~\citep{mirzaei2016rent}
+trees along the genome~\citep{yang2016rapidly,mirzaei2016rent}
 
 Such
 imprecision is unfortunate, since there are any number of graphical encodings of
@@ -1151,6 +1137,15 @@ which break this pattern of monolithic simulation software.
 
 Thus, development of \msprime\ is not completed and much remains
 to be done.
+
+Tskit has facilited unprecedented interoperability between simulators:
+Forward simulations can also use tree
+sequences~\citep{kelleher2018efficient,haller2018tree}. In particular, SLiM
+3.0~\citep{haller2019slim} and fwdpp~\citep{thornton2014cpp} can now output
+tree sequences. Msprime can take tree sequences simulated by these forward
+simulators as input and complete the simulation (``recapitation'').
+See \cite{haller2018tree} for more details.
+
 
 
 % Finish up with a paragraph saying that there loads of exciting
