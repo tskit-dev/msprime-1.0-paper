@@ -1,8 +1,9 @@
+import concurrent.futures
 import subprocess
-import sys
 import tempfile
 import time
 
+import cpuinfo
 import pandas as pd
 import numpy as np
 import click
@@ -36,14 +37,18 @@ def run_simbac(*, sample_size, L, gc_rate, gc_tract_length, count_trees=False):
     return num_trees
 
 
-def run_fastsimbac(*, sample_size, L, gc_rate, gc_tract_length, set_seed=0, count_trees=False):
+def run_fastsimbac(
+    *, sample_size, L, gc_rate, gc_tract_length, set_seed=0, count_trees=False
+):
 
-    # using R=2*gc_rate as gene conversion/recombination rate as SimBac uses R/2
+    # using R=2*gc_rate as gene conversion/recombination rate
     R = gc_rate * 2
     # Set theta to 0 to remove mutations (defaults to 0.01)
-    args = f"{sample_size} {int(L)} -r {R} {gc_tract_length} -t 0"
+    # We need the -b 500 to set the burn-in so we get the correct distribution
+    # of trees.
+    args = f"{sample_size} {int(L)} -r {R} {gc_tract_length} -t 0 -b 500"
     if count_trees:
-        args += " -T -b 500"
+        args += " -T "
     if set_seed > 0:
         args += " -s " + str(set_seed)
 
@@ -61,7 +66,7 @@ def run_fastsimbac(*, sample_size, L, gc_rate, gc_tract_length, set_seed=0, coun
     return num_trees
 
 
-def run_msprime(*, sample_size, L, gc_rate, gc_tract_length, ret_breakpoints = True):
+def run_msprime(*, sample_size, L, gc_rate, gc_tract_length, ret_breakpoints=True):
     sim = msprime.sim_ancestry(
         samples=sample_size,
         sequence_length=L,
@@ -70,7 +75,7 @@ def run_msprime(*, sample_size, L, gc_rate, gc_tract_length, ret_breakpoints = T
         gene_conversion_tract_length=gc_tract_length,
     )
     treenumber = sim.num_trees
-        
+
     # We use an internal msprime API here because we want to get at the
     # number of breakpoints, not the distinct trees.
     if ret_breakpoints:
@@ -84,8 +89,28 @@ def run_msprime(*, sample_size, L, gc_rate, gc_tract_length, ret_breakpoints = T
         sim.run()
         breakpointnumber = sim.num_breakpoints
         return treenumber, breakpointnumber
-        
+
     return treenumber
+
+
+def run_benchmark(work):
+    tool, sample_size = work
+
+    L = 4_500_000
+    gc_rate = 0.015
+    gc_tract_length = 500
+
+    func = tool_map[tool]
+    before = time.perf_counter()
+    func(
+        sample_size=sample_size, L=L, gc_rate=gc_rate, gc_tract_length=gc_tract_length,
+    )
+    duration = time.perf_counter() - before
+    return {
+        "sample_size": sample_size,
+        "tool": tool,
+        "time": duration,
+    }
 
 
 @click.command()
@@ -120,7 +145,7 @@ def validate(replicates, sample_size):
                 L=L,
                 gc_rate=gc_rate,
                 gc_tract_length=gc_tract_length,
-                set_seed = j,
+                set_seed=j,
                 count_trees=True,
             )
             nt_msprime[j], nb_msprime[j] = run_msprime(
@@ -157,46 +182,40 @@ def validate(replicates, sample_size):
     plt.savefig("figures/verify_fastsimbac_v_msprime.png")
 
 
+tool_map = {
+    "msprime": run_msprime,
+    "SimBac": run_simbac,
+    "fastSimBac": run_fastsimbac,
+}
+
+
 @click.command()
 @click.option("--replicates", type=int, default=5)
-def benchmark_ecoli(replicates):
+@click.option("--processes", type=int, default=None)
+def benchmark_ecoli(replicates, processes):
     """
     Runs the benchmarks for E-coli simulations.
     """
-    L = 4_500_000
-    # Make this run in a reasonable amount of time, change this when
-    # we're doing final runs.
-    L /= 100
-    gc_rate = 0.015
-    gc_tract_length = 500
+
+    cpu = cpuinfo.get_cpu_info()
+    with open("data/gc_perf_cpu.txt", "w") as f:
+        for k, v in cpu.items():
+            print(k, "\t", v, file=f)
 
     sample_sizes = np.linspace(10, 500, 20).astype(int)
-    tool_map = {
-        "msprime": run_msprime,
-        "SimBac": run_simbac,
-    }
-    data = []
+    work = []
     for sample_size in sample_sizes:
-        for name, func in tool_map.items():
-            print(name, "n =", sample_size)
-            before = time.perf_counter()
-            for _ in range(replicates):
-                func(
-                    sample_size=sample_size,
-                    L=L,
-                    gc_rate=gc_rate,
-                    gc_tract_length=gc_tract_length,
-                )
-            duration = time.perf_counter() - before
-            data.append(
-                {
-                    "sample_size": sample_size,
-                    "tool": name,
-                    "time": duration / replicates,
-                }
-            )
-            df = pd.DataFrame(data)
+        for name in tool_map.keys():
+            if sample_size > 50 and name == "SimBac":
+                continue
+            work.extend([(name, sample_size)] * replicates)
+    data = []
+    with concurrent.futures.ProcessPoolExecutor(max_workers=processes) as executor:
+        futures = [executor.submit(run_benchmark, item) for item in work]
+        for future in concurrent.futures.as_completed(futures):
+            data.append(future.result())
             print(data[-1])
+            df = pd.DataFrame(data)
             df.to_csv("data/gc-perf.csv")
 
 

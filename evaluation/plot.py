@@ -1,14 +1,8 @@
-import time
-import pathlib
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import click
-import pyvolve
-import tskit
-import msprime
-import cpuinfo
 
 
 @click.group()
@@ -58,16 +52,35 @@ def gc_perf():
     Plot the gene-conversion benchmark.
     """
     df = pd.read_csv("data/gc-perf.csv")
+    # Get the mean among replicates
+    df.time /= 3600
+    dfg = df.groupby(["sample_size", "tool"]).mean().reset_index()
 
     fig, ax1 = plt.subplots(1, 1)
-    for tool in set(df.tool):
-        dft = df[df.tool == tool]
-        ax1.plot(dft.sample_size, dft.time, label=tool)
+    lines = {}
+    for tool in ["SimBac", "fastSimBac", "msprime"]:
+        dft = dfg[dfg["tool"] == tool]
+        (line,) = ax1.plot(dft.sample_size, dft.time, label=tool)
+        lines[tool] = line
 
     ax1.set_xlabel("Sample size")
-    ax1.set_ylabel("Time (seconds)")
+    ax1.set_ylabel("Time (hours)")
+    # We could set a log-scale on the y-axis here but it really
+    # doesn't make much difference
 
+    dfmsp = dfg[dfg["tool"] == "msprime"]
+    largest_n = np.array(dfmsp.sample_size)[-1]
+    largest_value = np.array(dfmsp.time)[-1]
+    ax1.plot([largest_n], [largest_value], "o", color=lines["msprime"].get_color())
+    ax1.annotate(
+        f"{round(largest_value * 60)} mins",
+        textcoords="offset points",
+        xytext=(-30, 15),
+        xy=(largest_n, largest_value),
+        xycoords="data",
+    )
     ax1.legend()
+    plt.tight_layout()
     save("gc-perf")
 
 
