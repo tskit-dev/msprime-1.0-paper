@@ -20,7 +20,12 @@
 \newcommand{\tskit}[0]{\texttt{tskit}}
 \newcommand{\ms}[0]{\texttt{ms}}
 \newcommand{\scrm}[0]{\texttt{scrm}}
+\newcommand{\SLiM}[0]{\texttt{SLiM}}
+\newcommand{\fwdpy}[0]{\texttt{fwdpy11}}
 \newcommand{\stdpopsim}[0]{\texttt{stdpopsim}}
+\newcommand{\SeqGen}[0]{\texttt{Seq-Gen}}
+\newcommand{\Pyvolve}[0]{\texttt{Pyvolve}}
+\newcommand{\phastsim}[0]{\texttt{phastsim}}
 
 \newcommand{\jkcomment}[1]{\textcolor{red}{#1}}
 
@@ -362,21 +367,23 @@ virgoulay2021gspace}.
 % were really all people were after, classically.
 The output of the combined simulations of ancestry and mutations is
 then some representation of the resulting nucleotide sequences
-(or perhaps some derived statistics of those sequences);
-information about the mutations themselves is not typically
-provided to the user.
+(or some derived statistics of those sequences);
+information about the mutations that have been simulated
+is usually not retained or made available for subsequent analysis.
 
-The approach taken in \msprime\ and \tskit\ is quite different.
+The approach taken in \msprime\ is quite different.
 As illustrated in Fig.~\ref{fig-ts-example}, mutations are an
-integral part of the tree sequence data model, and genetic
-variation is encoded by sites and the mutations at those sites.
-This may seem at first inconvenient, but is extremely powerful.
+integral part of \tskit's tree sequence data model, and genetic
+variation is encoded by sites and the mutations at those sites;
+the sequences themselves are never stored.
+This may seem inconvenient at first, but it is extremely powerful.
 Firstly, the storage space required for simulations is dramatically
 reduced. For a simulation of $n$ samples with $m$ variant sites,
 we required $O(nm)$ space to store the sequence data as a variant
 matrix. However, if this simulation was of a recombining genome
 with $t$ trees, then the \tskit\ tree sequence encoding
-requires $O(n + t + m)$ space~\citep{kelleher2016efficient}. For
+requires $O(n + t + m)$ space~\citep{kelleher2016efficient},
+assuming we have $O(1)$ mutations at each site. For
 large sample sizes, this difference is profound, making it
 conceivable, for example, to store the genetic ancestry
 and variation data for the entire human population on a
@@ -385,21 +392,22 @@ difference in storage efficiency, it is also often far more efficient
 to compute statistics of the sequence data from the
 trees and mutations than it is to work with the sequences themselves.
 For example, computing Tajima's $D$ from simulated data using \tskit\
-is several orders of magnitude faster for large
-sample sizes~\citep{ralph2020efficiently}.
+is several orders of magnitude faster than efficient variant matrix
+libraries for large sample sizes~\citep{ralph2020efficiently}.
 
 The advantages of storing mutations rather than sequences have
-recently become clear in the context of vast genomic
+recently become clear in the context of the vast genomic
 datasets produced during the SARS-CoV-2 pandemic.
 \cite{turakhia2021ultrafast} propose the
 Mutation Annotated Tree (MAT)
-format~\citep{mcbroome2021daily}---consisting of a Newick tree
-and associated mutations in a binary format---as an efficient way to store
-and process large viral datasets,
-and achieve excellent compression and processing performance.
-Similarly, \texttt{phastsim}~\citep{demaio2021phastsim}
+format---consisting of a Newick tree
+and associated mutations in a binary format---and
+associated \texttt{matUtils} program as an efficient way to store
+and process large viral datasets~\citep{mcbroome2021daily},
+achieving excellent compression and processing performance.
+Similarly, \phastsim~\citep{demaio2021phastsim}
 was developed to simulate sequence evolution on such large SARS-CoV-2
-phylogenies, and also outputs a tree annotated with mutations (not
+phylogenies, and also outputs a Newick tree annotated with mutations (not
 in MAT format, however) to avoid the bottleneck of generating
 and storing the simulated sequences.
 While these methods illustate the advantages of the general
@@ -408,34 +416,28 @@ they do not generalise beyond their immediate settings, and
 no software library support is available.
 
 % on the other hand, tskit is awesome.
-Sites and mutations are fully integrated into the tree sequence data
-model and the \tskit\ library.
-As illustrated in Fig~\ref{fig-ts-example},
-each site corresponds to some position
-along the genome, and each mutation occurs at a given site, above
-a particular node, with a given derived state (along with other
-information, such as the time the mutation occured).
-% Now talk about why tskit allows us to easily generate mutations
-% on any input tree sequence topology.
+The \tskit\ library provides first-class support for site and mutation
+data, fully integrated with the topological information encoded in the
+node and edge tables (Fig~\ref{fig-ts-example}). The mature and
+efficient C and Python interfaces makes it straightforward to add
+further information to an existing file, and to output the results.
+As such, it is essentially a historical accident
+that \msprime\ (whose main focus is on ancestry simulation)
+contains code to simulate mutations: the process could (and arguably should)
+be performed in a separate package, and there would be no performance
+penalty for doing so. It is important to note that \msprime's
+mutation generator can work with \emph{any} \tskit\ tree sequence,
+be it simulated using \SLiM~\citep{haller2019slim} or
+\fwdpy~\citep{thornton2014cpp}, or estimated from real data
+using~\texttt{tsinfer}/\texttt{tsdate}~\citep{kelleher2019inferring,wohns2021unified}
+or \texttt{Relate}~\citep{speidel2019method}. It is a modular
+component intended to fit into a larger software ecosystem, and
+is in no way dependent on \msprime's ancestry simulator.
 
-
-\jkcomment{stuff to cover somewhere in this section}
-\begin{itemize}
-\item Mutation simulations is only included in msprime for historical reasons.
-It would be better to see msprime's mutation simulation as a separate
-package. The mutation and ancestry code in msprime have no priveledged
-access to each other, and mutation simulation would be no less efficient
-if done in a different package.
-\item Really emphasise this point: you can use msprime's mutation simulation
-on \emph{any} tskit tree sequence, produced by SLiM, fwdpp, etc or
-even tsinfer. It's completely modular.
-\end{itemize}
-
-
-Version 0.x of \texttt{msprime} provided a very simple mutation model,
-supporting only the infinite sites model.
-With version 1.0, we now support a large number of mutation models,
-including
+For version 1.0 we have greatly extended the sophistication of
+\msprime's mutation generation engine, achieving near feature-parity
+with \SeqGen.
+We  support a large number of mutation models, including
 JC69~\citep{jukes1969evolution},
 F84~\citep{felsenstein1996hidden},
 and GTR~\citep{tavare1986some} nucleotide models
@@ -447,11 +449,16 @@ and so other models such as the Kimura two and three
 parameter models~\citep{kimura1980simple,kimura1981estimation}
 parameters models can be easily
 and efficiently defined in user code.
-Full support for the original infinite sites model is also maintained.
-The results of mutation simulations across a range of models are
-extensively validated
+Mutation rates can vary along the genome, and multiple mutation
+models can be imposed on a tree sequence by overlaying mutations
+in multiple passes.
+The new \texttt{sim\_mutations} function
+(see the \nameref{sec-sim-interface} section) defaults to a finite-sites
+mutation model, but full support for the
+original infinite sites model is also maintained.
+We have extensively validated the results of mutation simulations
 against both theoretical expectations and output from
-Seq-Gen~\citep{rambaut1997seq} and
+\SeqGen~\citep{rambaut1997seq} and
 Pyvolve~\citep{spielman2015pyvolve}.
 
 \begin{figure}
@@ -469,6 +476,32 @@ number of samples (tree tips) from 10 to 100,000.
 length from 1 to 100 megabases.}
 \end{figure}
 
+Generating simulations in \msprime\ is extremely efficient.
+Fig.~\ref{fig-mutations-perf} shows the time requried to generate
+mutations (using the default JC69 model) on
+simulated tree sequences for a variety of mutation
+rates as we vary the number of samples
+(Fig.~\ref{fig-mutations-perf}A) and the sequence
+length (Fig.~\ref{fig-mutations-perf}B).
+For example, the longest running simulation in
+Fig.~\ref{fig-mutations-perf}B required less than 2 seconds to
+generate an average of 1.5 million mutations over 137,081 trees
+in a tree sequence with $508,125$ edges.
+This efficiency for large numbers of trees is possible because
+the tree sequence encoding allows us to generate mutations
+on an edge-by-edge (see Fig.\ref{fig-ts-example}) basis, rather than
+tree-by-tree and branch-by-branch as would otherwise be required.
+In the above example from Fig.~\ref{fig-mutations-perf}B,
+we would have to consider $273,887,838$ branches
+since there are $137,081$ trees and $1,998$ branches in each
+tree ($\sim500$ times more work).
+
+Even when we consider a single tree, \msprime\ is far more
+efficient than methods such as \SeqGen\ and \Pyvolve,
+and has similar performance to \phastsim.
+
+
+
 Comparing the performance of mutation generation methods is problematic.
 Because there is no standard format for representing trees and
 the accompanying mutations, all existing methods are focused on
@@ -476,17 +509,6 @@ writing out the resulting sequences. Methods are also not modular,
 and so it is very difficult to disentangle the time required to
 read in the tree file and output the sequences from the actual
 time required to perform the simulation.
-
-Fig.~\ref{fig-mutations-perf} shows that the mutation generation
-machinery in \msprime\ is extremely efficient, requiring
-fractions of a second to generate mutations for most simulations.
-For example, the longest running simulation in
-Fig.~\ref{fig-mutations-perf}B required less than 2 seconds to
-generate an average of 1.5 million mutations over 137,081 trees
-in a tree sequence with 508,125 edges.
-Generating mutations for a tree sequence is particularly efficient
-because we can work edge-by-edge rather than having to
-consider each tree independently.
 
 \jkcomment{We probably want to keep a version of this narrative too.}
 For example, we simulated mutations under the JC69
@@ -501,14 +523,6 @@ and at least competitive with the recent method from
 \cite{demaio2021phastsim}.
 
 \textbf{TODO: would love to do a like-for-like comparison, but quite hard}
-
-Another substantial advantage of our approach is that the simulated
-mutations are stored directly in the output data format with
-a defined API. Although
-Pyvolve and Phastsim are implemented in Python, neither provide
-programatic access to the simulated output, outputting instead
-to a series of files which must subsequently be parsed.
-See the Data Model section for more details and discussion.
 
 Things we can do: future work will need to do things like
 Dawg~\citep{cartwright2005dna} and to implement models and
@@ -990,6 +1004,7 @@ hybrid approach provides large efficiency gains.
 
 
 \subsection*{Simulation interface}
+\label{sec-sim-interface}
 
 The majority of simulation packages are controlled either through
 a command line interface~\citep[e.g.][]{hudson2002generating,kern2016discoal},
