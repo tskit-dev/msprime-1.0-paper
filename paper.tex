@@ -265,10 +265,10 @@ particularly important in simulation-based inference methods
 such as Approximate Bayesian Computation
 (ABC)~\citep{beaumont2002approximate,csillery2010approximate,wegmann2010abctoolbox}
 and machine learning based
-approaches~\citep{sheehan2016deep,schrider2018supervised,flagel2019unreasonable,
-sanchez2020deep}. Clearly, simulation efficiency is
+approaches~\citep{sheehan2016deep,chan2018likelihood,schrider2018supervised,
+flagel2019unreasonable,sanchez2020deep}. Clearly, simulation efficiency is
 crucial since the size and number of simulations that can be performed determines
-the depth to which the model and parameter space can be sampled from.
+the depth to which one can sample from the model and parameter space.
 Equally important,
 however, is the efficiency with which the simulation results can be
 transformed into the specific input required by the inference method.
@@ -492,10 +492,10 @@ acid model for a tree with $10^6$ leaves over $10^4$ sites (resulting
 in $\sim$260,000 mutations) in about $0.8$ seconds, including
 the time required for file input and output.
 We do not attempt a systematic benchmarking of \msprime's
-mutation generation code against other methods because it is
+mutation generation code against other methods because at this scale it is
 difficult to disentangle the effects of inefficient input and
-output formats from the mutation generation algorithms
-at this scale. It seems quite unlikely, however,
+output formats from the mutation generation algorithms.
+It seems quite unlikely, however,
 that generating mutations with \msprime\ would be a bottleneck in any
 realistic analysis.
 
@@ -538,7 +538,7 @@ coalescent with recombination when we have four or fewer sampled
 genomes~\citep{hobolth2014markovian,wilton2015smc}, but the
 effects of the approximation are less well understood for larger
 sample sizes and several approaches have been proposed to
-allow simulations more closely approximate the coalescent
+allow simulations that more closely approximate the coalescent
 with recombination~\citep{chen2009fast,wang2014new,staab2015scrm}.
 The SMC is an important analytical approximation
 and has allowed the development of numerous inference
@@ -596,7 +596,7 @@ models are therefore only appropriate for studying the SMC approximations
 themselves; an important avenue for future work is to implement
 efficient SMC-like models, perhaps based on the approaches used
 in \texttt{cosi2}~\citep{shlyakhter2014cosi2}, to facilitate
-simulation of organisms such as \textit{Drosophila melagaster}.
+simulation of organisms such as \textit{Drosophila melanogaster}.
 
 
 \subsection*{Gene conversion}
@@ -619,8 +619,8 @@ equals the distribution after two recombination events at the left and right pos
 of the gene conversion tract, followed by a common ancestor event.
 %Impact on LD
 However, gene conversions impact much shorter segments than crossover recombinations,
-typically below 1kb, and thus affects linkage pattern differently than
-recombination~\citep{korunes2017gene}.
+typically below 1kb, and thus affect linkage patterns differently than
+recombinations~\citep{korunes2017gene}.
 
 % other simulators
 Hudson's \ms\ optionally includes gene conversion and so does
@@ -660,8 +660,8 @@ with mean tract length $L = 542$~\citep{lapierre2016the}.}
 \end{figure}
 
 Gene conversion is particularly useful to model homologous recombination in
-bacterial evolution.
-We compare the performance of \msprime\ with gene conversion to
+bacterial evolution,
+so we compare the performance of \msprime\ with gene conversion to
 SimBac~\citep{brown2016simbac}, a simulator developed specifically to
 simulate bacterial evolution. Although \msprime\ is missing some features
 relevant to this case, e.g.\ the simulation of circular genomes, it is far
@@ -686,10 +686,11 @@ analytical results are rarely possible. Simulation is therefore integral to the
 development and evaluation of methods for demographic inference. The demography
 model in \msprime\ is directly derived from the approach used in \ms, and
 supports an arbitrary number of randomly mating populations exchanging migrants
-at specified rates. A range of demographic events are provided, which allow for
-varying population parameters and migration rates over time, as well as
-population splits, admixtures and pulse migrations. The location of lineages
-over time can be tracked in as much detail as required: each tree node is
+at specified rates. A range of demographic events are supported, which allow for
+varying population sizes and growth rates, changing migration rates over time,
+as well as population splits, admixtures and pulse migrations.
+The location of sampled lineages
+can be tracked through time in as much detail as required: each tree node is
 automatically associated with the population in which it arose, the location of
 lineages can be recorded at any given time via census events, or every lineage
 migration can be recorded.
@@ -704,24 +705,30 @@ resolves this issue by creating a new \texttt{Demography} class, which
 encapsulates all information about the demographic model, and fully decouples
 the definition from other simulation details. An instance of this class is then
 provided as a parameter to the new \texttt{sim\_ancestry} function,
-substantially reducing the potential for error. Another improvement over the
+substantially reducing the potential for error.
+Another improvement over the
 0.X APIs is the introduction of explicit population split and admixture events,
 and a population state machine that ensures that lineages cannot migrate into
 (or be sampled from) inactive populations. This demography model is compatible
 with the Demes standard~\citep{gower2021demes}, and the \texttt{Demography}
-class supports importing Demes models. We also support importing demographic
+class supports importing and exporting Demes models.
+Models previously constructed using the 0.x API can be seamlessly imported into
+the \texttt{Demography} class, and we also support importing demographic
 models in the form of Newick species tree descriptions, as well as those
 produced by programs such as *BEAST~\citep{heled2009bayesian}.
 
+The \texttt{DemographyDebugger} can output detailed information for debugging
+demographic models, but also provides
+methods to compute a suite of numerical predictions about the location of
+lineages over time, for example the coalescence rates for two or more lineages
+drawn from populations at specified times in the past.
 Many popular approaches in population genetics use the distribution of
 coalescence rates between pairs of lineages in one or more populations to infer
 effective population sizes over
 time~\citep{li2011inference,sheehan2013estimating,schiffels2014inferring} or
 split times and subsequent migration rates between
-populations~\citep{wang2020tracking}. The \texttt{DemographyDebugger} provides
-methods to compute a suite of numerical predictions about the location of
-lineages over time, for example the coalescence rates for two or more lineages
-drawn from populations at specified times in the past. This provides a valuable
+populations~\citep{wang2020tracking}.
+The \texttt{DemographyDebugger} provides a valuable
 ground-truth when evaluating such inference methods, as illustrated by
 \cite{adrion2020community}.
 
@@ -914,7 +921,9 @@ Each of these packages has their own benefits and possible drawbacks,
 however none of them at present will output tree sequence formatted data.
 
 \begin{figure}
+\begin{center}
 \includegraphics[width=6cm]{figures/sweeps-perf}
+\end{center}
 \caption{\label{fig-selection-perf}Comparison of the runtime for
 \msprime\ and \texttt{discoal} for simulating selective sweeps.
 }
