@@ -28,6 +28,7 @@
 \newcommand{\phastsim}[0]{\texttt{phastsim}}
 
 \newcommand{\jkcomment}[1]{\textcolor{red}{#1}}
+\newcommand{\plrcomment}[1]{\textcolor{purple}{#1}}
 
 \begin{document}
 
@@ -404,7 +405,8 @@ neutral evolution (see the \nameref{sec-selection} section, however)
 the problem of generating synthetic genetic variation can be decomposed into
 two independent steps:
 simulating genetic ancestry (the trees), and then simulating
-variation by superimposing mutation processes on those trees.
+variation by superimposing mutation processes on those trees
+(see figure~\ref{fig-mutated-trees}).
 Indeed, to call a mutation ``neutral'' means that its presence or absence
 does not affect demography.
 A number of programs exist to place mutations on trees:
@@ -422,6 +424,22 @@ but with several supporting a range of different models
 of sequence
 evolution~\citep[e.g.][]{mailund2005coasim,excoffier2011fastsimcoal,
 virgoulay2021gspace}.
+
+\begin{figure}
+    \includegraphics{figures/unmutated_tree}
+    \includegraphics{figures/mutated_tree}
+    \caption{
+        \label{fig-mutated-trees}
+        Visualization of the separation between ancestry and mutation simulation:
+        \texttt{sim\_ancestry} produces ancestry
+        (\textbf{left;} shown are two trees along a 1Kb chunk of genome
+        relating 200 samples),
+        and \texttt{sim\_mutations} adds mutations
+        (\textbf{right;} fourteen nucleotide mutations have been added).
+        Graphics produced with \tskit's \texttt{draw\_svg} method.
+        \plrcomment{TODO: fix up the axis labels, if we like this figure?}
+    }
+\end{figure}
 
 % on the other hand, tskit is awesome.
 Clean separation of the ancestry and mutation generation steps
@@ -469,7 +487,7 @@ against both theoretical expectations and output from
 Pyvolve~\citep{spielman2015pyvolve}.
 
 \begin{figure}
-\includegraphics[width=\textwidth]{figures/mutations-perf}
+    \includegraphics[width=\textwidth]{figures/mutations-perf}
 \caption{\label{fig-mutations-perf} Time required to run
 \texttt{sim\_mutations} on tree sequences generated
 by \texttt{sim\_ancestry} (with a population size of $10^4$

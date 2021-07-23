@@ -1,11 +1,15 @@
 DATA=data/arg.csv\
      data/mutations_perf.csv
 
-FIGURES=figures/mutations-perf.pdf\
+PERF_FIGURES=figures/mutations-perf.pdf\
 	figures/arg.pdf\
 	figures/sweeps-perf.pdf\
 	figures/gc-perf.pdf\
-	figures/dtwf-perf.pdf\
+	figures/dtwf-perf.pdf
+
+FIGURES=$(PERF_FIGURES)\
+	figures/mutated_tree.pdf\
+	figures/unmutated_tree.pdf\
 	figures/example_tree_sequence.pdf
 
 paper.pdf: paper.tex paper.bib ${DATA} ${FIGURES}
@@ -14,10 +18,16 @@ paper.pdf: paper.tex paper.bib ${DATA} ${FIGURES}
 	pdflatex paper.tex
 	pdflatex paper.tex
 
-figures/%.pdf:
+$(PERF_FIGURES):
 	python3 evaluation/plot.py $*
 
-figures/example_tree_sequence.pdf: figures/example_tree_sequence.ink.svg
+figures/mutated_tree.svg figures/unmutated_tree.svg : pretty_pictures.py
+	python3 $<
+
+%.pdf : %.svg
+	inkscape $< --export-pdf=$@
+
+%.pdf : %.ink.svg
 	inkscape $< --export-pdf=$@
 
 data/arg.csv:
