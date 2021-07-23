@@ -338,9 +338,6 @@ The output of population genetics simulators, quite naturally,
 tends to be some representation of the resulting nucleotide sequences
 (or some derived statistics of those sequences),
 although the underlying genealogies are also of interest.
-For instance,
-the classic simulator \ms\ will output trees or genome sequences,
-but not both.
 % Mutations are not treated as first-class data --- the sequences
 % were really all people were after, classically.
 However, joint information about the mutations that have been simulated
@@ -407,10 +404,8 @@ two independent steps:
 simulating genetic ancestry (the trees), and then simulating
 variation by superimposing mutation processes on those trees
 (see figure~\ref{fig-mutated-trees}).
-Indeed, to call a mutation ``neutral'' means that its presence or absence
-does not affect demography.
 A number of programs exist to place mutations on trees:
-in addition to \phastsim~\citep{demaio2021phastsim},
+for instance,
 the classical \texttt{Seq-Gen} program~\citep{rambaut1997seq}
 allows a range of different models of sequence evolution to be imposed on a given
 tree in Newick format, and there are various
