@@ -28,6 +28,7 @@
 \newcommand{\phastsim}[0]{\texttt{phastsim}}
 
 \newcommand{\jkcomment}[1]{\textcolor{red}{#1}}
+\newcommand{\plrcomment}[1]{\textcolor{purple}{#1}}
 
 \begin{document}
 
@@ -330,45 +331,31 @@ about the genetic ancestry. and is very efficient}
 % of.}
 
 
-\subsection*{Simulating mutations}
-\label{sec-mutations}
-% Explain the background: what have people done classically?
-Because coalescent simulations are usually concerned with
-neutral evolution (see the \nameref{sec-selection} section, however)
-the problem of generating synthetic genetic variation can be decomposed into
-two independent steps:
-simulating genetic ancestry (the trees), and then simulating
-variation by superimposing mutation processes on those trees.
-The classical \texttt{Seq-Gen} program~\citep{rambaut1997seq}
-allows a range of different models of sequence evolution to be imposed on a given
-tree in Newick format, and there are various
-extensions to the basic nucleotide
-models~\citep[e.g.][]{cartwright2005dna,fletcher2009indelible}.
-Population genetic simulators have tended to
-include their own implementations of mutation simulation, with
-most just supporting the infinite sites
-model~\citep[e.g.][]{hudson2002generating}
-but with several supporting a range of different models
-of sequence
-evolution~\citep[e.g.][]{mailund2005coasim,excoffier2011fastsimcoal,
-virgoulay2021gspace}.
+\subsection*{Genetic variation}
+\label{sec-genetic-variation}
+
+The output of population genetics simulators, quite naturally,
+tends to be some representation of the resulting nucleotide sequences
+(or some derived statistics of those sequences),
+although the underlying genealogies are also of interest.
 % Mutations are not treated as first-class data --- the sequences
 % were really all people were after, classically.
-The output of the combined simulations of ancestry and mutations is
-then some representation of the resulting nucleotide sequences
-(or some derived statistics of those sequences);
-information about the mutations that have been simulated
+However, joint information about the mutations that have been simulated
+-- e.g., where they have occurred on the trees -- 
 is usually not retained or made available for subsequent analysis.
 
 The approach taken in \msprime\ is quite different.
 As illustrated in Fig.~\ref{fig-ts-example}, mutations are an
 integral part of \tskit's tree sequence data model, and genetic
-variation is encoded by sites and the mutations at those sites;
+variation is encoded by recording sites at which mutations
+have occurred, and where each mutation at those sites
+has occurred on the marginal tree;
 the sequences themselves are never stored.
-This may seem inconvenient at first, but it is extremely powerful.
+It may at first seem inconvenient to have only this indirect representation
+of the genome sequences, but it is extremely powerful.
 Firstly, the storage space required for simulations is dramatically
 reduced. For a simulation of $n$ samples with $m$ variant sites,
-we required $O(nm)$ space to store the sequence data as a variant
+we would require $O(nm)$ space to store the sequence data as a variant
 matrix. However, if this simulation was of a recombining genome
 with $t$ trees, then the \tskit\ tree sequence encoding
 requires $O(n + t + m)$ space~\citep{kelleher2016efficient},
@@ -384,8 +371,8 @@ For example, computing Tajima's $D$ from simulated data using \tskit\
 is several orders of magnitude faster than efficient variant matrix
 libraries for large sample sizes~\citep{ralph2020efficiently}.
 
-The advantages of storing mutations rather than sequences have
-recently become clear in the context of the vast genomic
+The advantages of storing genetic variation data using the underlying trees
+have recently become clear in the context of the vast genomic
 datasets produced during the SARS-CoV-2 pandemic.
 \cite{turakhia2021ultrafast} propose the
 Mutation Annotated Tree (MAT)
@@ -403,18 +390,63 @@ While these methods illustrate the advantages of the general
 approach of storing ancestry and mutations rather than sequences,
 they do not generalise beyond their immediate settings, and
 no software library support is available.
+\msprime, on the other hand, provides a fast, powerful, and well-tested
+generic interface for generating and storing mutations on trees.
+
+\subsection*{Simulating mutations}
+\label{sec-mutations}
+
+% Explain the background: what have people done classically?
+Because coalescent simulations are usually concerned with
+neutral evolution (see the \nameref{sec-selection} section, however)
+the problem of generating synthetic genetic variation can be decomposed into
+two independent steps:
+simulating genetic ancestry (the trees), and then simulating
+variation by superimposing mutation processes on those trees
+(see figure~\ref{fig-mutated-trees}).
+A number of programs exist to place mutations on trees:
+for instance,
+the classical \texttt{Seq-Gen} program~\citep{rambaut1997seq}
+allows a range of different models of sequence evolution to be imposed on a given
+tree in Newick format, and there are various
+extensions to the basic nucleotide
+models~\citep[e.g.][]{cartwright2005dna,fletcher2009indelible}.
+Population genetic simulators have tended to
+include their own implementations of mutation simulation, with
+most just supporting the infinite sites
+model~\citep[e.g.][]{hudson2002generating}
+but with several supporting a range of different models
+of sequence
+evolution~\citep[e.g.][]{mailund2005coasim,excoffier2011fastsimcoal,
+virgoulay2021gspace}.
+
+\begin{figure}
+    \includegraphics{figures/unmutated_tree}
+    \includegraphics{figures/mutated_tree}
+    \caption{
+        \label{fig-mutated-trees}
+        Visualization of the separation between ancestry and mutation simulation:
+        \texttt{sim\_ancestry} produces ancestry
+        (\textbf{left;} shown are two trees along a 1Kb chunk of genome
+        relating 200 samples),
+        and \texttt{sim\_mutations} adds mutations
+        (\textbf{right;} fourteen nucleotide mutations have been added).
+        Graphics produced with \tskit's \texttt{draw\_svg} method.
+        \plrcomment{TODO: fix up the axis labels, if we like this figure?}
+    }
+\end{figure}
 
 % on the other hand, tskit is awesome.
-The \tskit\ library provides first-class support for site and mutation
-data, fully integrated with the topological information encoded in the
-node and edge tables (Fig~\ref{fig-ts-example}). The mature and
+Clean separation of the ancestry and mutation generation steps
+is made possible by the \tskit\ library, whose mature and
 efficient C and Python interfaces makes it straightforward to add
 further information to an existing file, and to output the results.
 As such, it is essentially a historical accident
 that \msprime\ (whose main focus is on ancestry simulation)
-contains code to simulate mutations: the process could (and arguably should)
-be performed in a separate package, and there would be no performance
-penalty for doing so. It is important to note that \msprime's
+contains code to simulate mutations: the mutation process could
+be performed by a separate package, and there would be no performance
+penalty for doing so.
+Thanks to this interoperability, \msprime's
 mutation generator can work with \emph{any} \tskit\ tree sequence,
 be it simulated using \SLiM~\citep{haller2019slim} or
 \fwdpy~\citep{thornton2014cpp}, or estimated from real data
@@ -432,7 +464,7 @@ F84~\citep{felsenstein1996hidden},
 and GTR~\citep{tavare1986some} nucleotide models
 and the BLOSUM62~\citep{henikoff1992amino}
 and PAM~\citep{dayhoff1978} amino acid models.
-The general model accepts an arbitrary transition matrix between
+A general model accepts an arbitrary transition matrix between
 any number of alleles (which can be arbitrary unicode strings),
 and so other models such as the Kimura two and three
 parameter models~\citep{kimura1980simple,kimura1981estimation}
@@ -450,7 +482,7 @@ against both theoretical expectations and output from
 Pyvolve~\citep{spielman2015pyvolve}.
 
 \begin{figure}
-\includegraphics[width=\textwidth]{figures/mutations-perf}
+    \includegraphics[width=\textwidth]{figures/mutations-perf}
 \caption{\label{fig-mutations-perf} Time required to run
 \texttt{sim\_mutations} on tree sequences generated
 by \texttt{sim\_ancestry} (with a population size of $10^4$
