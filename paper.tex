@@ -13,6 +13,7 @@
 \usepackage{environ}%
 \usepackage[right]{lineno}%
 \usepackage{nameref}
+\usepackage{tikz}
 %\usepackage{showkeys}
 
 % local definitions
@@ -28,7 +29,8 @@
 \newcommand{\phastsim}[0]{\texttt{phastsim}}
 
 \newcommand{\jkcomment}[1]{\textcolor{red}{#1}}
-\newcommand{\plrcomment}[1]{\textcolor{purple}{#1}}
+% @plr - purple doesn't exist in my Latex
+\newcommand{\plrcomment}[1]{\textcolor{blue}{#1}}
 
 \begin{document}
 
@@ -191,7 +193,7 @@ the aspects that are important for simulation here.
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=6cm]{figures/example_tree_sequence}
+\includegraphics[width=6cm]{illustrations/example_tree_sequence}
 \end{center}
 \caption{\label{fig-ts-example} Example tree sequence.
 An example tree sequence describing genealogies and genotypes
@@ -341,7 +343,7 @@ although the underlying genealogies are also of interest.
 % Mutations are not treated as first-class data --- the sequences
 % were really all people were after, classically.
 However, joint information about the mutations that have been simulated
--- e.g., where they have occurred on the trees -- 
+-- e.g., where they have occurred on the trees --
 is usually not retained or made available for subsequent analysis.
 
 The approach taken in \msprime\ is quite different.
@@ -421,8 +423,8 @@ evolution~\citep[e.g.][]{mailund2005coasim,excoffier2011fastsimcoal,
 virgoulay2021gspace}.
 
 \begin{figure}
-    \includegraphics{figures/unmutated_tree}
-    \includegraphics{figures/mutated_tree}
+    \includegraphics{illustrations/unmutated_tree}
+    \includegraphics{illustrations/mutated_tree}
     \caption{
         \label{fig-mutated-trees}
         Visualization of the separation between ancestry and mutation simulation:
@@ -858,8 +860,44 @@ which we only track genetic ancestors, and wait until all marginal trees
 have fully coalesced (like Hudson's algorithm).
 
 \begin{figure}
+
 \begin{center}
-\includegraphics[width=7cm]{figures/arg}
+    \begin{tikzpicture}[scale=0.45]
+
+    \draw (-2,0) -- (-2,3) -- (0, 3);
+    \draw (1,0) -- (1,1);
+    \draw (0,1) -- (2,1) -- (2,2) -- (4,2) -- (4,0);
+    \draw (3,2) -- (3,5);
+    \draw (0,1) -- (0,3);
+    \draw (-1, 3) -- (-1, 5) -- (3,5);
+
+    \draw[fill] (-2,0) circle [radius=0.05];
+    \draw[fill] (-1,3) circle [radius=0.05];
+    \draw[fill] (1,0) circle [radius=0.05];
+    \draw[fill] (4,0) circle [radius=0.05];
+    \draw[fill] (1,1) circle [radius=0.05];
+    \draw[fill] (3,2) circle [radius=0.05];
+    \draw[fill] (1,5) circle [radius=0.05];
+
+    \node [below] at (-2,0) {0};
+    \node [below] at (1,0) {1};
+    \node [below] at (4,0) {2};
+    \node [above] at (1,1) {3};
+    \node [below right] at (1,1) {$x = 0.3$};
+    \node [above right] at (3,2) {4};
+    \node [above left] at (-1,3) {5};
+    \node [above] at (1,5) {6};
+
+    \end{tikzpicture}
+% \begin{center}
+% $\equiv$
+% \end{center}
+% \end{column}
+% \begin{column}{5cm}
+\includegraphics[width=3cm]{illustrations/arg-ts.pdf}
+\includegraphics[width=3cm]{illustrations/arg-ts-simplified.pdf}
+\includegraphics[width=3cm]{figures/arg.pdf}
+
 \end{center}
 \caption{\label{fig-arg} A figure illustrating the relative size of
 the full ARG representation compared the minimal tree sequence.
