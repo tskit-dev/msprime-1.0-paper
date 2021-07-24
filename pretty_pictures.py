@@ -21,12 +21,21 @@ def mutated_tree():
 
 
     def do_svg(ts, **kwargs):
+
+        # Sizes are probably all wrong here
+        style = """\
+            @media print {
+              @page { margin: 0; size: 3in 2in}
+              body { margin: 1.6cm; }
+            }
+        """
         ts.draw_svg(
             size=(300, 200),
             node_labels={},
             mutation_labels={m.id: m.derived_state for m in ts.mutations()},
             symbol_size=5,
             force_root_branch=True,
+            style=style,
             **kwargs
         )
 
