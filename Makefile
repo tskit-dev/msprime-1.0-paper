@@ -5,7 +5,8 @@ FIGURES=figures/mutations-perf.pdf\
 	figures/arg.pdf\
 	figures/sweeps-perf.pdf\
 	figures/gc-perf.pdf\
-	figures/dtwf-perf.pdf
+	figures/dtwf-perf.pdf\
+	figures/ancestry-perf.pdf\
 
 ILLUSTRATIONS=\
 	illustrations/mutated_tree.pdf\
@@ -42,6 +43,9 @@ data/arg.csv:
 data/mutations_perf.csv:
 	python3 evaluation/generate_mutations_perf_data.py generate-trees
 	python3 evaluation/generate_mutations_perf_data.py benchmark-on-trees
+
+data/ancestry_perf.csv:
+	python3 evaluation/generation_ancestry_perf_data.py
 
 paper.ps: paper.dvi
 	dvips paper

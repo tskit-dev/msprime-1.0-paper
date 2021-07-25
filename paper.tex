@@ -29,8 +29,7 @@
 \newcommand{\phastsim}[0]{\texttt{phastsim}}
 
 \newcommand{\jkcomment}[1]{\textcolor{red}{#1}}
-% @plr - purple doesn't exist in my Latex
-\newcommand{\plrcomment}[1]{\textcolor{blue}{#1}}
+\newcommand{\plrcomment}[1]{\textcolor{cyan}{#1}}
 
 \begin{document}
 
@@ -587,16 +586,21 @@ zheng2014bayesian,
 terhorst2017robust}.
 
 \begin{figure}
-% \begin{center}
-% \begin{tabular}{cc}
-% % \includegraphics[width=5cm]{msprime-scaling.png} &
-% % \includegraphics[width=5cm]{figures/recombination} \\
-% \end{tabular}
-% \end{center}
-% \includegraphics[width=\textwidth]{figures/recombination}
-\Large{Plot of msprime run time against $\rho$}
-\caption{\label{fig-recombination-perf} Approximate run time for \msprime\
-simulations as a function of scaled recombination rate.
+\begin{center}
+    \includegraphics{figures/ancestry-perf}
+\end{center}
+\caption{\label{fig-ancestry-perf}
+    Approximate run time for \msprime\ simulations,
+    for \textbf{(left)} small, and \textbf{(right)} larger simulations.
+    Each point is the runtime of one simulation,
+    for various values of effective population size ($N$),
+    genome length ($L$), and number of samples.
+    Runtime scales quadratically with the product of $N$ and $L$;
+    since recombination rate in these simulations was $10^{-8}$,
+    the scaled recombination rate here is $\rho = NL/10^8$,
+    shown on the horizontal axis.
+    The black line is a quadratic fit separately in each panel.
+    \plrcomment{TODO: run out more simulations to get more triangles}
 }
 \end{figure}
 
@@ -618,11 +622,18 @@ genome length, or $N_e$. %Until we decide to approximate the recombination proce
 
 % \jkcomment{We want to round out this discussion here by giving some
 % sort of rough argument for why Hudson's algorithm is quadratic, and discussing
-% to Fig.~\ref{fig-recombination-perf} to show roughly what we can expect
+% to Fig.~\ref{fig-ancestry-perf} to show roughly what we can expect
 % to simulate in how long. See issue 28.}
 
-Figure~\ref{fig-recombination-perf} gives a rough idea of the runtime of
-a given simulation of a constant size population.
+Figure~\ref{fig-ancestry-perf} gives a rough idea of the runtime of
+a given simulation of a constant size population,
+and verifies that runtime scales quadratically with $\rho$,
+and depends much less strongly on the number of samples.
+Taking a typical chromosome to be 1 Morgan in length,
+these plot show, roughly, that simulating
+samples from a population of thousands of individuals takes seconds,
+while samples from a population of tens of thousands takes minutes.
+
 However, what about a simulation with \emph{changing} size?
 To understand how runtime depends on demography
 it helps to consider \emph{why} runtime is quadratic in $\rho$.
@@ -675,6 +686,10 @@ For instance, in many agricultural species $N_1 \propto 100$, while $N_2 \propto
 and the runtime will depend critically on $T$ -- in other words,
 simulation will be quick in a species with a strong domestication bottleneck,
 and slow otherwise.
+In practice, we recommend that users estimate runtime by
+measuring runtime in a series of simulations with short genome lengths,
+possibly varying other parameters to check for interactions,
+and then predict runtime by fitting a quadratic curve to genome length.
 
 The SMC~\citep{mcvean2005approximating} and
 SMC'~\citep{marjoram2006fast} models are available
