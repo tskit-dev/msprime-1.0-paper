@@ -7,6 +7,7 @@ FIGURES=figures/mutations-perf.pdf\
 	figures/gc-perf.pdf\
 	figures/dtwf-perf.pdf\
 	figures/ancestry-perf.pdf\
+	figures/ancestry-perf-expected.pdf
 
 ILLUSTRATIONS=\
 	illustrations/mutated_tree.pdf\

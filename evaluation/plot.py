@@ -231,15 +231,25 @@ def ancestry_perf():
     axes[1].legend(prop={'size': 6})
     save("ancestry-perf")
 
-    # Compare to Hein, Schierup & Wiuf:
-    # recombination rate is 1e-8, so rho = N * L * 1e-8
+
+@click.command()
+def ancestry_perf_expected():
+    """
+    Compare the ancestry benchark to Hein, Schierup & Wiuf:
+    recombination rate is 1e-8, so rho = N * L * 1e-8
+    """
+
+    df = pd.read_csv(
+        "data/ancestry-perf.csv", sep=",",
+    )
+
     h = np.cumsum(1/np.arange(1, np.max(df["num_samples"]) + 1))
     rho = df["L"] * df["N"] * 1e-8
     expected = rho * (rho + 1) * (h[df["num_samples"].astype("int") - 1] ** 2)
 
     fig, (ax0, ax1) = plt.subplots(1, 2, figsize=(6, 3))
 
-    ax0.set_xlabel("expected time (rho * (rho+1) * log(num_samples))")
+    ax0.set_xlabel("expected time (theory)")
     ax0.set_ylabel("observed time (seconds)")
     for ns, m in zip((1000, 100000), ("o", "v")):
         ut = (df["num_samples"] == ns)
@@ -258,17 +268,7 @@ def ancestry_perf():
                 (df["time"] / expected)[ut],
                 marker=m,
         )
-    ax1.set_xscale("log")
     ax1.set_yscale("log")
-
-    # ax1.set_xlabel("number of samples")
-    # ax1.set_ylabel("observed / expected time")
-    # sc = ax1.scatter(
-    #         df["num_samples"], df["time"] / expected,
-    #         c=np.log10(df["N"] * df["L"] / 1e8), cmap="cool",
-    # )
-    # ax1.set_yscale("log")
-    # plt.colorbar(sc, label="log10(rho)")
 
     save("ancestry-perf-expected")
 
@@ -293,6 +293,7 @@ cli.add_command(gc_perf)
 cli.add_command(sweeps_perf)
 cli.add_command(dtwf_perf)
 cli.add_command(ancestry_perf)
+cli.add_command(ancestry_perf_expected)
 cli.add_command(arg)
 
 if __name__ == "__main__":

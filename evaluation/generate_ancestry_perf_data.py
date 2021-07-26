@@ -1,5 +1,6 @@
 import time
 
+import cpuinfo
 import msprime
 import numpy as np
 
@@ -26,6 +27,11 @@ def run_sims():
     N_VALS = [1000, 5000, 10000, 50000, 100000, 200000, 300000]
     ln_pairs = [(L, N) for L in L_VALS for N in N_VALS]
     ln_pairs.sort(key=lambda x: x[0] * x[1])
+
+    cpu = cpuinfo.get_cpu_info()
+    with open("data/ancestry_perf_cpu.txt", "w") as f:
+        for k, v in cpu.items():
+            print(k, "\t", v, file=f)
 
     with open(outfile, "w") as f:
         f.write(csv(["N", "L", "num_samples", "height", "num_trees", "time"]))

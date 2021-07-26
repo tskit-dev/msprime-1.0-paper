@@ -600,7 +600,6 @@ terhorst2017robust}.
     the scaled recombination rate here is $\rho = NL/10^8$,
     shown on the horizontal axis.
     The black line is a quadratic fit separately in each panel.
-    \plrcomment{TODO: run out more simulations to get more triangles}
 }
 \end{figure}
 
@@ -628,6 +627,9 @@ genome length, or $N_e$. %Until we decide to approximate the recombination proce
 Figure~\ref{fig-ancestry-perf} gives a rough idea of the runtime of
 a given simulation of a constant size population,
 and verifies that runtime scales quadratically with $\rho$,
+(\citet{hein2004gene} gives an equation
+including the effects of sample size --
+see Appendix~\ref{app-theoretical-runtime}.)
 and depends much less strongly on the number of samples.
 Taking a typical chromosome to be 1 Morgan in length,
 these plot show, roughly, that simulating
@@ -643,7 +645,7 @@ Common ancestor events reduce the number of lineages,
 and recombination events increase their number.
 However, with long genomes
 only a small fraction of the common ancestor events
-will involve overlapping segments of ancesty,
+will involve overlapping segments of ancestry,
 and lead to coalescence in the marginal trees.
 Such disjoint segments are often far apart (on average, about distance $L/2$),
 and so recombine apart again immediately;
@@ -679,7 +681,7 @@ Putting this together:
 suppose that population size today is $N_1$,
 while longer ago than $T$ generations ago it was $N_2$:
 does the runtime depend more on $4 N_1 L$ or $4 N_2 L$?
-The answer depends on how $T$ commpares to $N_1$: if $T/N_1$ is large,
+The answer depends on how $T$ compares to $N_1$: if $T/N_1$ is large,
 then runtime will be similar to a population of size $N_1$;
 while if $T/N_1$ is small, it will be similar to a population of size $N_2$.
 For instance, in many agricultural species $N_1 \propto 100$, while $N_2 \propto 10^5$,
@@ -690,6 +692,10 @@ In practice, we recommend that users estimate runtime by
 measuring runtime in a series of simulations with short genome lengths,
 possibly varying other parameters to check for interactions,
 and then predict runtime by fitting a quadratic curve to genome length.
+There is only a weak dependency on sample size
+-- notice that in Figure~\ref{fig-ancestry-perf} increasing sample size 100-fold
+only increases runtime by a factor of 2 or so.
+
 
 The SMC~\citep{mcvean2005approximating} and
 SMC'~\citep{marjoram2006fast} models are available
@@ -1345,8 +1351,51 @@ EXC 2064/1 -- Project number 390727645, and EXC 2124 -- Project number 390838134
 
 \appendix
 
-\label{app-likelihoods}
+\section*{Theoretical runtime}
+    \label{app-theoretical-runtime}
+
+\begin{figure}
+\begin{center}
+    \includegraphics{figures/ancestry-perf-expected}
+\end{center}
+\caption{\label{fig-expected-perf}
+    Data from Figure~\ref{fig-ancestry-perf}, compared with
+    equation~\eqref{eqn-hsw-bound} (``expected'').
+    Left panel shows observed times plotted against expected number
+    of operations; right panel shows the ratio of the two, plotted against $\rho$.
+}
+\end{figure}
+
+The book \citet{hein2004gene} (Equation 5.10) gives a theoretical upper bound
+on the number of events involving trapped ancestral material in Hudson's algorithm.
+For $n$ samples from 
+a diploid population of effective size $N_e$,
+and a genome of genetic length $r$,
+with $\rho = 4 N_e r$ the scaled recombination rate,
+and $R^T$ the number of recombination recombination events in trapped material,
+this upper bound is
+\begin{equation} \label{eqn-hsw-bound}
+    \mathbb{E}[R^T]
+    \le
+    \rho (\rho + 1) \left( \sum_{i=1}^{n-1} \frac{1}{i} \right)^2 .
+\end{equation}
+Note that the sum on the right is well-approximated by $\log(n)$.
+Although \citet{hein2004gene} refer to this bound as ``crude'',
+it turns out to predict the scaling of runtime quite well for large genomes.
+Figure~\ref{fig-expected-perf} shows the observed runtime
+(from the same simulations as Figure~\ref{fig-ancestry-perf})
+plotted against equation~\eqref{eqn-hsw-bound},
+showing that for values of $\rho$ above $4 \times 10^4$ or so
+(i.e., chromosome-length simulations in populations above $10^4$),
+the ratio of observed time to the value from \eqref{eqn-hsw-bound} is constant.
+This implies the runtime for a large sample
+can be predicted from the runtime for a small sample.
+For smaller values of $\rho$, however, the prediction
+severely underestimates runtime.
+
+
 \section*{Likelihood calculations}
+\label{app-likelihoods}
 
 We provide two functions to facilitate likelihood-based inference.
 Both are implemented only for the simplest case of the standard ARG with a
