@@ -1,31 +1,37 @@
 DATA=data/arg.csv\
      data/mutations_perf.csv
 
-PERF_FIGURES=figures/mutations-perf.pdf\
+FIGURES=figures/mutations-perf.pdf\
 	figures/arg.pdf\
 	figures/sweeps-perf.pdf\
 	figures/gc-perf.pdf\
 	figures/dtwf-perf.pdf
 
-FIGURES=$(PERF_FIGURES)\
-	figures/mutated_tree.pdf\
-	figures/unmutated_tree.pdf\
-	figures/example_tree_sequence.pdf
+ILLUSTRATIONS=\
+	illustrations/mutated_tree.pdf\
+	illustrations/unmutated_tree.pdf\
+	illustrations/arg-ts.pdf\
+	illustrations/arg-ts-simplified.pdf\
+	illustrations/example_tree_sequence.pdf
 
-paper.pdf: paper.tex paper.bib ${DATA} ${FIGURES}
+paper.pdf: paper.tex paper.bib ${DATA} ${FIGURES} ${ILLUSTRATIONS}
 	pdflatex paper.tex
 	bibtex paper
 	pdflatex paper.tex
 	pdflatex paper.tex
 
-$(PERF_FIGURES):
+figures/%.pdf:
 	python3 evaluation/plot.py $*
 
-figures/mutated_tree.svg figures/unmutated_tree.svg : pretty_pictures.py
-	python3 $<
+illustrations/mutated_tree.svg illustrations/unmutated_tree.svg : pretty_pictures.py
+	python3 $< mutated-tree
+
+illustrations/arg-ts.svg: pretty_pictures.py
+	python3 $< arg-ts
 
 %.pdf : %.svg
-	inkscape $< --export-pdf=$@
+	chromium --headless --no-margins --print-to-pdf=$@ $<
+	# inkscape $< --export-pdf=$@
 
 %.pdf : %.ink.svg
 	inkscape $< --export-pdf=$@
