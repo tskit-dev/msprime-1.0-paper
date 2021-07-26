@@ -176,6 +176,7 @@ point in listing it out section by section.}
 % to be extended by addition of new features while ensuring robustness and
 % maintainability of the core codebase.
 
+% The data model
 \subsection*{Tree sequences}
 \label{sec-ts}
 
@@ -316,7 +317,9 @@ no software library support is available.
 % \msprime, on the other hand, provides a fast, powerful, and well-tested
 % generic interface for generating and storing mutations on trees.
 
-\subsection*{Simulation interface}
+
+% The input - how do we run simulations?
+\subsection*{User interface}
 \label{sec-sim-interface}
 
 The majority of simulation packages are controlled either through
@@ -376,6 +379,92 @@ command line interface to support existing workflows, and the
 \texttt{msp} program that supports specifying demographic models in
 Demes format~\citep{gower2021demes} from the command line.
 
+% The output - what do we get out?
+\subsection*{Data analysis}
+\label{sec-data-analysis}
+The point of running simulations is to generate data, and there
+are two important ways in which the \tskit\ tree sequences output by
+\msprime\ are more useful than established methods: (1) tree
+sequences are more efficient; and (2) tree sequences contain
+more information. We will consider these points in turn.
+
+The standard way of representing simulation data is
+to render the results in a text format. For example,
+\ms~\citep{hudson2002generating} outputs a set of sequences
+and can also optionally output the marginal trees along
+the genome in Newick format,
+and variants of this approach are used by many simulators.
+Text files have many advantages, but are slow to process
+at scale.
+The ability to efficiently process simulation results is
+particularly important in simulation-based inference methods
+such as Approximate Bayesian Computation
+(ABC)~\citep{beaumont2002approximate,csillery2010approximate,wegmann2010abctoolbox}
+and machine learning based
+approaches~\citep{sheehan2016deep,chan2018likelihood,schrider2018supervised,
+flagel2019unreasonable,sanchez2020deep}. Clearly, simulation efficiency is
+crucial since the size and number of simulations that can be performed determines
+the depth to which one can sample from the model and parameter space.
+Equally important,
+however, is the efficiency with which the simulation results can be
+transformed into the specific input required by the inference method.
+In the case of ABC, this is usually a set of summary statistics of the sequence
+data, and methods avoid the bottleneck of parsing
+text-based file formats to compute these statistics
+by either developing their own
+simulators~\citep[e.g.][]{cornuet2008inferring,lopes2009popabc}
+or creating forked versions of existing
+simulators~\cite[e.g.][]{thornton2006approximate,
+hickerson2007msbayes,pavlidis2010msabc,huang2011mtml,quinto2018modeling},
+tightly integrated with the inference method.
+Modern approaches to ABC such as
+ABC-RF~\citep{raynal2019abc,pudlo2016abc} and
+ABC-NN~\citep{csillery2012abc,blum2010abc} use large
+numbers of weakly informative statistics,
+making the need to efficiently compute statistics from simulation
+results all the more acute.
+
+Classical text based output formats like \ms\ are inefficient to process,
+but also lack a great deal of important information.
+The tree-by-tree topology information output by simulators in Newick
+format lacks any concept of node (in the tree sequence sense) identity,
+and means that we cannot reliably infer information about ancestors
+from the output. Because Newick stores branch lengths rather
+than node times, numerical precision issues also arise when summing
+over many short branches~\citep{mcgill2013graphml}.
+% JK: not sure this is worth leaving in tbh
+This lack of reliable information about ancestors in simulation data
+has lead, for example, to the definition of segments of
+identity by descent as a set of samples having the same time
+to their most recent common ancestor along some section of the
+genome~\citep{yang2016rapidly}.
+Numerous forks
+of simulators have been created to access information not provided
+in the output. For example, \ms\  has been forked to
+output information about migrating segments~\citep{rosenzweig2016powerful},
+information about ancestral lineages~\citep{chen2013asymptotic},
+an array of population genetic statistics~\citep{ramos2007mlcoalsim}
+% Any more?
+and \ms's fork \texttt{msHOT}~\citep{hellenthal2007mshot},
+has in turn been forked to output information on local
+ancestry~\citep{racimo2017archaic}.
+All of this information
+is either directly available by default in \msprime, or can be optionally
+stored via options such as \texttt{record\_migrations} or
+\texttt{record\_full\_arg} (see the \nameref{sec-arg} section) and
+can be efficiently and conveniently processed via \tskit\ APIs.
+
+These problems, of inefficient and limited access to the simulated
+data are comprehensively solved by \msprime\ and \tskit. Complete
+information about ancestry and mutation simulations is immediately
+available to the user in a single integrated data structure
+(rather than multiple independent files), with no intermediate
+processing required.
+Users can subsequently compute precisely the information that they
+require using the powerful suite of population genetic statistics
+and other methods available in \tskit.
+
+% Stuff we simulate: mutations
 \subsection*{Simulating mutations}
 \label{sec-mutations}
 
@@ -1039,11 +1128,11 @@ See the Appendix for details.
 
 \subsection*{Selection}
 \label{sec-selection}
-Another ellaboration of the standard neutral coalescent with recombination
+Another elaboration of the standard neutral coalescent with recombination
 is the addition of selective sweeps~\citep{kaplan1989hitchhiking,braverman1995hitchhiking,kim2002detecting}.
 In the context of the coalescent this amounts to creating a structured population
 during the sojourn of the beneficial mutation through the population (i.e., the sweep phase)
-in which lineages may transit between favored and unfavored backgrounds through
+in which lineages may transit between favoured and unfavoured backgrounds through
 recombination. This allows for many selective sweep scenarios, including recurrent, partial,
 and soft selective sweeps to be simulated efficiently, however in general this
 efficiency comes at the cost of flexibility in comparison to forwards in
@@ -1124,97 +1213,6 @@ this approach with ARGON~\citep{palamara2016argon}, a specialised DTWF
 simulator.  The Wright-Fisher approach in \msprime\ is more efficient at
 simulating chromosome-scale sequences (larger than $\approx10$Mb), while the
 hybrid approach provides large efficiency gains.
-
-
-\subsection*{Analysis of simulation results}
-\label{sec-data-analysis}
-
-\jkcomment{This is probably part of the discussion, but putting here out of
-the way for now in its own subsection}
-
-The point of running simulations is to generate data, and there
-are two important ways in which the tree sequences output by
-\msprime\ are more useful than classical approaches: (1) tree
-sequences are more efficient; and (2) tree sequences contain
-more information. We will consider these points in turn.
-
-The classical approach to generating simulation data is
-to render the results in some text format. For example,
-\ms~\citep{hudson2002generating} outputs a set of sequences
-and can also optionally output the marginal trees along
-the genome in Newick format,
-and variants of this approach are used by many simulators.
-Text files have many advantages, but are slow to process
-at scale. With sample sizes becoming ever larger, processing
-text output can become a significant bottleneck in many analyses.
-The ability to efficiently process simulation results is
-particularly important in simulation-based inference methods
-such as Approximate Bayesian Computation
-(ABC)~\citep{beaumont2002approximate,csillery2010approximate,wegmann2010abctoolbox}
-and machine learning based
-approaches~\citep{sheehan2016deep,chan2018likelihood,schrider2018supervised,
-flagel2019unreasonable,sanchez2020deep}. Clearly, simulation efficiency is
-crucial since the size and number of simulations that can be performed determines
-the depth to which one can sample from the model and parameter space.
-Equally important,
-however, is the efficiency with which the simulation results can be
-transformed into the specific input required by the inference method.
-In the case of ABC, this is usually a set of summary statistics of the sequence
-data, and methods avoid the bottleneck of parsing
-text-based file formats to compute these statistics
-by either developing their own
-simulators~\citep[e.g.][]{cornuet2008inferring,lopes2009popabc}
-or creating forked versions of existing
-simulators~\cite[e.g.][]{thornton2006approximate,
-hickerson2007msbayes,pavlidis2010msabc,huang2011mtml,quinto2018modeling},
-tightly integrated with the inference method.
-While this is certainly more efficient,
-there is a great deal of duplication of effort and significant
-room for error (and propagation of bugs).
-Modern approaches to ABC such as
-ABC-RF~\citep{raynal2019abc,pudlo2016abc} and
-ABC-NN~\citep{csillery2012abc,blum2010abc} use large
-numbers of weakly informative statistics,
-making the need to efficiently compute statistics from simulation
-results even more acute.
-
-Classical text based output formats like \ms\ are inefficient to process,
-but also lacking a great deal of important information.
-The tree-by-tree topology information output by simulators in Newick
-format lacks any concept of node (in the tree sequence sense) identity,
-and means that we cannot reliably infer information about ancestors
-from the output. Because Newick stores branch lengths rather
-than node times, numerical precision issues also arise when summing
-over many short branches~\citep{mcgill2013graphml}.
-% JK: not sure this is worth leaving in tbh
-This lack of reliable information about ancestors in simulation data
-has lead, for example, to the definition of segments of
-identity by descent as a set of samples having the same time
-to their most recent common ancestor along some section of the
-genome~\citep{yang2016rapidly}.
-Numerous forks
-of simulators have been created to access information not provided
-in the output. For example, \ms\  has been forked to
-output information about migrating segments~\citep{rosenzweig2016powerful},
-information about ancestral lineages~\citep{chen2013asymptotic},
-an array of population genetic statistics~\citep{ramos2007mlcoalsim}
-% Any more?
-and \ms's fork \texttt{msHOT}~\citep{hellenthal2007mshot},
-has in turn been forked to output information on local
-ancestry~\citep{racimo2017archaic}.
-All of this information
-is either directly available by default in \msprime, or can be optionally
-stored via options such as \texttt{record\_migrations} or
-\texttt{record\_full\_arg} (see the \nameref{sec-arg} section) and
-can be efficiently and conveniently processed via \tskit\ APIs.
-
-\jkcomment{Summary paragraph: tskit gives us complete information
-about the genetic ancestry. and is very efficient}
-
-% \jkcomment{A point to make somewhere in here: the tskit data model is
-% integrated, with all of the information that you need in one file. Not
-% splattered across a number of different files, that you have to keep track
-% of.}
 
 
 \subsection*{Development model}
