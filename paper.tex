@@ -29,8 +29,7 @@
 \newcommand{\phastsim}[0]{\texttt{phastsim}}
 
 \newcommand{\jkcomment}[1]{\textcolor{red}{#1}}
-% @plr - purple doesn't exist in my Latex
-\newcommand{\plrcomment}[1]{\textcolor{blue}{#1}}
+\newcommand{\plrcomment}[1]{\textcolor{cyan}{#1}}
 
 \begin{document}
 
@@ -587,16 +586,20 @@ zheng2014bayesian,
 terhorst2017robust}.
 
 \begin{figure}
-% \begin{center}
-% \begin{tabular}{cc}
-% % \includegraphics[width=5cm]{msprime-scaling.png} &
-% % \includegraphics[width=5cm]{figures/recombination} \\
-% \end{tabular}
-% \end{center}
-% \includegraphics[width=\textwidth]{figures/recombination}
-\Large{Plot of msprime run time against $\rho$}
-\caption{\label{fig-recombination-perf} Approximate run time for \msprime\
-simulations as a function of scaled recombination rate.
+\begin{center}
+    \includegraphics{figures/ancestry-perf}
+\end{center}
+\caption{\label{fig-ancestry-perf}
+    Approximate run time for \msprime\ simulations,
+    for \textbf{(left)} small, and \textbf{(right)} larger simulations.
+    Each point is the runtime of one simulation,
+    for various values of effective population size ($N$),
+    genome length ($L$), and number of samples.
+    Runtime scales quadratically with the product of $N$ and $L$;
+    since recombination rate in these simulations was $10^{-8}$,
+    the scaled recombination rate here is $\rho = NL/10^8$,
+    shown on the horizontal axis.
+    The black line is a quadratic fit separately in each panel.
 }
 \end{figure}
 
@@ -606,7 +609,8 @@ all other simulators, including those based on SMC
 approximations~\citep{kelleher2016efficient}. However, it is important
 to note that although the implementation of Hudson's algorithm is
 very efficient, it is still quadratic in the scaled recombination rate
-$\rho$. This is because Hudson's algorithms tracks recombinations not only
+$\rho = 4 N_e L$, where $L$ is the length of the genome in units of recombination distance.
+This is because Hudson's algorithms tracks recombinations not only
 in segments ancestral to the sample, but also between ancestral segments.
 Estimates of the number of such ``trapped'' recombinations grow quadratically
 with genome length \citep[Eq.~5.10]{hein2004gene}.
@@ -615,11 +619,83 @@ will be faster than \msprime\ for sufficiently high recombination rate,
 genome length, or $N_e$. %Until we decide to approximate the recombination process
 %between distant ancestral segment. Hint hint.
 
+% \jkcomment{We want to round out this discussion here by giving some
+% sort of rough argument for why Hudson's algorithm is quadratic, and discussing
+% to Fig.~\ref{fig-ancestry-perf} to show roughly what we can expect
+% to simulate in how long. See issue 28.}
 
-\jkcomment{We want to round out this discussion here by giving some
-sort of rough argument for why Hudson's algorithm is quadratic, and discussing
-to Fig.~\ref{fig-recombination-perf} to show roughly what we can expect
-to simulate in how long. See issue 28.}
+Figure~\ref{fig-ancestry-perf} gives a rough idea of the runtime of
+a given simulation of a constant size population,
+and verifies that runtime scales quadratically with $\rho$,
+(\citet{hein2004gene} gives an equation
+including the effects of sample size --
+see Appendix~\ref{app-theoretical-runtime}.)
+and depends much less strongly on the number of samples.
+Taking a typical chromosome to be 1 Morgan in length,
+these plot show, roughly, that simulating
+samples from a population of thousands of individuals takes seconds,
+while samples from a population of tens of thousands takes minutes.
+
+However, what about a simulation with \emph{changing} size?
+To understand how runtime depends on demography
+it helps to consider \emph{why} runtime is quadratic in $\rho$.
+At any point in time, \msprime\ must keep track of some number of lineages,
+each of which contains some number of chunks of genetic material.
+Common ancestor events reduce the number of lineages,
+and recombination events increase their number.
+However, with long genomes
+only a small fraction of the common ancestor events
+will involve overlapping segments of ancestry,
+and lead to coalescence in the marginal trees.
+Such disjoint segments are often far apart (on average, about distance $L/2$),
+and so recombine apart again immediately;
+it is these large numbers of rapid yet inconsequential events that lead to the quadratic runtime.
+\plrcomment{(this is discussed also in the ARG section; check for overlap)}
+The maximum number of lineages occurs when
+the increase and decrease in numbers of lineages due to
+common ancestor and recombination events balance out;
+to get an idea of runtime we can estimate when this occurs.
+Suppose that the maximal number of lineages is $M$;
+at this time the rate of common ancestor events is $M (M-1) / (4 N_e)$
+and the total rate of recombination is $M \ell$,
+where $\ell$ is the mean length of genome carried by each lineage
+(including ``trapped'' non-ancestral material).
+It is known that the maximum number of lineages is reached very quickly \citep{nelson2020accounting},
+and at this maximum, recombination and coalescence rates are equal,
+so many (roughly half) of these lineages have at least two distant segments of ancestral material
+separated by a long segment of genome, implying that $\ell \approx L / 4$.
+This implies that $M$ is roughly $L N_e$.
+Now, the number of linages decreases gradually, on the coalescent time scale -- so, over roughly $2 N_e$ generations.
+Since the total rate of events when there are the maximum number of lineages
+happens at rate roughly $L^2 N_e / 4$,
+then the total number of events is proportional to $(L N_e)^2$ -- i.e., proportional to $\rho^2$,
+as desired.
+What does this tell us about time-varying population sizes?
+The argument above implies that the work is spread out relatively evenly on the coalescent time scale:
+in other words,
+more events happen in the time period from 0 to $N_e/2$ generations
+than from $N_e/2$ to $N_e$ generations,
+but the runtime is not dominated but the more recent time period.
+
+Putting this together:
+suppose that population size today is $N_1$,
+while longer ago than $T$ generations ago it was $N_2$:
+does the runtime depend more on $4 N_1 L$ or $4 N_2 L$?
+The answer depends on how $T$ compares to $N_1$: if $T/N_1$ is large,
+then runtime will be similar to a population of size $N_1$;
+while if $T/N_1$ is small, it will be similar to a population of size $N_2$.
+For instance, in many agricultural species $N_1 \propto 100$, while $N_2 \propto 10^5$,
+and the runtime will depend critically on $T$ -- in other words,
+simulation will be quick in a species with a strong domestication bottleneck,
+and slow otherwise.
+In practice, we recommend that users estimate runtime by
+measuring runtime in a series of simulations with short genome lengths,
+possibly varying other parameters to check for interactions,
+and then predict runtime by fitting a quadratic curve to genome length.
+There is only a weak dependency on sample size
+-- notice that in Figure~\ref{fig-ancestry-perf} increasing sample size 100-fold
+only increases runtime by a factor of 2 or so.
+
 
 The SMC~\citep{mcvean2005approximating} and
 SMC'~\citep{marjoram2006fast} models are available
@@ -1275,8 +1351,51 @@ EXC 2064/1 -- Project number 390727645, and EXC 2124 -- Project number 390838134
 
 \appendix
 
-\label{app-likelihoods}
+\section*{Theoretical runtime}
+    \label{app-theoretical-runtime}
+
+\begin{figure}
+\begin{center}
+    \includegraphics{figures/ancestry-perf-expected}
+\end{center}
+\caption{\label{fig-expected-perf}
+    Data from Figure~\ref{fig-ancestry-perf}, compared with
+    equation~\eqref{eqn-hsw-bound} (``expected'').
+    Left panel shows observed times plotted against expected number
+    of operations; right panel shows the ratio of the two, plotted against $\rho$.
+}
+\end{figure}
+
+The book \citet{hein2004gene} (Equation 5.10) gives a theoretical upper bound
+on the number of events involving trapped ancestral material in Hudson's algorithm.
+For $n$ samples from 
+a diploid population of effective size $N_e$,
+and a genome of genetic length $r$,
+with $\rho = 4 N_e r$ the scaled recombination rate,
+and $R^T$ the number of recombination recombination events in trapped material,
+this upper bound is
+\begin{equation} \label{eqn-hsw-bound}
+    \mathbb{E}[R^T]
+    \le
+    \rho (\rho + 1) \left( \sum_{i=1}^{n-1} \frac{1}{i} \right)^2 .
+\end{equation}
+Note that the sum on the right is well-approximated by $\log(n)$.
+Although \citet{hein2004gene} refer to this bound as ``crude'',
+it turns out to predict the scaling of runtime quite well for large genomes.
+Figure~\ref{fig-expected-perf} shows the observed runtime
+(from the same simulations as Figure~\ref{fig-ancestry-perf})
+plotted against equation~\eqref{eqn-hsw-bound},
+showing that for values of $\rho$ above $4 \times 10^4$ or so
+(i.e., chromosome-length simulations in populations above $10^4$),
+the ratio of observed time to the value from \eqref{eqn-hsw-bound} is constant.
+This implies the runtime for a large sample
+can be predicted from the runtime for a small sample.
+For smaller values of $\rho$, however, the prediction
+severely underestimates runtime.
+
+
 \section*{Likelihood calculations}
+\label{app-likelihoods}
 
 We provide two functions to facilitate likelihood-based inference.
 Both are implemented only for the simplest case of the standard ARG with a
