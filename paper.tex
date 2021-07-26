@@ -316,6 +316,66 @@ no software library support is available.
 % \msprime, on the other hand, provides a fast, powerful, and well-tested
 % generic interface for generating and storing mutations on trees.
 
+\subsection*{Simulation interface}
+\label{sec-sim-interface}
+
+The majority of simulation packages are controlled either through
+a command line interface~\citep[e.g.][]{hudson2002generating,kern2016discoal},
+a text-based input file
+format~\citep[e.g.][]{guillaume2006nemo,excoffier2011fastsimcoal,shlyakhter2014cosi2},
+or a mixture of both.
+Command line interfaces such as \ms\ make it very easy to run simple
+simulations, but as model complexity and the number of parameters specified increases
+they become difficult to understand and
+error-prone~\citep{ragsdale2020lessons,gower2021demes}.
+Specifying parameters through a text file alleviates this problem to a degree,
+but lacks flexibility, for example, when running simulations with parameters
+drawn from some distribution. In practice, for any significant simulation
+project (or at least, any reproducible one), users will write a script
+to generate the required command lines or input parameter files,
+invoke the simulation engine, and process the results in some way.
+This process is cumbersome and labour intensive, and
+a number of packages have been developed
+to allow simulations be run directly in a high-level
+scripting language~\citep{staab2016coala,parobek2017skelesim,gladstein2018simprily}.
+
+The more recent trend has been to move away from this file and command-line
+driven approach and to instead provide direct interfaces to the simulation
+engines via an Application Programming Interface (API)~\citep[e.g.][]{
+thornton2014cpp,kelleher2016efficient,becheler2019quetzal,haller2019slim}.
+The primary interface for \msprime\ is through a thoroughly documented and
+stable Python
+API, which has allowed a number of downstream tools to be built on top of
+% Found these through the Dependent packages on GitHub
+it~\citep{terhorst2017robust,chan2018likelihood,spence2019inference,
+adrion2020community,adrion2020predicting, kamm2020efficiently,
+mckenzie2020ipcoal, montinaro2020revisiting,
+de2021geonomics,rivera2021simulation}.
+As well as providing a stable and efficient platform for building
+downstream applications, \msprime's Python API makes it much easier to
+build reproducible simulation pipelines, as the entire workflow can
+be encapsulated in a single script, and package and version
+dependencies can be explicitly stated using the \texttt{pip}
+or \texttt{conda} package managers.
+For example, the errors made~\citep{ragsdale2020lessons,martin2020erratum}
+in the influential simulation analysis of
+\cite{martin2017human} were only detected because the pipeline
+could be easily run and reanalysed.
+
+A major change for the \msprime\ 1.0 release is the introduction of a new set of APIs,
+designed in part to avoid sources of error (see the Demography section) but
+also to provide more appropriate defaults while keeping compatibility with
+existing code. In the new APIs, ancestry and mutation simulation are fully
+separated, with the \texttt{sim\_ancestry} and \texttt{sim\_mutations}
+functions replacing the legacy \texttt{simulate} function. Among other changes,
+the new APIs default to discrete genome coordinates and finite sites mutations,
+resolving a major source of confusion and error. The 0.x APIs are fully
+supported and tested, and will be maintained for the foreseeable future.
+We also provide an \ms\ compatible
+command line interface to support existing workflows, and the
+\texttt{msp} program that supports specifying demographic models in
+Demes format~\citep{gower2021demes} from the command line.
+
 \subsection*{Simulating mutations}
 \label{sec-mutations}
 
@@ -402,10 +462,6 @@ can be easily and efficiently defined in user code.
 Mutation rates can vary along the genome, and multiple mutation
 models can be imposed on a tree sequence by overlaying mutations
 in multiple passes.
-The new \texttt{sim\_mutations} function
-(see the \nameref{sec-sim-interface} section) defaults to a finite-sites
-mutation model, but full support for the
-original infinite sites model is also maintained.
 We have extensively validated the results of mutation simulations
 against both theoretical expectations and output from
 \SeqGen~\citep{rambaut1997seq} and
@@ -1070,66 +1126,6 @@ simulating chromosome-scale sequences (larger than $\approx10$Mb), while the
 hybrid approach provides large efficiency gains.
 
 
-\subsection*{Simulation interface}
-\label{sec-sim-interface}
-
-The majority of simulation packages are controlled either through
-a command line interface~\citep[e.g.][]{hudson2002generating,kern2016discoal},
-a text-based input file
-format~\citep[e.g.][]{guillaume2006nemo,excoffier2011fastsimcoal,shlyakhter2014cosi2},
-or a mixture of both.
-Command line interfaces such as \ms\ make it very easy to run simple
-simulations, but as model complexity and the number of parameters specified increases
-they become difficult to understand and
-error-prone~\citep{ragsdale2020lessons,gower2021demes}.
-Specifying parameters through a text file alleviates this problem to a degree,
-but lacks flexibility, for example, when running simulations with parameters
-drawn from some distribution. In practice, for any significant simulation
-project (or at least, any reproducible one), users will write a script
-to generate the required command lines or input parameter files,
-invoke the simulation engine, and process the results in some way.
-This process is cumbersome and labour intensive, and
-a number of packages have been developed
-to allow simulations be run directly in a high-level
-scripting language~\citep{staab2016coala,parobek2017skelesim,gladstein2018simprily}.
-
-The more recent trend has been to move away from this file and command-line
-driven approach and to instead provide direct interfaces to the simulation
-engines via an Application Programming Interface (API)~\citep[e.g.][]{
-thornton2014cpp,kelleher2016efficient,becheler2019quetzal,haller2019slim}.
-The primary interface for \msprime\ is through a thoroughly documented and
-stable Python
-API, which has allowed a number of downstream tools to be built on top of
-% Found these through the Dependent packages on GitHub
-it~\citep{terhorst2017robust,chan2018likelihood,spence2019inference,
-adrion2020community,adrion2020predicting, kamm2020efficiently,
-mckenzie2020ipcoal, montinaro2020revisiting,
-de2021geonomics,rivera2021simulation}.
-As well as providing a stable and efficient platform for building
-downstream applications, \msprime's Python API makes it much easier to
-build reproducible simulation pipelines, as the entire workflow can
-be encapsulated in a single script, and package and version
-dependencies can be explicitly stated using the \texttt{pip}
-or \texttt{conda} package managers.
-For example, the errors made~\citep{ragsdale2020lessons,martin2020erratum}
-in the influential simulation analysis of
-\cite{martin2017human} were only detected because the pipeline
-could be easily run and reanalysed.
-
-A major change for the \msprime\ 1.0 release is the introduction of a new set of APIs,
-designed in part to avoid sources of error (see the Demography section) but
-also to provide more appropriate defaults while keeping compatibility with
-existing code. In the new APIs, ancestry and mutation simulation are fully
-separated, with the \texttt{sim\_ancestry} and \texttt{sim\_mutations}
-functions replacing the legacy \texttt{simulate} function. Among other changes,
-the new APIs default to discrete genome coordinates and finite sites mutations,
-resolving a major source of confusion and error. The 0.x APIs are fully
-supported and tested, and will be maintained for the foreseeable future.
-We also provide an \ms\ compatible
-command line interface to support existing workflows, and the
-\texttt{msp} program that supports specifying demographic models in
-Demes format~\citep{gower2021demes} from the command line.
-
 \subsection*{Analysis of simulation results}
 \label{sec-data-analysis}
 
@@ -1237,10 +1233,10 @@ results or existing simulators.
 % rather than focusing on one
 Simulation has played a key role in the development of coalescent theory
 and its use in understanding observed patterns of genetic variation.
-The basic model can be simulated for $n$ samples in $O(n)$ time
+The Kingman coalescent can be simulated for $n$ samples in $O(n)$ time
 and is straightforward to implement---for example, Hudson provided a fully
-functional and highly efficient simulator as a C source code listing in an
-appendix to the seminal review paper~\citep{hudson1990gene}. Because of
+functional and efficient simulator as a C source code listing
+in a paper appendix~\citep{hudson1990gene}. Because of
 this ease, the dominant approach to producing simulators for extensions
 to this basic model has been to develop them independently. This is
 often seen as a learning opportunity, since those developing extensions
@@ -1252,8 +1248,7 @@ proposed over the
 years~\citep{hudson1983properties,griffiths1997ancestral,wiuf1999recombination,
 mcvean2005approximating}. It has only recently become clear that it is
 possible to implement the model efficiently, and only through the use
-of sophisticated data structures and
-intricate algorithms~\citep{kelleher2016efficient}.
+of sophisticated algorithms and data structures~\citep{kelleher2016efficient}.
 
 % Making lots of simulators has given us a fragmented and poor
 % quality ecosystem.
@@ -1313,9 +1308,6 @@ There is also the welcome development of libraries such as
 Quetzal~\citep{becheler2019quetzal} and libsequence~\citep{thornton2014cpp}
 which break this pattern of monolithic simulation software.
 
-
-Thus, development of \msprime\ is not completed and much remains
-to be done.
 
 Tskit has facilited unprecedented interoperability between simulators:
 Forward simulations can also use tree
