@@ -239,7 +239,7 @@ The term Ancestral Recombination Graph (ARG) is often understood
 to mean the complete record of the genetic
 ancestry of a set of sampled
 genomes~\citep[e.g.][]{mathieson2020ancestry},
-and in this sense a succint tree
+and in this sense a succinct tree
 sequence \emph{is} an ARG. More technically, an ARG is a particular
 graphical representation of genetic ancestry based on the
 flow of ancestral material through recombination and common
@@ -327,14 +327,14 @@ two independent steps:
 simulating genetic ancestry (the trees), and then simulating
 variation by superimposing mutation processes on those trees
 (see Fig.~\ref{fig-mutated-trees}).
-A number of programs exist to place mutations on trees:
-for instance,
-the classical \texttt{Seq-Gen} program~\citep{rambaut1997seq}
-allows a range of different models of sequence evolution to be imposed on a given
-tree in Newick format, and there are various
-extensions to the basic
+A number of programs exist to place mutations on trees: for instance,
+the classical \SeqGen\ program~\citep{rambaut1997seq}
+supports a range of different models of sequence evolution,
+and there are various extensions to the basic
 models~\citep[e.g.][]{cartwright2005dna,fletcher2009indelible}.
-Population genetic simulators have tended to
+Partly for efficiency and partly in the interest of
+simplicity for users (i.e., to avoid intermediate text format conversions),
+population genetic simulators have tended to
 include their own implementations of mutation simulation, with
 most supporting the infinite sites
 model~\citep[e.g.][]{hudson2002generating}
@@ -419,7 +419,7 @@ number of samples (tree tips) from 10 to 100,000.
 length from 1 to 100 megabases.}
 \end{figure}
 
-Generating simulations in \msprime\ is extremely efficient.
+Generating simulations in \msprime\ is efficient.
 Fig.~\ref{fig-mutations-perf} shows the time required to generate
 mutations (using the default JC69 model) on
 simulated tree sequences for a variety of mutation
@@ -438,10 +438,10 @@ In the above example from Fig.~\ref{fig-mutations-perf}B,
 we would have to consider 273,887,838 branches
 since there are 137,081 trees and 1,998 branches in each
 tree ($\sim500$ times more work).
-
 % python3 evaluation/generate_mutations_perf_data.py benchmark-single-tree
-Even if we consider a single tree, \msprime\ generates mutations
-extremely efficiently.
+Even if we have a tree sequence consisting of a single tree
+(so that there is no advantage to working edge-by-edge),
+\msprime's mutation generator is quite efficient.
 For example, we simulated mutations under the BLOSUM62 amino
 acid model for a tree with $10^6$ leaves over $10^4$ sites (resulting
 in $\sim$260,000 mutations) in about $0.8$ seconds, including
@@ -455,8 +455,7 @@ that generating mutations with \msprime\ would be a bottleneck in any
 realistic analysis.
 
 There are many ways in which the mutation generation code
-in \msprime\ could be extended by adapting existing methods.
-For example, we hope to add support for
+in \msprime\ could be extended. For example, we hope to add support for
 microsatellites~\citep{mailund2005coasim},
 codon models~\citep{arenas2007recodon}
 and indels~\citep{cartwright2005dna,fletcher2009indelible}.
@@ -1380,7 +1379,7 @@ EXC 2064/1 -- Project number 390727645, and EXC 2124 -- Project number 390838134
 
 The book \citet{hein2004gene} (Equation 5.10) gives a theoretical upper bound
 on the number of events involving trapped ancestral material in Hudson's algorithm.
-For $n$ samples from 
+For $n$ samples from
 a diploid population of effective size $N_e$,
 and a genome of genetic length $r$,
 with $\rho = 4 N_e r$ the scaled recombination rate,
