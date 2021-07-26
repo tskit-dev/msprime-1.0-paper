@@ -193,7 +193,7 @@ One of the key reasons for \msprime's substantial performance advantage
 over other simulators~\citep{kelleher2016efficient}
 is its usage of the ``succinct tree sequence''
  data stucture to represent simulation results.
-The succinct tree sequence (usually abbreviated to tree sequence)
+The succinct tree sequence (usually abbreviated to ``tree sequence'')
 is a data structure for concisely encoding
 genetic ancestry and sequence variation.
 The basic concepts were introduced by \cite{kelleher2016efficient}
@@ -210,10 +210,10 @@ Given a set of sample chromosomes, the topology
 of their genetic ancestry is described by a set of \emph{nodes}
 and \emph{edges} (Fig.~\ref{fig-ts-example}).
 A node in tree sequence terminology corresponds
-to a single chromosome strand, and is associated with its birth time,
-and other optional metadata. A node may optionally be
+to a single chromosome strand, associated with its birth time
+and other optional metadata. A node may be
 associated with an \emph{individual}, so that, for example, a diploid
-individual will be associated with two separate nodes (we omit
+individual is associated with two separate nodes (we omit
 the individual table in Fig.~\ref{fig-ts-example} as it is optional).
 Nodes define haplotypes that exist at a specific time within
 some individual, and edges define genetic inheritence
@@ -254,9 +254,9 @@ no shared format for interchanging ARG data, and no supporting software
 libraries.
 
 % OK, back to tree sequences: what about sequence variation?
-The final output of most population simulations is some representation
-of the sequence variation among the specified samples. For coalescent
-simulations, we usually have three steps (1) simulate
+The final output of most population genetic simulations is some representation
+of sequence variation among the specified samples. For coalescent
+simulations, we usually have three steps: (1) simulate
 the genetic ancestry, and optionally output the resulting marginal trees;
 (2) simulate sequence evolution conditioned on this ancestry by generating
 mutations (see the \nameref{sec-mutations} section); and (3) output the
@@ -330,18 +330,19 @@ variation by superimposing mutation processes on those trees
 A number of programs exist to place mutations on trees: for instance,
 the classical \SeqGen\ program~\citep{rambaut1997seq}
 supports a range of different models of sequence evolution,
-and there are various extensions to the basic
-models~\citep[e.g.][]{cartwright2005dna,fletcher2009indelible}.
+and various extensions to the basic
+models have been proposed~\citep[e.g.][]{cartwright2005dna,fletcher2009indelible}.
 Partly for efficiency and partly in the interest of
 simplicity for users (i.e., to avoid intermediate text format conversions),
 population genetic simulators have tended to
 include their own implementations of mutation simulation, with
 most supporting the infinite sites
 model~\citep[e.g.][]{hudson2002generating}
-but with several supporting a range of different models
-of sequence
+but with several supporting a wide range of different models of sequence
 evolution~\citep[e.g.][]{mailund2005coasim,excoffier2011fastsimcoal,
-virgoulay2021gspace}.
+virgoulay2021gspace}. Thus, despite the logical separation between
+the tasks of simulating ancestry and neutral sequence evolution,
+the two have been conflated in practice.
 
 \begin{figure}
     \includegraphics{illustrations/unmutated_tree}
@@ -356,19 +357,23 @@ virgoulay2021gspace}.
         (\textbf{right;} fourteen nucleotide mutations have been added).
         Graphics produced with \tskit's \texttt{draw\_svg} method.
         \plrcomment{TODO: fix up the axis labels, if we like this figure?}
+        \jkcomment{Why 200 samples? Seems like far too many to me, how about 5?}
     }
 \end{figure}
 
-% on the other hand, tskit is awesome.
-Clean separation of the ancestry and mutation generation steps
-is made possible by the \tskit\ library, whose mature and
-efficient C and Python interfaces makes it straightforward to add
-further information to an existing file, and to output the results.
-As such, it is essentially a historical accident
-that \msprime\ (whose main focus is on ancestry simulation)
-contains code to simulate mutations: the mutation process could
-be performed by a separate package, and there would be no performance
-penalty for doing so.
+Part of the reason for this poor record of software reuse and modularity is the
+lack of standardised file formats, and in particular, the lack of common
+library infrastructure to abstract the details of interchanging simulation
+data. On the surface, it would appear that \msprime\ is also guilty of this
+lack of modularity since it supports simulating both ancestry and mutations.
+However, this is essentially a historical accident and because of the \tskit\
+library, the mutation process in \msprime\ could just as easily
+be performed in a separate package.
+The mature and efficient C and Python interfaces for
+\tskit\ makes it straightforward to add further information to
+an existing file, and because of its efficient data interchange mechanisms,
+there is no performance penalty for performing additional operations
+in a different Python package.
 Thanks to this interoperability, \msprime's
 mutation generator can work with \emph{any} \tskit\ tree sequence,
 be it simulated using \SLiM~\citep{haller2019slim} or
@@ -378,10 +383,12 @@ or \texttt{Relate}~\citep{speidel2019method}. It is a modular
 component intended to fit into a larger software ecosystem, and
 is in no way dependent on \msprime's ancestry simulator.
 
-For version 1.0 we have greatly extended the sophistication of
-\msprime's mutation generation engine, achieving near feature-parity
-with \SeqGen.
-We  support a large number of mutation models, including
+As well as providing a new API (see the \nameref{sec-sim-interface} section)
+which emphasises this logical split between ancestry and mutation simulation,
+we have greatly extended the sophistication of
+\msprime's mutation generation engine for version 1.0,
+achieving near feature-parity with \SeqGen.
+We  support a large number of mutation models, including the
 JC69~\citep{jukes1969evolution},
 F84~\citep{felsenstein1996hidden},
 and GTR~\citep{tavare1986some} nucleotide models
@@ -419,7 +426,7 @@ number of samples (tree tips) from 10 to 100,000.
 length from 1 to 100 megabases.}
 \end{figure}
 
-Generating simulations in \msprime\ is efficient.
+Simulating mutations in \msprime\ is efficient.
 Fig.~\ref{fig-mutations-perf} shows the time required to generate
 mutations (using the default JC69 model) on
 simulated tree sequences for a variety of mutation
@@ -441,7 +448,7 @@ tree ($\sim500$ times more work).
 % python3 evaluation/generate_mutations_perf_data.py benchmark-single-tree
 Even if we have a tree sequence consisting of a single tree
 (so that there is no advantage to working edge-by-edge),
-\msprime's mutation generator is quite efficient.
+\msprime's mutation generator is still very efficient.
 For example, we simulated mutations under the BLOSUM62 amino
 acid model for a tree with $10^6$ leaves over $10^4$ sites (resulting
 in $\sim$260,000 mutations) in about $0.8$ seconds, including
@@ -458,11 +465,13 @@ There are many ways in which the mutation generation code
 in \msprime\ could be extended. For example, we hope to add support for
 microsatellites~\citep{mailund2005coasim},
 codon models~\citep{arenas2007recodon}
-and indels~\citep{cartwright2005dna,fletcher2009indelible}.
+and indels~\citep{cartwright2005dna,fletcher2009indelible},
+although some may also require upstream additions to \tskit's data model
+which is currently based on the assumption of independent sites.
 
 \subsection*{Recombination}
 
-Recombination is implemented in \msprime\ using Hudson's algorithm, which
+Crossover recombination is implemented in \msprime\ using Hudson's algorithm, which
 works backwards in time tracking the
 effects of common ancestor and recombination
 events~\citep{hudson1983properties,hudson1990gene,kelleher2016efficient}.
