@@ -1422,16 +1422,15 @@ If an edge spans a region of the genome with more than one mutation rate,
 this is done separately for each distinct region.
 The algorithm scales with the number of edges in the tree sequence.
 Since the number of edges is proportional to the number of marginal trees,
-this is equivalent to an algorithm that applies mutations separately
-to each marginal tree,
-but avoids the bookkeeping necessary to place mutations uniformly on a tree
-(as opposed to drawing locations uniformly on the box $[a,b) \times [s, t)$
-as we do here).
+an algorithm that applies mutations separately to each marginal tree
+would take at least as many steps,
+and would require additional bookkeeping necessary to place mutations uniformly on a tree.
 
 Next, alleles are chosen for each mutation.
-If the site was not previously mutated, then a new ancestral allele is chosen for the site.
+If the site was not previously mutated, then a new ancestral allele is chosen for the site,
+according to an input distribution of ancestral state allele probabilities.
 Then, each mutation on the tree is considered in turn,
-in decreasing order of time ago,
+in order so that older mutations are considered first,
 and a derived allele is chosen based on the parental allele
 (which may be the ancestral allele or the derived allele of a previous mutation)
 and some randomness.
@@ -1449,7 +1448,8 @@ assigned subsequent (and therefore unique) integers.
 Since the algorithm above applies mutations at a single rate
 independent of ancestral state,
 a model in which different alleles mutate at different rates
-must necessarily produce some silent mutations.
+must necessarily produce some silent mutations,
+i.e., mutations in which the derived allele is equal to the parental allele.
 To illustrate this, consider a mutation model on the binary alphabet
 $\{X, Y\}$ in which $X$ mutates to $Y$ at rate $\alpha$
 and $Y$ mutates to $X$ at rate $\beta$, with $\beta < \alpha$.
