@@ -1453,7 +1453,7 @@ a way of choosing an ancestral allele for each new variant site,
 and a way of choosing a derived allele given the parental allele at each mutation.
 Perhaps the simplest mutation model implemented in \msprime\ is the
 \texttt{InfiniteAlleles} mutation model,
-which keeps an internal counter so that the requested alleles are 
+which keeps an internal counter so that the requested alleles are
 assigned subsequent (and therefore unique) integers.
 
 Since the algorithm above applies mutations at a single rate
@@ -1492,7 +1492,7 @@ to allow layering of different mutation models.
 Suppose that we wanted to model the mutation process as a mixture of more than one model,
 e.g., Jukes-Cantor mutations at rate $\mu_1$, and
 HKY mutations occur at rate $\mu_2$.
-Layering multiple calls to \texttt{sim_mutations} is allowed,
+Layering multiple calls to \texttt{sim\_mutations} is allowed,
 so we could first apply mutations with the \texttt{JC69} model at rate $\mu_1$
 and then add more with the \texttt{HKY} model at rate $\mu_2$.
 However, there is a small statistical problem:
@@ -1768,15 +1768,15 @@ and the leaves  correspond to arbitrarily labelled DNA sequences in the sample.
 
 \label{app-sweeps}
 \section*{Selective sweep trajectories}
-We have implemented the coalescent with selective sweeps as a structured 
+We have implemented the coalescent with selective sweeps as a structured
 coalescent process (as in~\citep{braverman1995hitchhiking}). During the
 ``sweep phase'' of the simulation the rate of coalescence and recombination
 is tracked separately in lineages linked to the beneficial allele or not,
-with those rates depending on the frequency of the beneficial allele in 
+with those rates depending on the frequency of the beneficial allele in
 the population at a given time. The allele frequency trajectory of the
 sweeping allele is modeled using a jump process that approximates
-the conditional diffusion of the allele, conditioning on its eventual 
-fixation~\citep{coop2004ancestral}. 
+the conditional diffusion of the allele, conditioning on its eventual
+fixation~\citep{coop2004ancestral}.
 The jump process moves back in time following the beneficial
 allele frequency, $p$, from some initial frequency (e.g., $p=1$) back to
 the origination of the allele at $p=1/2N$, and we track time in small
@@ -1790,7 +1790,7 @@ the next time step back in time, call it $p^\prime$ is
 	\end{array} \right.
 \end{eqnarray*}
 where $\alpha=2Ns$ and $s$ is the fitness advantage in homozygotes. This model
-assumes genic selection (i.e., that the dominance coefficient $h=0.5$. Further
+assumes genic selection (i.e., that the dominance coefficient $h=0.5$). Further
 $\mu(p)$ is
 \begin{eqnarray*}
 	\mu(p)=\frac{\alpha p (1 - p)}{tanh(\alpha(1-p))}
