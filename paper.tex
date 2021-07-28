@@ -27,6 +27,7 @@
 \newcommand{\SeqGen}[0]{\texttt{Seq-Gen}}
 \newcommand{\Pyvolve}[0]{\texttt{Pyvolve}}
 \newcommand{\phastsim}[0]{\texttt{phastsim}}
+\newcommand{\discoal}[0]{\texttt{discoal}}
 
 \newcommand{\jkcomment}[1]{\textcolor{red}{#1}}
 \newcommand{\plrcomment}[1]{\textcolor{cyan}{#1}}
@@ -1163,7 +1164,7 @@ time simulation.
 Currently there are a small number of other simulators that will generate
 coalescent samples with sweeps including, SelSim~\citep{spencer2004selsim}
 mbs~\citep{teshima2009mbs}, msms~\citep{ewing2010msms},
-Cosi2~\citep{shlyakhter2014cosi2}, and discoal~\citep{kern2016discoal}.
+Cosi2~\citep{shlyakhter2014cosi2}, and \discoal~\citep{kern2016discoal}.
 Each of these packages has their own benefits and possible drawbacks,
 however none of them at present will output tree sequence formatted data.
 
@@ -1172,12 +1173,12 @@ however none of them at present will output tree sequence formatted data.
 \includegraphics[width=6cm]{figures/sweeps-perf}
 \end{center}
 \caption{\label{fig-selection-perf}Comparison of the runtime for
-\msprime\ and \texttt{discoal} for simulating selective sweeps.
+\msprime\ and \discoal\ for simulating selective sweeps.
 }
 \end{figure}
 
 We have implemented selective sweeps in \msprime\ similarly to
-the \texttt{discoal} implementation-- sweep trajectories are
+the \discoal\ implementation-- sweep trajectories are
 generated from a jump process approximation to the conditional diffusion
 of an allele bound for fixation~\citep{coop2004ancestral}.
 Details of our implementation are available in the Appendix.
@@ -1231,7 +1232,7 @@ flexible choice of simulation scenarios without severely damaging efficiency.
 As the discrete time Wright-Fisher model improves accuracy of genealogical
 patterns in the recent past, we can simulate the recent history using this
 model and then switch to the standard coalescent to more efficiently simulate
-the more ancient history. Fig.~\ref{fig-dtwf-perf} compares the perfomance of
+the more ancient history. Fig.~\ref{fig-dtwf-perf} compares the performance of
 this approach with ARGON~\citep{palamara2016argon}, a specialised DTWF
 simulator.  The Wright-Fisher approach in \msprime\ is more efficient at
 simulating chromosome-scale sequences (larger than $\approx10$Mb), while the
@@ -1239,14 +1240,37 @@ hybrid approach provides large efficiency gains.
 
 
 \subsection*{Development model}
-The community development process for \msprime\ is enabled by following an
-open source development practise with a strong emphasis on code quality
-and correctness. To ensure a consistent style, we require that all code
-follows the PEP8 guidelines. Unit tests for all additions are required, and
-are automatically run on each pull request on a variety of continuous
-integration testing platforms. For new simulation features, statistical tests
-must also be added, comparing the distribution of results to either analytical
-results or existing simulators.
+\texttt{Msprime} has a large number of features, encompassing
+the functionality of several more specialised simulators
+while maintaining excellent performance.
+It is developed by a geographically distributed team of volunteers under an
+open source community development model, with a strong emphasis
+on code quality and correctness. As in any large code base,
+unit tests play a key role in ensuring that new additions behave
+as expected and \msprime\ has an extensive suite.
+As of the 1.0.0 release \msprime\ consists of around 13K lines of C and 11K
+lines of Python, with suites of 122 C tests (7K lines of code) and
+1350 Python tests (22K lines of code). These tests are run
+automatically on different operating systems on each pull request
+(where a contributor updates the codebase), using standard Continuous
+Integration (CI) methodology. Other CI services check code formatting
+and for common errors, as well as producing reports on the level of
+test coverage, e.g., pinpointing areas where additional unit tests may
+be required.
+
+Unit tests are vital for ensuring software quality and correctness, but
+they are usually of little value in assessing the statistical properties
+of simulations. To validate the correctness of simulation output
+we maintain a suite of statistical tests (as of 1.0.0,
+217 validation tests, in 6K lines of code). These consist of running many
+replicate simulations, and checking the properties of the output
+against either analytical results of the output of other simulators
+where such results are not available.
+For example, simulations of complex demography are validated against \ms,
+selective sweeps against \discoal\, and Wright-Fisher simulations
+against forwards-time simulations in \SLiM.
+This suite of tests is run before every release, to ensure
+that statistical errors have not been introduced.
 
 \section*{Discussion}
 % Simulation is useful, and it's really easy for a single locus.
