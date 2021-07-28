@@ -1334,57 +1334,61 @@ performance to more specialised methods.
 % crappy unmaintained software. Not sure if the following paragraph
 % does the job that well, though.
 
-There seems to be little point in continuing the huge duplication of effort we
-have seen. It is not possible to achieve the performance levels of \msprime\
-without investing substantially in software engineering. As demonstrated here,
-\msprime\ is extensible and we would argue that developing this simulator as an
-open-source community asset is of more benefit to all. Implementing a
-coalescent simulator may once have been a good way for (e.g.) a student to
-learn about programming and simulation, but it is no longer reasonable to
-expect this. There is simply too much engineering required. For example, as of
-the 1.0.0 release \msprime\ consisted of around 13K lines of C and 11K
-lines of Python, with test suites of 122 C test cases (7K lines of code) and
-1350 Python test cases (22K lines of code), along with a suite of 217
-statistical validation tests (6K lines of code). It requires a sustained effort
-over years to produce well engineered, high-quality software. It may reasonably
-be asked if students would learn more from contributing to an existing project
-with established high-quality engineering standards, or from producing their own
-software in a self-taught manner.
+% There seems to be little point in continuing the huge duplication of effort we
+% have seen. It is not possible to achieve the performance levels of \msprime\
+% without investing substantially in software engineering. As demonstrated here,
+% \msprime\ is extensible and we would argue that developing this simulator as an
+% open-source community asset is of more benefit to all. Implementing a
+% coalescent simulator may once have been a good way for (e.g.) a student to
+% learn about programming and simulation, but it is no longer reasonable to
+% expect this. There is simply too much engineering required. For example, as of
+% the 1.0.0 release \msprime\ consisted of around 13K lines of C and 11K
+% lines of Python, with test suites of 122 C test cases (7K lines of code) and
+% 1350 Python test cases (22K lines of code), along with a suite of 217
+% statistical validation tests (6K lines of code). It requires a sustained effort
+% over years to produce well engineered, high-quality software. It may reasonably
+% be asked if students would learn more from contributing to an existing project
+% with established high-quality engineering standards, or from producing their own
+% software in a self-taught manner.
 
-A significant advantage to simulating the coalescent with recombination
-backwards in time using Hudson's algorithm rather than
-left-to-right
-approaches~\citep{wiuf1999recombination,chen2009fast,staab2015scrm}
-is the ease with which additional processes can be integrated.
-We have seen that processes such as gene conversion, complex
-demography, instantaneous bottlenecks, multiple merger caolescents
-and selective sweeps have been integrated seamlessly into
-the simulations. Incorporating any of these extensions into
-either the exact or approximate left-to-right processes would require
-complex derivations. Because we are going backwards
-in time, processes can be modelled as competing exponentials
-using Gillespie's algorithm \jkcomment{I think?},
-and therefore in principle we can
-add as many extra processes as we like.
-\jkcomment{so, backwards in time
-sims in msprime is extensible for the future.}
-
-
-There is also the welcome development of libraries such as
-Quetzal~\citep{becheler2019quetzal} and libsequence~\citep{thornton2014cpp}
-which break this pattern of monolithic simulation software.
+% A significant advantage to simulating the coalescent with recombination
+% backwards in time using Hudson's algorithm rather than
+% left-to-right
+% approaches~\citep{wiuf1999recombination,chen2009fast,staab2015scrm}
+% is the ease with which additional processes can be integrated.
+% We have seen that processes such as gene conversion, complex
+% demography, instantaneous bottlenecks, multiple merger caolescents
+% and selective sweeps have been integrated seamlessly into
+% the simulations. Incorporating any of these extensions into
+% either the exact or approximate left-to-right processes would require
+% complex derivations. Because we are going backwards
+% in time, processes can be modelled as competing exponentials
+% using Gillespie's algorithm \jkcomment{I think?},
+% and therefore in principle we can
+% add as many extra processes as we like.
+% \jkcomment{so, backwards in time
+% sims in msprime is extensible for the future.}
 
 
-% Finish up with a paragraph saying that there loads of exciting
-% new things that simulation can do. We need MORE sims!!!
-The ability to infer trees at scale for the first time
-in the presence of
-recombination~\citep{harris2019database,kelleher2019inferring,
-speidel2019method,tang2019genealogy}
-% also SARGE
-opens the possibility for new applications of coalescent simulations.
-With lots of applications, e.g., [cite Osmond and Coop].
-Also \stdpopsim\ is cool~\citep{adrion2020community}
+Recent breakthroughs in methods to infer genetic ancestry in recombining
+organisms~\citep{kelleher2019inferring,
+speidel2019method,wohns2021unified,schaefer2021ancestral,speidel2021inferring}
+have made it possible to estimate such ancestry at scale for
+the first time~\citep{harris2019database,tang2019genealogy}.
+Given such inferred ancestry, many exciting applications
+become possible. For example, \cite{osmond2021estimating}
+developed a method to estimate the location of genetic ancestors
+based on inferred trees, and other uses are sure to follow.
+Since the inferred genetic ancestry
+becomes the input for other downstream inferences, it is vitally
+important that these primary inferences are thoroughly validated,
+with the detailed properties of the inferred ancestries
+catalogued and understood.
+As we have seen, \msprime\---through the succinct tree sequence
+data structure and \tskit\ library---can provide simulated
+genetic ancestry at any scale or degree of detail required, and should
+provide a valuable source of ground-truth for evaluating
+these methods.
 
 \section*{Acknowledgments}
 JK is supported by the Robertson Foundation.
