@@ -82,8 +82,8 @@ Simulation has been a vital
 tool in coalescent theory since its earliest days~\citep{hudson1983testing},
 and dozens of different simulation tools have been
 developed over the decades~\citep{carvajal2008simulation,liu2008survey,
-arenas2012simulation,yuan2012overview,hoban2012computer}.
-%% CQ: Reading this sentence, I thought we were still talking abour simulators, that's what I proposed these changes
+arenas2012simulation,yuan2012overview,hoban2012computer,yang2014critical,
+peng2015genetic}.
 Two technological developments of recent years, however, have made the majority
 of these simulators of little relevance to modern datasets.
 % Some citations here? Darwin tree of life maybe?
@@ -1288,87 +1288,52 @@ replicate simulations, and checking the properties of the output
 against either analytical results of the output of other simulators
 where such results are not available.
 For example, simulations of complex demography are validated against \ms,
-selective sweeps against \discoal\, and Wright-Fisher simulations
+selective sweeps against \discoal, and Wright-Fisher simulations
 against forwards-time simulations in \SLiM.
 This suite of tests is run before every release, to ensure
 that statistical errors have not been introduced.
 
 \section*{Discussion}
-% Simulation is useful, and it's really easy for a single locus.
-% This has lead to a culture of developing lots of simulators
-% rather than focusing on one
-Simulation has played a key role in the development of coalescent theory
-and its use in understanding observed patterns of genetic variation.
-The Kingman coalescent can be simulated for $n$ samples in $O(n)$ time
-and is straightforward to implement---for example, Hudson provided a fully
-functional and efficient simulator as a C source code listing
-in a paper appendix~\citep{hudson1990gene}. Because of
-this ease, the dominant approach to producing simulators for extensions
-to this basic model has been to develop them independently. This is
-often seen as a learning opportunity, since those developing extensions
-to the coalescent must have an excellent understanding of the basic
-model in order to develop extensions to the coalescent.
-The coalescent with recombination, however, is \emph{not} straightforward
-to implement, and numerous different approaches have been
-proposed over the
-years~\citep{hudson1983properties,griffiths1997ancestral,wiuf1999recombination,
-mcvean2005approximating}. It has only recently become clear that it is
-possible to implement the model efficiently, and only through the use
-of sophisticated algorithms and data structures~\citep{kelleher2016efficient}.
 
-% Making lots of simulators has given us a fragmented and poor
-% quality ecosystem.
-The approach of developing ``in-house'' simulators
-has lead to a huge proliferation of different programs, with
-slightly different feature sets and often incompatible interfaces.
-It is a fragmented ecosystem with significant issues with software
-quality (see, e.g.,~\cite{yang2014critical}),
-and few simulators are actively maintained after publication.
-We have seen that \msprime\ (for larger samples at least)
-has at worst comparable, but usually far superior
-performance to more specialised methods.
+% Simulation software is historically a total shitshow
 
-% JK: I want to make the point that the established idea that
-% developing your own simulation software is a good learning experience
-% is pretty questionable these days, and tends to produce a lot of
-% crappy unmaintained software. Not sure if the following paragraph
-% does the job that well, though.
+Simulation is a vital tool in population genetics, but the approach to
+developing simulation software has historically been dysfunctional. A huge
+proliferation of tools have been published (the references here are not
+exhaustive) and only a small minority of these are actively developed and
+maintained today. The ecosystem is highly fragmented, with numerous different
+ways of specifying parameters and representing results, and there are
+significant software quality issues at all stages. This is unsurprising, since
+the majority of simulation software development is performed by students, who
+are themselves learning to code, often without formal training in software
+development. Although developing a simulator is certainly a learning
+opportunity, it is also an opportunity to learn poor development practices. A
+large number of unmaintained tools with mostly overlapping features represents
+a profound waste of effort, and it is worth considering what could have been
+achieved if even a small fraction of this effort had been invested in shared
+community infrastructure.
 
-% There seems to be little point in continuing the huge duplication of effort we
-% have seen. It is not possible to achieve the performance levels of \msprime\
-% without investing substantially in software engineering. As demonstrated here,
-% \msprime\ is extensible and we would argue that developing this simulator as an
-% open-source community asset is of more benefit to all. Implementing a
-% coalescent simulator may once have been a good way for (e.g.) a student to
-% learn about programming and simulation, but it is no longer reasonable to
-% expect this. There is simply too much engineering required. For example, as of
-% the 1.0.0 release \msprime\ consisted of around 13K lines of C and 11K
-% lines of Python, with test suites of 122 C test cases (7K lines of code) and
-% 1350 Python test cases (22K lines of code), along with a suite of 217
-% statistical validation tests (6K lines of code). It requires a sustained effort
-% over years to produce well engineered, high-quality software. It may reasonably
-% be asked if students would learn more from contributing to an existing project
-% with established high-quality engineering standards, or from producing their own
-% software in a self-taught manner.
+% THERE IS A BETTER WAY!!!
+Scientific software is vital apparatus, and must be engineered
+to a high quality if we are to trust its results. There is a growing
+realisation across the sciences [citations] that investing in
+shared community infrastructure produces better results than a
+proliferation of individually maintained tools, allowing scientists
+to focus on their specific questions rather than software engineering.
+\texttt{Msprime} 1.0 is the result of such a community process,
+with features added by motivated users, taking advantage of the
+established development practices and infrastructure.
+% I'm going out on a limb here - do folks agree?
+Most contributors would agree that this is also a learning experience,
+allowing them to improve their software development skills in a
+welcoming community environment and being exposed to
+state-of-the-art infrastructure. We hope that users who find that
+features they require are missing will continue to contribute to
+\msprime, leading to a community project that is both high-quality
+and sustainable in the long term.
 
-% A significant advantage to simulating the coalescent with recombination
-% backwards in time using Hudson's algorithm rather than
-% left-to-right
-% approaches~\citep{wiuf1999recombination,chen2009fast,staab2015scrm}
-% is the ease with which additional processes can be integrated.
-% We have seen that processes such as gene conversion, complex
-% demography, instantaneous bottlenecks, multiple merger caolescents
-% and selective sweeps have been integrated seamlessly into
-% the simulations. Incorporating any of these extensions into
-% either the exact or approximate left-to-right processes would require
-% complex derivations. Because we are going backwards
-% in time, processes can be modelled as competing exponentials
-% using Gillespie's algorithm \jkcomment{I think?},
-% and therefore in principle we can
-% add as many extra processes as we like.
-% \jkcomment{so, backwards in time
-% sims in msprime is extensible for the future.}
-
+\jkcomment{TODO either need another paragraph linking these up, or we just
+ drop this last one?}
 
 Recent breakthroughs in methods to infer genetic ancestry in recombining
 organisms~\citep{kelleher2019inferring,
