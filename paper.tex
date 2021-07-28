@@ -200,8 +200,8 @@ genetic ancestry and sequence variation.
 The basic concepts were introduced by \cite{kelleher2016efficient}
 and originally developed as part of \msprime. We subsequently
 extracted the tree sequence code that was independent of simulations
-from \msprime\ into \tskit,
-a standalone Python and C library~\citep{tskit2021tskit}.
+from \msprime\ into
+a standalone Python and C library, called \tskit~\citep{tskit2021tskit}.
 While a full discussion of tree sequences and the capabilities
 of \tskit\ is beyond the scope of this article, we summarise
 some aspects that are important for simulation here.
@@ -212,7 +212,7 @@ of their genetic ancestry is described by a set of \emph{nodes}
 and \emph{edges} (Fig.~\ref{fig-ts-example}).
 A node in tree sequence terminology corresponds
 to a single chromosome strand, associated with its birth time
-and other optional metadata. A node may be
+and other optional information. A node may be
 associated with an \emph{individual}, so that, for example, a diploid
 individual is associated with two separate nodes (we omit
 the individual table in Fig.~\ref{fig-ts-example} as it is optional).
@@ -266,7 +266,7 @@ the trees. Information about the mutations
 themselves---e.g., where they have occurred on the
 trees---is usually not retained or made available for subsequent analysis.
 In \msprime, however, we skip step (3), instead using \tskit's
-data model of ancestry and mutations
+combined data model of ancestry and mutations
 to represent the simulated sequences.
 As illustrated in Fig.~\ref{fig-ts-example}, mutations are a
 fully integrated part of \tskit's tree sequence data model, and genetic
@@ -317,6 +317,26 @@ no software library support is available.
 % \msprime, on the other hand, provides a fast, powerful, and well-tested
 % generic interface for generating and storing mutations on trees.
 
+The software ecosystem built around \tskit\ is stable and mature,
+with simulators such as
+\fwdpy~\citep{thornton2014cpp},
+\SLiM~\citep{haller2019slim},
+\stdpopsim~\citep{adrion2020community},
+\texttt{Geonomics}~\citep{de2021geonomics}
+and
+\texttt{GSpace}~\citep{virgoulay2021gspace},
+and inference methods such as
+\texttt{tsinfer}~\citep{kelleher2019inferring},
+\texttt{tsdate}~\citep{,wohns2021unified}
+and \texttt{Relate}~\citep{speidel2019method}
+using either the Python or C
+APIs to support outputting results in tree sequence format.
+Tree sequences are stored in an efficient binary file format, and
+are fully portable across operating systems and processor
+architectures. The \tskit\ library ensures interoperability
+between programs by having strict definitions of how the
+information in each of the tables is interpreted, and
+stringent checks for the internal consistency of the data model.
 
 % The input - how do we run simulations?
 \subsection*{User interface}
@@ -360,10 +380,10 @@ build reproducible simulation pipelines, as the entire workflow can
 be encapsulated in a single script, and package and version
 dependencies can be explicitly stated using the \texttt{pip}
 or \texttt{conda} package managers.
-For example, the errors made~\citep{ragsdale2020lessons,martin2020erratum}
+For example, the errors made
 in the influential simulation analysis of
 \cite{martin2017human} were only detected because the pipeline
-could be easily run and reanalysed.
+could be easily run and reanalysed~\citep{ragsdale2020lessons,martin2020erratum}.
 
 A major change for the \msprime\ 1.0 release is the introduction of a new set of APIs,
 designed in part to avoid sources of error (see the Demography section) but
@@ -377,16 +397,17 @@ supported and tested, and will be maintained for the foreseeable future.
 We also provide an \ms\ compatible
 command line interface to support existing workflows, and the
 \texttt{msp} program that supports specifying demographic models in
-Demes format~\citep{gower2021demes} from the command line.
+Demes format~\citep{gower2021demes} from the command line, as
+well as simulating mutations on a given tree sequence file.
 
 % The output - what do we get out?
 \subsection*{Data analysis}
 \label{sec-data-analysis}
 The point of running simulations is to generate data, and there
 are two important ways in which the \tskit\ tree sequences output by
-\msprime\ are more useful than established methods: (1) tree
-sequences are more efficient; and (2) tree sequences contain
-more information. We will consider these points in turn.
+\msprime\ are more useful than established methods:
+they are more efficient and they contain more information.
+We will consider these points in turn.
 
 The standard way of representing simulation data is
 to render the results in a text format. For example,
@@ -427,7 +448,7 @@ results all the more acute.
 Classical text based output formats like \ms\ are inefficient to process,
 but also lack a great deal of important information.
 The tree-by-tree topology information output by simulators in Newick
-format lacks any concept of node (in the tree sequence sense) identity,
+format lacks any concept of node identity,
 and means that we cannot reliably infer information about ancestors
 from the output. Because Newick stores branch lengths rather
 than node times, numerical precision issues also arise when summing
@@ -435,11 +456,10 @@ over many short branches~\citep{mcgill2013graphml}.
 % JK: not sure this is worth leaving in tbh
 This lack of reliable information about ancestors in simulation data
 has lead, for example, to the definition of segments of
-identity by descent as a set of samples having the same time
+identity by descent as a set of samples having approximately the same time
 to their most recent common ancestor along some section of the
 genome~\citep{yang2016rapidly}.
-Numerous forks
-of simulators have been created to access information not provided
+Numerous forks (i.e., independent copies) of simulators have been created to access information not provided
 in the output. For example, \ms\  has been forked to
 output information about migrating segments~\citep{rosenzweig2016powerful},
 information about ancestral lineages~\citep{chen2013asymptotic},
@@ -526,14 +546,14 @@ in a different Python package.
 Thanks to this interoperability, \msprime's
 mutation generator can work with \emph{any} \tskit\ tree sequence,
 be it simulated using \SLiM~\citep{haller2019slim} or
-\fwdpy~\citep{thornton2014cpp}, or estimated from real data
-using~\texttt{tsinfer}/\texttt{tsdate}~\citep{kelleher2019inferring,wohns2021unified}
-or \texttt{Relate}~\citep{speidel2019method}. It is a modular
+\fwdpy~\citep{thornton2014cpp}, or estimated from real
+data~\citep{kelleher2019inferring,speidel2019method,wohns2021unified}.
+It is a modular
 component intended to fit into a larger software ecosystem, and
 is in no way dependent on \msprime's ancestry simulator.
 
 As well as providing a new API (see the \nameref{sec-sim-interface} section)
-which emphasises this logical split between ancestry and mutation simulation,
+which emphasises the logical split between ancestry and mutation simulation,
 we have greatly extended the sophistication of
 \msprime's mutation generation engine for version 1.0,
 achieving near feature-parity with \SeqGen.
@@ -585,7 +605,8 @@ in a tree sequence with 508,125 edges.
 This efficiency for large numbers of trees is possible because
 the tree sequence encoding allows us to generate mutations
 on an edge-by-edge basis
-(see Fig.~\ref{fig-ts-example} and Appendix~\ref{app-mutation-algorithm}),
+(see Fig.~\ref{fig-ts-example} and the~\nameref{app-mutation-algorithm}
+appendix),
 rather than tree-by-tree and branch-by-branch as would otherwise be required.
 In the above example from Fig.~\ref{fig-mutations-perf}B,
 we would have to consider 273,887,838 branches
