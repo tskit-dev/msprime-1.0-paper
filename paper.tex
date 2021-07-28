@@ -1238,6 +1238,27 @@ simulator.  The Wright-Fisher approach in \msprime\ is more efficient at
 simulating chromosome-scale sequences (larger than $\approx10$Mb), while the
 hybrid approach provides large efficiency gains.
 
+\subsection*{Integration with forward simulators}
+A unique feature of \msprime\ is its ability to simulate
+genetic ancestries conditioned on an existing partial
+genetic ancestry. Given a tree sequence that
+is complete up until time $t$ as input
+(where marginal trees may or may not have fully coalesced),
+\msprime\ can efficiently obtain the segments of ancestral material
+present at this time, and then run the simulation backwards in time from there.
+This allows a simulated ancestry to be produced by any
+number of different processes across disjoint time slices.
+In practise this feature is used to ``complete''
+forwards-time ancestry simulations~\citep{kelleher2018efficient}
+that may have not fully coalesced. This process
+(``recapitation'') can be orders of magnitude faster than
+the standard approach of neutral burn-in; see
+\cite{haller2018tree} for more details and examples.
+This interoperability between simulators, where a partial ancestry
+simulation produced by \SLiM~\citep{haller2019slim}
+or \fwdpy~\citep{thornton2014cpp} can be picked up and completed
+by another simulator, with complete information
+retained---at scale---is unprecedented.
 
 \subsection*{Development model}
 \texttt{Msprime} has a large number of features, encompassing
@@ -1352,16 +1373,6 @@ sims in msprime is extensible for the future.}
 There is also the welcome development of libraries such as
 Quetzal~\citep{becheler2019quetzal} and libsequence~\citep{thornton2014cpp}
 which break this pattern of monolithic simulation software.
-
-
-Tskit has facilited unprecedented interoperability between simulators:
-Forward simulations can also use tree
-sequences~\citep{kelleher2018efficient,haller2018tree}. In particular, SLiM
-3.0~\citep{haller2019slim} and fwdpp~\citep{thornton2014cpp} can now output
-tree sequences. Msprime can take tree sequences simulated by these forward
-simulators as input and complete the simulation (``recapitation'').
-See \cite{haller2018tree} for more details.
-
 
 
 % Finish up with a paragraph saying that there loads of exciting
