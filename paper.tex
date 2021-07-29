@@ -769,7 +769,8 @@ will involve overlapping segments of ancestry,
 and lead to coalescence in the marginal trees.
 Such disjoint segments are often far apart (on average, about distance $L/2$),
 and so recombine apart again immediately;
-it is these large numbers of rapid yet inconsequential events that lead to the quadratic runtime.
+it is these large numbers of rapid yet inconsequential events that
+lead to the quadratic runtime.
 \plrcomment{(this is discussed also in the ARG section; check for overlap)}
 The maximum number of lineages occurs when
 the increase and decrease in numbers of lineages due to
@@ -780,32 +781,34 @@ at this time the rate of common ancestor events is $M (M-1) / (4 N_e)$
 and the total rate of recombination is $M \ell$,
 where $\ell$ is the mean length of genome carried by each lineage
 (including ``trapped'' non-ancestral material).
-It is known that the maximum number of lineages is reached very quickly \citep{nelson2020accounting},
-and at this maximum, recombination and coalescence rates are equal,
-so many (roughly half) of these lineages have at least two distant segments of ancestral material
+It is known that the maximum number of lineages is reached
+very quickly~\citep{nelson2020accounting},
+and at this maximum, recombination and coalescence rates are equal.
+Threfore, many (roughly half) of these lineages have at
+least two distant segments of ancestral material
 separated by a long segment of genome, implying that $\ell \approx L / 4$.
 This implies that $M$ is roughly $L N_e$.
-Now, the number of linages decreases gradually, on the coalescent time scale -- so, over roughly $2 N_e$ generations.
+The number of linages decreases gradually,
+on the coalescent time scale---so, over roughly $2 N_e$ generations.
 Since the total rate of events when there are the maximum number of lineages
-happens at rate roughly $L^2 N_e / 4$,
-then the total number of events is proportional to $(L N_e)^2$ -- i.e., proportional to $\rho^2$,
-as desired.
+happens is roughly $L^2 N_e / 4$,
+then the total number of events is proportional to $(L N_e)^2$---i.e.,
+proportional to $\rho^2$, as desired.
+
 What does this tell us about time-varying population sizes?
-The argument above implies that the work is spread out relatively evenly on the coalescent time scale:
-in other words,
+The argument above implies that the work is spread out relatively
+evenly on the coalescent time scale: in other words,
 more events happen in the time period from 0 to $N_e/2$ generations
 than from $N_e/2$ to $N_e$ generations,
 but the runtime is not dominated but the more recent time period.
-
-Putting this together:
-suppose that population size today is $N_1$,
+Suppose that population size today is $N_1$,
 while longer ago than $T$ generations ago it was $N_2$:
 does the runtime depend more on $4 N_1 L$ or $4 N_2 L$?
 The answer depends on how $T$ compares to $N_1$: if $T/N_1$ is large,
 then runtime will be similar to a population of size $N_1$;
 while if $T/N_1$ is small, it will be similar to a population of size $N_2$.
 For instance, in many agricultural species $N_1 \propto 100$, while $N_2 \propto 10^5$,
-and the runtime will depend critically on $T$ -- in other words,
+and the runtime will depend critically on $T$---in other words,
 simulation will be quick in a species with a strong domestication bottleneck,
 and slow otherwise.
 In practice, we recommend that users estimate runtime by
@@ -813,14 +816,9 @@ measuring runtime in a series of simulations with short genome lengths,
 possibly varying other parameters to check for interactions,
 and then predict runtime by fitting a quadratic curve to genome length.
 There is only a weak dependency on sample size
--- notice that in Figure~\ref{fig-ancestry-perf} increasing sample size 100-fold
+---notice that in Figure~\ref{fig-ancestry-perf} increasing sample size 100-fold
 only increases runtime by a factor of 2 or so.
-
-
-an important avenue for future work is to implement
-efficient SMC-like models, perhaps based on the approaches used
-in \texttt{cosi2}~\citep{shlyakhter2014cosi2}, to facilitate
-simulation of organisms such as \textit{Drosophila melanogaster}.
+\jkcomment{as expected, since it's $O(\log^2{n})$?}
 
 
 \subsection*{Gene conversion}
