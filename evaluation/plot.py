@@ -3,6 +3,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import scipy.optimize
 import click
 
 
@@ -170,9 +171,20 @@ def ancestry_perf():
     Plot the ancestry benchark.
     """
 
-    df = pd.read_csv(
-        "data/ancestry-perf.csv", sep=",",
-    )
+    df = pd.read_csv("data/ancestry-perf.csv", sep=",")
+
+    def objective(X, a, b):
+        r, n = X
+        return a * (r ** 2) * (np.log(n)**2) + b
+
+    # Constants aren't going to matter here since we're fitting, but not
+    # to worry.
+    rho = np.array(4 * df["N"] * df["L"] / 1e8)
+    n = np.array(df["num_samples"])
+    T = np.array(df["time"])
+    popt, _ = scipy.optimize.curve_fit(objective, [rho, n], T, [1, 0])
+
+    fig, axes = plt.subplots(1, 2, figsize=(6, 3))
 
     # Plot the times
     fig, axes = plt.subplots(1, 2, figsize=(6, 3))
@@ -219,11 +231,14 @@ def ancestry_perf():
                     )
 
             xx = np.linspace(0, 1.05 * max(X[:, 0]), 51)
+
+            ax.plot(xx, [objective((x,ns), *popt) for x in xx], color="red")
+
             # Note the two quadratic curves are not the same!
-            pargs = {}
-            if m == "o":
-                pargs["label"] = "quadratic"
-            ax.plot(xx, b[2] + b[0] * xx + b[1] * (xx ** 2), color="black", **pargs)
+            # pargs = {}
+            # if m == "o":
+            #     pargs["label"] = "quadratic"
+            # ax.plot(xx, b[2] + b[0] * xx + b[1] * (xx ** 2), color="black", **pargs)
             print(f"Times less than {tl}: "
                   f"{b[2]:.2f} + {b[0]} * rho + {b[1]} * rho^2")
 
