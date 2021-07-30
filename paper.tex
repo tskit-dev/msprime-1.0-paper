@@ -74,20 +74,20 @@ The coalescent
 process~\citep{kingman1982coalescent,hudson1983testing,tajima1983evolutionary}
 models the ancestry of a set of sampled genomes. Given some sampled
 genomes, the coalescent provides a mathematical description of the
-genealogical tree relating these to each other. Because of its
-elegance and simplicity, the coalescent is now central to much of
-population genetics and
-genomics~\citep{hudson1990gene,hein2004gene,wakely2008coalescent}.
+genealogical tree relating the samples to each other.
+The coalescent has proved to be a powerful model,
+and it is now central to
+population genetics~\citep{hudson1990gene,hein2004gene,wakely2008coalescent}.
 Simulation has been a vital
 tool in coalescent theory since its earliest days~\citep{hudson1983testing},
 and dozens of different simulation tools have been
 developed over the decades~\citep{carvajal2008simulation,liu2008survey,
 arenas2012simulation,yuan2012overview,hoban2012computer,yang2014critical,
 peng2015genetic}.
-Two technological developments of recent years, however, have made the majority
-of these simulators of little relevance to modern datasets.
+Two technological developments of recent years, however,
+pose major challenges to the majority of these methods.
 % Some citations here? Darwin tree of life maybe?
-Firstly, whole genome sequencing ---and in particular fourth-generation
+Firstly, whole genome sequencing---and in particular fourth-generation
 sequencing technologies---have made chromosome-level assemblies
 commonplace. Thus, regarding input data as a series of unlinked loci
 (a previously reasonable assumption), is no longer defensible and
@@ -101,52 +101,34 @@ can only simulate short segments under the influence of recombination,
 and, until recently, approximate models of
 recombination~\citep{mcvean2005approximating,staab2015scrm}
 were necessary to simulate whole chromosomes.
-
-The second development that has made the majority of
-present day simulators inapplicable to modern data sets is the
+The second development reducing the utility of many simulators is the
 exponential increase in sample size. Human datasets such
 UK Biobank~\citep{bycroft2018genome} and
-gnomAD~\citep{karczewski2019variation} now contain hundreds of
-thousands of genomes, and there is every reason to believe that
-researchers will be soon be routinely working with
-datasets containing millions of samples~\citep{stephens2015big}.
-Classical simulators such as \ms\ and even fast approximate simulators
-such as \scrm\ simply cannot cope with this scale. Even if we
-spend months of CPU time on running simulations with millions of samples,
-the output would require terabytes of storage space to store and
-days of CPU time to parse~\citep{kelleher2016efficient}.
+gnomAD~\citep{karczewski2020mutational} now consist of hundreds of
+thousands of genomes and many other datasets on a similar scale
+are becoming available~\citep{tanjo2021practical}.
+Classical simulators such as \ms\ and even fast approximate methods
+such as \scrm\ simply cannot cope with such a large number of samples.
 
 The \msprime\ simulator~\citep{kelleher2016efficient,kelleher2020coalescent}
-has greatly increased the scope of coalescent simulations.
-Through the use of efficient data structures, it is
-now straightforward to simulate millions of whole chromosomes.
+has greatly increased the scope of coalescent simulations,
+and it now straightforward to simulate millions of whole chromosomes.
 The ``succinct tree sequence'' data
 structure~\citep{kelleher2016efficient,kelleher2018efficient,kelleher2019inferring,
 wohns2021unified},
-introduced as part of \msprime\, makes it possible to store simulations
-of millions of whole chromosomes in a few gigabytes, several orders
-of magnitude smaller than the standard
-Newick~\citep{felsenstein1989phylip} or
-VCF~\citep{danecek2011variant} based formats.
-This data structure has
-also lead to major advances in forwards-time
+introduced as part of \msprime\, makes it possible to store
+such huge simulations in a few gigabytes, several orders
+of magnitude smaller than commonly used formats.
+The succinct tree sequence has also lead to major advances in forwards-time
 simulation~\citep{kelleher2018efficient,haller2018tree},
 ancestry inference~\citep{kelleher2019inferring,wohns2021unified}
 and calculation of population genetic statistics~\citep{ralph2020efficiently}.
 Through a rigorous open-source community development process,
 \msprime\ has gained a large number of features since its introduction,
-making a highly efficient and flexible platform for population
+making it a highly efficient and flexible platform for population
 genetic simulation.
 % This is a bit flat --- anything else to say at the end here?
 This paper marks the release of \msprime\ 1.0.
-
-% JK: Earlier notes on this para
-% - Msprime 1.0 combines the features of many different simulators and is
-%   far more efficient than all of them. The combination of a Python API,
-%   an extremely efficient storage format, and a well-engineered and
-%   extensible codebase changes the game. Stdpopsim builds on this base
-%   to provide easy access to standard models of population genetics.
-%
 
 \section*{Results}
 
@@ -1344,6 +1326,7 @@ and sustainable in the long term.
 
 \jkcomment{TODO either need another paragraph linking these up, or we just
  drop this last one?}
+
 
 Recent breakthroughs in methods to infer genetic ancestry in recombining
 organisms~\citep{kelleher2019inferring,
