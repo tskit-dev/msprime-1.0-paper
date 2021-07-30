@@ -656,7 +656,7 @@ us to simulate recombination hotspots and patterns
 of recombination from empirical maps.
 The implementation of recombination in \msprime\ is extensively validated
 against analytical results~\citep{hudson1983properties,kaplan1985use}
-and \ms.
+and simulations by \ms.
 
 The Sequentially Markovian Coalescent (SMC) is an approximation of the
 coalescent with recombination
@@ -668,7 +668,7 @@ coalescent with recombination when we have four or fewer sampled
 genomes~\citep{hobolth2014markovian,wilton2015smc}, but the
 effects of the approximation are less well understood for larger
 sample sizes and several approaches have been proposed
-to allow simulations more closely approximate the coalescent
+that allow simulations to more closely approximate the coalescent
 with recombination~\citep{chen2009fast,wang2014new,staab2015scrm}.
 The SMC and SMC' models are available
 in \msprime\ 1.0. However, they are currently implemented using a
@@ -684,6 +684,9 @@ implement them more efficiently in future versions.
     \includegraphics{figures/ancestry-perf-expected}
 \end{center}
 \caption{\label{fig-ancestry-perf}
+    \jkcomment{This is a temporary version of the figure pending the outcome
+    of discussion in \#96}
+    \textbf{TOP}
     Approximate run time for \msprime\ simulations,
     for \textbf{(left)} small, and \textbf{(right)} larger simulations.
     Each point is the runtime of one simulation,
@@ -694,19 +697,13 @@ implement them more efficiently in future versions.
     the scaled recombination rate here is $\rho = NL/10^8$,
     shown on the horizontal axis.
     The black line is a quadratic fit separately in each panel.
+    \textbf{BOTTOM}
+    Time data from compared with
+    equation~\eqref{eqn-hsw-bound} (``expected'').
+    Left panel shows observed times plotted against expected number
+    of operations; right panel shows the ratio of the two, plotted against $\rho$.
 }
 \end{figure}
-
-% \begin{figure}
-% \begin{center}
-% \end{center}
-% \caption{\label{fig-expected-perf}
-%     Data from Figure~\ref{fig-ancestry-perf}, compared with
-%     equation~\eqref{eqn-hsw-bound} (``expected'').
-%     Left panel shows observed times plotted against expected number
-%     of operations; right panel shows the ratio of the two, plotted against $\rho$.
-% }
-% \end{figure}
 
 In human-like parameter regimes and for large sample sizes,
 \msprime's implementation of the
@@ -718,7 +715,8 @@ very efficient, it is still quadratic in the scaled recombination rate
 $\rho = 4 N_e L$, where $L$ is the length of the genome in units of recombination distance.
 This is because Hudson's algorithms tracks recombinations not only
 in segments ancestral to the sample, but also between ancestral segments
-and for large $\rho$, these events will dominate.
+(``trapped'' ancestral material). For large $\rho$, recombination events
+in trapped material will dominate.
 \citet[Eq.~5.10]{hein2004gene} derived an upper bound
 on $R_T$, the number of recombination events within trapped ancestral material
 in Hudson's algorithm,
@@ -728,9 +726,8 @@ in Hudson's algorithm,
     \rho (\rho + 1) \left( \sum_{i=1}^{n-1} \frac{1}{i} \right)^2 .
 \end{equation}
 Therefore, since the sum on the right is well approximated by $\log{n}$,
-we can very roughly say that the time
-complexity of Hudson's algorithm is $O(\rho^2 \log^2 n)$.
-
+we can conjecture that the time complexity of Hudson's
+algorithm is $O(\rho^2 \log^2 n)$.
 
 Figure~\ref{fig-ancestry-perf} gives a rough idea of the runtime of
 a given simulation of a constant size population,
@@ -741,19 +738,18 @@ these plot show, roughly, that simulating
 samples from a population of thousands of individuals takes seconds,
 while samples from a population of tens of thousands takes minutes.
 
-
-Although \citet{hein2004gene} refer to the bound in \eqref{eqn-hsw-bound}
-as ``crude'', it predicts the scaling of run time quite well for large genomes
-Figure~\ref{fig-expected-perf} shows the observed runtime
-(from the same simulations as Figure~\ref{fig-ancestry-perf})
-plotted against equation~\eqref{eqn-hsw-bound},
-showing that for values of $\rho$ above $4 \times 10^4$ or so
-(i.e., chromosome-length simulations in populations above $10^4$),
-the ratio of observed time to the value from \eqref{eqn-hsw-bound} is constant.
-This implies the runtime for a large sample
-can be predicted from the runtime for a small sample.
-For smaller values of $\rho$, however, the prediction
-severely underestimates runtime.
+% Although \citet{hein2004gene} refer to the bound in \eqref{eqn-hsw-bound}
+% as ``crude'', it predicts the scaling of run time quite well for large genomes
+% Figure~\ref{fig-expected-perf} shows the observed runtime
+% (from the same simulations as Figure~\ref{fig-ancestry-perf})
+% plotted against equation~\eqref{eqn-hsw-bound},
+% showing that for values of $\rho$ above $4 \times 10^4$ or so
+% (i.e., chromosome-length simulations in populations above $10^4$),
+% the ratio of observed time to the value from \eqref{eqn-hsw-bound} is constant.
+% This implies the runtime for a large sample
+% can be predicted from the runtime for a small sample.
+% For smaller values of $\rho$, however, the prediction
+% severely underestimates runtime.
 
 
 However, what about a simulation with changing population size?
@@ -793,7 +789,7 @@ on the coalescent time scale---so, over roughly $2 N_e$ generations.
 Since the total rate of events when there are the maximum number of lineages
 happens is roughly $L^2 N_e / 4$,
 then the total number of events is proportional to $(L N_e)^2$---i.e.,
-proportional to $\rho^2$, as desired.
+proportional to $\rho^2$, in agreement with Eq.~\eqref{eqn-hsw-bound}.
 
 What does this tell us about time-varying population sizes?
 The argument above implies that the work is spread out relatively
@@ -1401,48 +1397,6 @@ EXC 2064/1 -- Project number 390727645, and EXC 2124 -- Project number 390838134
 \setcounter{secnumdepth}{2} % Print out appendix section numbers
 
 \appendix
-
-% \section*{Theoretical runtime}
-%     \label{app-theoretical-runtime}
-% \begin{figure}
-% \begin{center}
-%     \includegraphics{figures/ancestry-perf-expected}
-% \end{center}
-% \caption{\label{fig-expected-perf}
-%     Data from Figure~\ref{fig-ancestry-perf}, compared with
-%     equation~\eqref{eqn-hsw-bound} (``expected'').
-%     Left panel shows observed times plotted against expected number
-%     of operations; right panel shows the ratio of the two, plotted against $\rho$.
-% }
-% \end{figure}
-
-% The book \citet{hein2004gene} (Equation 5.10) gives a theoretical upper bound
-% on the number of events involving trapped ancestral material in Hudson's algorithm.
-% For $n$ samples from
-% a diploid population of effective size $N_e$,
-% and a genome of genetic length $r$,
-% with $\rho = 4 N_e r$ the scaled recombination rate,
-% and $R^T$ the number of recombination recombination events in trapped material,
-% this upper bound is
-% \begin{equation} \label{eqn-hsw-bound}
-%     \mathbb{E}[R^T]
-%     \le
-%     \rho (\rho + 1) \left( \sum_{i=1}^{n-1} \frac{1}{i} \right)^2 .
-% \end{equation}
-% Note that the sum on the right is well-approximated by $\log(n)$.
-% Although \citet{hein2004gene} refer to this bound as ``crude'',
-% it turns out to predict the scaling of runtime quite well for large genomes.
-% Figure~\ref{fig-expected-perf} shows the observed runtime
-% (from the same simulations as Figure~\ref{fig-ancestry-perf})
-% plotted against equation~\eqref{eqn-hsw-bound},
-% showing that for values of $\rho$ above $4 \times 10^4$ or so
-% (i.e., chromosome-length simulations in populations above $10^4$),
-% the ratio of observed time to the value from \eqref{eqn-hsw-bound} is constant.
-% This implies the runtime for a large sample
-% can be predicted from the runtime for a small sample.
-% For smaller values of $\rho$, however, the prediction
-% severely underestimates runtime.
-
 
 \section*{Mutation generation}
 \label{app-mutation-algorithm}
