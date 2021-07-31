@@ -50,8 +50,8 @@
 
 \begin{abstract}
 Coalescent simulation is a key tool in population genetics and
-has been integral to coalescent theory since its beginnings.
-Because of the ease at which the basic model can be simulated,
+has been integral to theoretical developments since its beginnings.
+Because of the ease with which the basic coalescent model can be simulated,
 a large number of different simulators have been developed. However,
 the coalescent with recombination is far more challenging to simulate,
 and, until recently, it was not possible to simulate efficiently.
@@ -60,9 +60,9 @@ coalescent simulation, making it possible to simulate millions
 of whole genomes for the first time. We summarise the many features
 of \msprime\ 1.0, which is built around a core model of efficiently
 implementing recombination via the succinct tree sequence data
-structure. We advocate a community oriented open-source development
-process as a way to reduce duplication of effort and increase
-the quality of simulation software.
+structure. Moreover, \msprime\ is a community oriented open-source development
+project, aimed as a way to reduce duplication of effort and increase
+the quality of key simulation software.
 \end{abstract}
 
 
@@ -72,15 +72,17 @@ the quality of simulation software.
 
 The coalescent
 process~\citep{kingman1982coalescent,hudson1983testing,tajima1983evolutionary}
-models the ancestry of a set of sampled genomes. Given some sampled
-genomes, the coalescent provides a mathematical description of the
-genealogical tree relating the samples to each other.
+models the ancestry of a set of sampled genomes. Specifically,
+the coalescent provides a mathematical description of the
+genealogical tree that relates sampled genomes to one another.
 The coalescent has proved to be a powerful model,
 and it is now central to
 population genetics~\citep{hudson1990gene,hein2004gene,wakely2008coalescent}.
-Simulation has been a vital
-tool in coalescent theory since its earliest days~\citep{hudson1983testing},
-and dozens of different simulation tools have been
+Among the most impactful contributions of the coalescent since its origins
+~\citep{hudson1983testing} is that it provides a path towards more efficient
+simulation of population genetic samples than is possible using traditional,
+forwards in time simulation.
+As a result of this great utility, dozens of different simulation tools have been
 developed over the decades~\citep{carvajal2008simulation,liu2008survey,
 arenas2012simulation,yuan2012overview,hoban2012computer,yang2014critical,
 peng2015genetic}.
@@ -89,7 +91,7 @@ pose major challenges to the majority of these methods.
 % Some citations here? Darwin tree of life maybe?
 Firstly, whole genome sequencing---and in particular fourth-generation
 sequencing technologies---have made chromosome-level assemblies
-commonplace. Thus, regarding input data as a series of unlinked loci
+commonplace. Thus, modeling genetic variation data as a series of unlinked loci
 (a previously reasonable assumption), is no longer defensible and
 recombination must be fully accounted for. While the
 single-locus coalescent for $n$ samples can be simulated in $O(n)$
@@ -101,8 +103,10 @@ can only simulate short segments under the influence of recombination,
 and, until recently, approximate models of
 recombination~\citep{mcvean2005approximating,staab2015scrm}
 were necessary to simulate whole chromosomes.
-The second development reducing the utility of many simulators is the
-exponential increase in sample size. Human datasets such
+
+%adk-- splitting this to new paragraph
+The second major challenge to existing coalescent simulators is the
+exponential increase in sample size of genetic studies. Human datasets such
 UK Biobank~\citep{bycroft2018genome} and
 gnomAD~\citep{karczewski2020mutational} now consist of hundreds of
 thousands of genomes and many other datasets on a similar scale
@@ -128,7 +132,13 @@ Through a rigorous open-source community development process,
 making it a highly efficient and flexible platform for population
 genetic simulation.
 % This is a bit flat --- anything else to say at the end here?
-This paper marks the release of \msprime\ 1.0.
+This paper marks the release of \msprime\ 1.0, a state-of-the-art
+coalescent simulator both with respect to efficiency as well as feature-richness.
+Here we provide an overview of the extensive abilities of \msprime\ 1.0, 
+demonstrate through numerous performance comparisons its advantages over
+current, alternative software packages, and finally lay out future plans for
+further open-source development of what we hope will become an industry
+standard piece of computational infrastructure for the genetics community.
 
 \section*{Results}
 
