@@ -122,7 +122,8 @@ of magnitude smaller than commonly used formats.
 The succinct tree sequence has also lead to major advances in forwards-time
 simulation~\citep{kelleher2018efficient,haller2018tree},
 ancestry inference~\citep{kelleher2019inferring,wohns2021unified}
-and calculation of population genetic statistics~\citep{ralph2020efficiently}.
+and calculation of population genetic 
+statistics~\citep{kelleher2016efficient,ralph2020efficiently}.
 Through a rigorous open-source community development process,
 \msprime\ has gained a large number of features since its introduction,
 making it a highly efficient and flexible platform for population
@@ -330,7 +331,7 @@ a command line interface~\citep[e.g.][]{hudson2002generating,kern2016discoal},
 a text-based input file
 format~\citep[e.g.][]{guillaume2006nemo,excoffier2011fastsimcoal,shlyakhter2014cosi2},
 or a mixture of both.
-Command line interfaces such as \ms\ make it very easy to run simple
+Command line interfaces make it very easy to run simple
 simulations, but as model complexity and the number of parameters specified increases
 they become difficult to understand and
 error-prone~\citep{ragsdale2020lessons,gower2021demes}.
@@ -375,20 +376,22 @@ existing code. In the new APIs, ancestry and mutation simulation are fully
 separated, with the \texttt{sim\_ancestry} and \texttt{sim\_mutations}
 functions replacing the legacy \texttt{simulate} function. Among other changes,
 the new APIs default to discrete genome coordinates and finite sites mutations,
-resolving a major source of confusion and error. The 0.x APIs are fully
+resolving a major source of confusion and error. The previous APIs (like \texttt{simulate}) are fully
 supported and tested, and will be maintained for the foreseeable future.
 We also provide an \ms\ compatible
-command line interface to support existing workflows, and the
-\texttt{msp} program that supports specifying demographic models in
-Demes format~\citep{gower2021demes} from the command line, as
-well as simulating mutations on a given tree sequence file.
+command line interface to support existing workflows. The
+\texttt{msp} program has been extended to include new commands 
+for simulating ancestry and mutations separately. A particularly useful 
+feature is the ability to specify demographic models in
+Demes format~\citep{gower2021demes} from the command line,
+making simulating complex demography models straightforward.
 
 % The output - what do we get out?
 \subsection*{Data analysis}
 \label{sec-data-analysis}
 The point of running simulations is to generate data, and there
 are two important ways in which the \tskit\ tree sequences output by
-\msprime\ are more useful than established methods:
+\msprime\ are more useful than classical methods:
 they are more efficient and they contain more information.
 We will consider these points in turn.
 
@@ -417,7 +420,7 @@ data, and methods avoid the bottleneck of parsing
 text-based file formats to compute these statistics
 by either developing their own
 simulators~\citep[e.g.][]{cornuet2008inferring,lopes2009popabc}
-or creating forked versions of existing
+or creating forked versions (i.e., independent copies) of existing
 simulators~\cite[e.g.][]{thornton2006approximate,
 hickerson2007msbayes,pavlidis2010msabc,huang2011mtml,quinto2018modeling},
 tightly integrated with the inference method.
@@ -442,7 +445,7 @@ has lead, for example, to the definition of segments of
 identity by descent as a set of samples having approximately the same time
 to their most recent common ancestor along some section of the
 genome~\citep{yang2016rapidly}.
-Numerous forks (i.e., independent copies) of simulators have been created to access information not provided
+Numerous forks  of simulators have been created to access information not provided
 in the output. For example, \ms\  has been forked to
 output information about migrating segments~\citep{rosenzweig2016powerful},
 information about ancestral lineages~\citep{chen2013asymptotic},
@@ -457,9 +460,9 @@ stored via options such as \texttt{record\_migrations} or
 \texttt{record\_full\_arg} (see the \nameref{sec-arg} section) and
 can be efficiently and conveniently processed via \tskit\ APIs.
 
-These problems, of inefficient and limited access to the simulated
+These problems of inefficient and limited access to the simulated
 data are comprehensively solved by \msprime\ and \tskit. Complete
-information about ancestry and mutation simulations is immediately
+information about ancestry and mutation in simulations is immediately
 available to the user in a single integrated data structure
 (rather than multiple independent files), with no intermediate
 processing required.
@@ -716,7 +719,7 @@ a given simulation of a constant size population,
 and verifies that runtime scales quadratically with $\rho$,
 and depends much less strongly on the number of samples.
 Taking a typical chromosome to be 1 Morgan in length,
-these plot show, roughly, that simulating
+these plot show, roughly, that simulating chromosome-length
 samples from a population of thousands of individuals takes seconds,
 while samples from a population of tens of thousands takes minutes.
 
@@ -762,7 +765,7 @@ where $\ell$ is the mean length of genome carried by each lineage
 It is known that the maximum number of lineages is reached
 very quickly~\citep{nelson2020accounting},
 and at this maximum, recombination and coalescence rates are equal.
-Threfore, many (roughly half) of these lineages have at
+Therefore, many (roughly half) of these lineages have at
 least two distant segments of ancestral material
 separated by a long segment of genome, implying that $\ell \approx L / 4$.
 This implies that $M$ is roughly $L N_e$.
@@ -795,8 +798,9 @@ possibly varying other parameters to check for interactions,
 and then predict runtime by fitting a quadratic curve to genome length.
 There is only a weak dependency on sample size
 ---notice that in Figure~\ref{fig-ancestry-perf} increasing sample size 100-fold
-only increases runtime by a factor of 2 or so.
-\jkcomment{as expected, since it's $O(\log^2{n})$?}
+only increases runtime by a factor of 2 or so,
+as predicted from the $\log^2{n}$? factor
+of equation \eqref{eqn-hsw-bound}.
 
 
 \subsection*{Gene conversion}
@@ -805,8 +809,8 @@ only increases runtime by a factor of 2 or so.
 Gene conversion is a unidirectional transfer of a short segment of genetic material,
 for example between homologous chromosomes~\citep{chen2007gene}.
 %description of ancestral process
-Just as recombination, gene conversion events split the ancestral material
-for some lineage, creating two independent lineages.
+Just as recombination, gene conversion events split how genetic material
+is inherited along some lineage, creating two independent lineages.
 In contrast to the previously described recombination process, where the ancestral
 material to the left and right of a recombination breakpoint follows two
 different ancestral lineages, gene conversion events distribute the genetic material
@@ -921,7 +925,9 @@ The \texttt{DemographyDebugger} can output detailed information for debugging
 demographic models, but also provides
 methods to compute a suite of numerical predictions about the location of
 lineages over time, for example the coalescence rates for two or more lineages
-drawn from populations at specified times in the past.
+drawn from populations at specified times in the past,
+which can be inverted to obtain the ``inverse instanteous coalescence rate'',
+or IICR of \citet{chikhi2018inverse}.
 Many popular approaches in population genetics use the distribution of
 coalescence rates between pairs of lineages in one or more populations to infer
 effective population sizes over
@@ -1011,7 +1017,7 @@ Please see the Appendix for more details and model derivations.
 
 The Ancestral Recombination Graph (ARG) was introduced by
 Griffiths~\citep{griffiths1991two,griffiths1997ancestral} as a graphical
-representation of the coalescent with recombination stochastic process. This
+representation of the stochastic process that describes the coalescent with recombination. This
 formulation was complementary to Hudson's earlier
 work~\citep{hudson1983properties}, and substantially increased our theoretical
 understanding of recombination. In Griffiths' ARG formulation, we
