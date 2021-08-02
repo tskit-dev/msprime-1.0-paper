@@ -93,9 +93,9 @@ Firstly, whole genome sequencing---and in particular fourth-generation
 sequencing technologies---have made chromosome-level assemblies
 commonplace. Thus, modelling genetic variation data as a series of unlinked loci,
 a previously reasonable assumption, is no longer defensible and
-we must fully account for recombination. 
-While a genealogical tree relating $n$ samples in the single-locus coalescent 
-can be simulated in $O(n)$ time~\citep{hudson1990gene}, 
+we must fully account for recombination.
+While a genealogical tree relating $n$ samples in the single-locus coalescent
+can be simulated in $O(n)$ time~\citep{hudson1990gene},
 the coalescent with recombination, which generates multiple correlated trees, is
 far more challenging.
 % Sentence is too long...
@@ -127,7 +127,7 @@ of magnitude smaller than commonly used formats.
 The succinct tree sequence has also lead to major advances in forwards-time
 simulation~\citep{kelleher2018efficient,haller2018tree},
 ancestry inference~\citep{kelleher2019inferring,wohns2021unified}
-and calculation of population genetic 
+and calculation of population genetic
 statistics~\citep{kelleher2016efficient,ralph2020efficiently}.
 Through a rigorous open-source community development process,
 \msprime\ has gained a large number of features since its introduction,
@@ -136,7 +136,7 @@ genetic simulation.
 % This is a bit flat --- anything else to say at the end here?
 This paper marks the release of \msprime\ 1.0, a state-of-the-art
 coalescent simulator both with respect to efficiency as well as feature-richness.
-Here we provide an overview of the extensive abilities of \msprime\ 1.0, 
+Here we provide an overview of the extensive abilities of \msprime\ 1.0,
 demonstrate through numerous performance comparisons its advantages over
 current, alternative software packages, and finally lay out future plans for
 further open-source development of what we hope will become an industry
@@ -230,14 +230,14 @@ and is the key to the efficiency of tree
 sequences~\citep{
 kelleher2018efficient,kelleher2019inferring,ralph2020efficiently}.
 
-The tree sequence encoding of ancestry as set of nodes and edges 
-as just described, is equivalent to a graph in which edges 
+The tree sequence encoding of ancestry as set of nodes and edges
+as just described, is equivalent to a graph in which edges
 are annotated with a set of disjoint genomic intervals.
 This is closely related to the Ancestral Recombination Graph (ARG),
 a term that is often loosely understood
 to mean some representation of genetic
 ancestry as a graph~\citep[e.g.][]{mathieson2020ancestry}.
-In this sense a succinct tree sequence \emph{is} an ARG. 
+In this sense a succinct tree sequence \emph{is} an ARG.
 More technically, an ARG is a particular
 representation of genetic ancestry as a graph based on the
 flow of ancestral material through recombination and common
@@ -246,7 +246,7 @@ In this sense, tree sequences can be used to \emph{encode}
 ARGs without loss of information (although
 the default minimal tree sequence encoding is
 much more concise; see the \nameref{sec-arg} section).
-It should be noted that, despite standardisation 
+It should be noted that, despite standardisation
 efforts~\citep{cardona2008extended,mcgill2013graphml}, there is
 no shared format for interchanging ARG data, and no supporting software
 libraries.
@@ -364,7 +364,7 @@ engines via an Application Programming Interface (API)~\citep[e.g.][]{
 thornton2014cpp,kelleher2016efficient,becheler2019quetzal,haller2019slim}.
 The primary interface for \msprime\ is through a thoroughly documented and
 stable Python
-API, which has encouraged the development of an ecosystem of downstream 
+API, which has encouraged the development of an ecosystem of downstream
 % Found these through the Dependent packages on GitHub
 tools~\citep{terhorst2017robust,chan2018likelihood,spence2019inference,
 adrion2020community,adrion2020predicting, kamm2020efficiently,
@@ -388,13 +388,13 @@ existing code. In the new APIs, ancestry and mutation simulation are fully
 separated, with the \texttt{sim\_ancestry} and \texttt{sim\_mutations}
 functions replacing the legacy \texttt{simulate} function. Among other changes,
 the new APIs default to discrete genome coordinates and finite sites mutations,
-making the default settings more realistic and resolving a major source of confusion and error. 
+making the default settings more realistic and resolving a major source of confusion and error.
 The previous APIs are fully
 supported and tested, and will be maintained for the foreseeable future.
 We also provide an \ms\ compatible
 command line interface to support existing workflows. The
-\texttt{msp} program has been extended to include new commands 
-for simulating ancestry and mutations separately. A particularly useful 
+\texttt{msp} program has been extended to include new commands
+for simulating ancestry and mutations separately. A particularly useful
 feature is the ability to specify demographic models in
 Demes format~\citep{gower2021demes} from the command line,
 making simulating complex demography models straightforward.
@@ -864,12 +864,12 @@ conversion in \msprime\ 1.0, and validated the output against
 % In terms of file size, as expected from the discussion above, we observe that gene
 % conversion is equivalent to double the rate of
 % crossover recombination, so that a tree sequence produced with a `recombination_rate` of $r$
-% and a `gene_conversion_rate` of $g$ is roughly the same size as a tree sequence with no gene 
+% and a `gene_conversion_rate` of $g$ is roughly the same size as a tree sequence with no gene
 % conversion and a `recombination_rate` of $r+2g$. However, because gene conversion tends to
 % affect only short regions of the genome, each gene conversion event usually creates
 % less trapped material, hence simulations using mammalian-like gene conversion parameters
 % run faster than simulations in which an equivalent amount of crossover recombination is
-% imposed. 
+% imposed.
 
 \begin{figure}
 \begin{center}
@@ -950,7 +950,7 @@ methods to compute a suite of numerical predictions about the location of
 lineages over time, for example the coalescence rates for two or more lineages
 drawn from populations at specified times in the past,
 which can be inverted to obtain the ``inverse instantaneous coalescence rate'',
-or IICR of \citet{chikhi2018inverse}.
+or IICR of \citet{chikhi2018iicr}.
 Many popular approaches in population genetics use the distribution of
 coalescence rates between pairs of lineages in one or more populations to infer
 effective population sizes over
@@ -1039,11 +1039,11 @@ Please see the Appendix for more details and model derivations.
 \label{sec-arg}
 
 The Ancestral Recombination Graph (ARG) was introduced by
-Griffiths~\citep{griffiths1991two,griffiths1997ancestral} 
-representation of the coalescent with recombination in terms of a graph. 
+Griffiths~\citep{griffiths1991two,griffiths1997ancestral}
+as a representation of the coalescent with recombination in terms of a graph.
 This formulation was complementary to Hudson's earlier
 work~\citep{hudson1983properties}, and substantially increased our theoretical
-understanding of recombination. In Griffiths' ARG formulation, 
+understanding of recombination. In Griffiths' ARG formulation,
 a realisation of the coalescent with recombination is a graph in which
 vertices represent common ancestor or recombination events, and edges represent
 lineages through which ancestral material flows.
