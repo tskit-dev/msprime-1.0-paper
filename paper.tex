@@ -213,7 +213,7 @@ individual is associated with two separate nodes (we omit
 the individual table in Fig.~\ref{fig-ts-example} as it is optional).
 Nodes define haplotypes that exist at a specific time within
 some individual, and edges define genetic inheritance
-relationships between these nodes. An \emph{edge} consists of a
+between these nodes. An \emph{edge} consists of a
 parent node, a child node and the left and right coordinates
 of the contiguous genomic interval over which
 the child inherited genetic material from the parent.
@@ -532,11 +532,11 @@ the two have been conflated in practice.
 Part of the reason for this poor record of software reuse and modularity is the
 lack of standardised file formats, and in particular, the absence of common
 library infrastructure to abstract the details of interchanging simulation
-data. On the surface, it would appear that \msprime\ is also guilty of this
-lack of modularity since it supports simulating both ancestry and mutations.
-However, this is essentially a historical accident and because of the \tskit\
-library, the mutation process in \msprime\ could just as easily
-be performed in a separate package.
+data. Although \msprime\ also supports simulating both ancestry and mutations,
+the two aspects are functionally independent within the software.
+Both ancestry and mutation simulators are present in \msprime
+for reasons of convenience and history,
+and could be split into separate packages.
 The mature and efficient C and Python interfaces for
 \tskit\ makes it straightforward to add further information to
 an existing file, and because of its efficient data interchange mechanisms,
@@ -1287,7 +1287,8 @@ the functionality of several more specialised simulators
 while maintaining excellent performance.
 It is developed by a geographically distributed team of volunteers under an
 open source community development model, with a strong emphasis
-on code quality and correctness. As in any large code base,
+on code quality, correctness, good documentation, and inclusive development.
+As in any large code base,
 unit tests play a key role in ensuring that new additions behave
 as expected and \msprime\ has an extensive suite.
 As of the 1.0.0 release \msprime\ consists of around 13K lines of C and 11K
@@ -1313,6 +1314,17 @@ selective sweeps against \discoal, and Wright-Fisher simulations
 against forwards-time simulations in \SLiM.
 This suite of tests is run before every release, to ensure
 that statistical errors have not been introduced.
+
+More visibly to the end user, we also have a high standard for documentation,
+with precise, comprehensive, and cross-linked documentation
+that is automatically built from the code base
+and served through the website \url{https://tskit.dev}.
+With the goal of lowering the entry barrier to new users,
+we have invested significant effort in writing examples and introductions,
+and making common tasks discoverable.
+We also view contributions to documentation as equally important to the project
+as writing code or designing methods---what use would it be
+to write reliable, stable software if no-one used it?
 
 \section*{Discussion}
 
