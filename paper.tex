@@ -1328,28 +1328,43 @@ to write reliable, stable software if no-one used it?
 
 \section*{Discussion}
 
-% Simulation software is historically a total shitshow
+% We can simulate so much more now
 
-Simulation is a vital tool in population genetics, but the approach to
-developing simulation software has historically been dysfunctional. A huge
-proliferation of tools have been published (the references here are not
-exhaustive) and only a small minority of these are actively developed and
+This release makes \msprime\ able to produce simulations
+with a great deal more biological realism, without a loss in speed and efficiency.
+This ability will allow researchers to perform more reliable % different word here
+power analyses, more robustly test new methods,
+and carry out more reliable inferences,
+without worrying that gene conversion or backmutation might be sabatoging
+their applications to real data.
+These advances have only been possible thanks to a distributed,
+collaborative model of software development,
+and the work of many people.
+We hope the tool continues to be useful to many.
+
+% Simulation software is historically a beautiful shitshow
+
+Even though simulation has long been a vital tool in population genetics,
+such collaborative software development has historically been uncommon.
+A huge proliferation of tools have been published
+(the references here are not exhaustive)
+and only a small minority of these are actively developed and
 maintained today. The ecosystem is highly fragmented, with numerous different
 ways of specifying parameters and representing results, and there are
 significant software quality issues at all stages. This is unsurprising, since
 the majority of simulation software development is performed by students, who
 are themselves learning to code, often without formal training in software
-development. Although developing a simulator is certainly a learning
-opportunity, it is also an opportunity to learn poor development practices. A
-large number of unmaintained tools with mostly overlapping features represents
-a profound waste of effort, and it is worth considering what could have been
-achieved if even a small fraction of this effort had been invested in shared
-community infrastructure.
+development.
+Although this ``Haldane's sieve'' of software has produced many good tools
+and enabled decades of research,
+it also represents a missed opportunity to invest as a community
+in shared infrastructure and mentorship in good software development practice.
 
 % THERE IS A BETTER WAY!!!
 Scientific software is vital apparatus, and must be engineered
 to a high quality if we are to trust its results. There is a growing
-realisation across the sciences [citations] that investing in
+realisation across the sciences \citet[OTHER CITATIONS]{siepel2019challenges}
+that investing in
 shared community infrastructure produces better results than a
 proliferation of individually maintained tools, allowing scientists
 to focus on their specific questions rather than software engineering.
@@ -1357,22 +1372,25 @@ to focus on their specific questions rather than software engineering.
 with features added by motivated users, taking advantage of the
 established development practices and infrastructure.
 % I'm going out on a limb here - do folks agree?
-This is a learning experience for many users,
-allowing them to improve their software development skills in a
-welcoming community environment and being exposed to
-state-of-the-art infrastructure. We hope that users who find that
+% PLR- personally I have learned SO MUCH, and I'm passing it on to others
+Software development in a welcoming community,
+with mentorship by experienced developers,
+is a hugely useul experience for many users,
+The skills that contributors learn
+can lead to greatly increased productivity in subsequent
+work (e.g., through more reliable code and better debugging skills).
+We hope that users who find that
 features they require are missing will continue to contribute to
 \msprime, leading to a community project that is both high-quality
 and sustainable in the long term.
 
-\jkcomment{TODO either need another paragraph linking these up, or we just
- drop this last one?}
 
-
+The tree sequence developed for \msprime\ allows users a view of not only
+genetic variation but also the genetic ancestry that produced that variation.
 Recent breakthroughs in methods to infer genetic ancestry in recombining
 organisms~\citep{kelleher2019inferring,
 speidel2019method,wohns2021unified,schaefer2021ancestral,speidel2021inferring}
-have made it possible to estimate such ancestry at scale for
+have made it possible to estimate such ancestry from real data at scale for
 the first time~\citep{harris2019database,tang2019genealogy}.
 Given such inferred ancestry, many exciting applications
 become possible. For example, \cite{osmond2021estimating}
@@ -1383,11 +1401,11 @@ becomes the input for other downstream inferences, it is vitally
 important that these primary inferences are thoroughly validated,
 with the detailed properties of the inferred ancestries
 catalogued and understood.
-As we have seen, \msprime\---through the succinct tree sequence
-data structure and \tskit\ library---can provide simulated
-genetic ancestry at any scale or degree of detail required, and should
-provide a valuable source of ground-truth for evaluating
-these methods.
+\texttt{Msprime} will be an important tool for these inferences and validations,
+and in this context the ability to interoperate
+with other methods---particularly, forwards simulators---through
+the succinct tree sequence data structure and \tskit\ library
+will be vital.
 
 \section*{Acknowledgments}
 JK is supported by the Robertson Foundation.
