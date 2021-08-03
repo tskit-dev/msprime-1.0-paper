@@ -703,20 +703,27 @@ to note that although the implementation of Hudson's algorithm is
 very efficient, it is still quadratic in the scaled recombination rate
 $\rho = 4 N_e L$, where $L$ is the length of the genome in units of recombination distance.
 This is because Hudson's algorithms tracks recombinations not only
-in segments ancestral to the sample, but also between ancestral segments
-(i.e. in ``trapped'' ancestral material). For large $\rho$, recombination events
-in trapped material will dominate.
-\citet[Eq.~5.10]{hein2004gene} derived an upper bound
-on $R_T$, the number of recombination events within trapped ancestral material
-in Hudson's algorithm,
-\begin{equation} \label{eqn-hsw-bound}
-    \mathbb{E}[R_T]
-    \le
-    \rho (\rho + 1) \left( \sum_{i=1}^{n-1} \frac{1}{i} \right)^2 .
-\end{equation}
-Therefore, since the sum on the right is well approximated by $\log{n}$,
-we can conjecture that the time complexity of Hudson's
+in segments ancestral to the sample, but also between ancestral segments.
+In other words, lineages may ``coalesce'' even if the pieces of ancestral material they carry
+do not overlap---representing an ancestral chromosome
+that is a genetic ancestor to each of two linages,
+but not the most recent common genetic ancestor at any location along the genome.
+When this happens, the resulting merged lineage carries ``trapped'' genetic material
+that is not ancestral to any samples;
+recombinations in the trapped material will cause the two segments of ancestry
+to split apart into separate lineages again.
+For large $\rho$, recombination events
+in this trapped material will dominate.
+\citet[Eq.~5.10]{hein2004gene} gave 
+$\rho (\rho + 1) \left( \sum_{i=1}^{n-1} \frac{1}{i} \right)^2$
+as an upper bound
+on the number of recombination events within trapped ancestral material
+in Hudson's algorithm.
+Since the sum is well approximated by $\log{n}$,
+a natural conjecture is that the time complexity of Hudson's
 algorithm is $O(\rho^2 \log^2 n)$.
+This turns out to have the correct dependence on $\rho$---although
+caution is needed; see below---but the dependence on $n$ is less accurate.
 
 Figure~\ref{fig-ancestry-perf} gives a rough idea of the runtime of
 a given simulation of a constant size population,
@@ -726,6 +733,12 @@ Taking a typical chromosome to be 1 Morgan in length,
 these plot show, roughly, that simulating chromosome-length
 samples from a population of thousands of individuals takes seconds,
 while samples from a population of tens of thousands takes minutes.
+However, it is important to note that the quadratic curves in the two
+panels are different---predicting the runtimes of days-long simulations
+using the timing of minutes-long runs is unlikely to be very accurate.
+Further experiments show that adding a $\log^2 n$ factor
+to predict runtimes across different sample sizes does not do well
+except possibly at very large values of $\rho$.
 
 % Although \citet{hein2004gene} refer to the bound in \eqref{eqn-hsw-bound}
 % as ``crude'', it predicts the scaling of run time quite well for large genomes
@@ -778,7 +791,7 @@ on the coalescent time scale---so, over roughly $2 N_e$ generations.
 Since the total rate of events when there are the maximum number of lineages
 happens is roughly $L^2 N_e / 4$,
 then the total number of events is proportional to $(L N_e)^2$---i.e.,
-proportional to $\rho^2$, in agreement with Eq.~\eqref{eqn-hsw-bound}.
+proportional to $\rho^2$.
 
 What does this tell us about time-varying population sizes?
 The argument above implies that the work is spread out relatively
@@ -796,15 +809,16 @@ For instance, in many agricultural species $N_1 \propto 100$, while $N_2 \propto
 and the runtime will depend critically on $T$---in other words,
 simulation will be quick in a species with a strong domestication bottleneck,
 and slow otherwise.
+
 In practice, we recommend that users estimate runtime by
 measuring runtime in a series of simulations with short genome lengths,
 possibly varying other parameters to check for interactions,
 and then predict runtime by fitting a quadratic curve to genome length.
-There is only a weak dependency on sample size
+In these experiments, sample sizes should be roughly
+those desired---which is not a problem in practice because of
+the weak dependency on sample size
 ---notice that in Figure~\ref{fig-ancestry-perf} increasing sample size 100-fold
-only increases runtime by a factor of 2 or so,
-as predicted from the $\log^2{n}$? factor
-of equation \eqref{eqn-hsw-bound}.
+only increases runtime by a factor of 2 or so.
 
 
 \subsection*{Gene conversion}
