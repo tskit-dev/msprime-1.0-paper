@@ -1,4 +1,3 @@
-
 import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -173,48 +172,35 @@ def ancestry_perf():
 
     df = pd.read_csv("data/ancestry-perf.csv", sep=",")
 
-    def objective(X, a, b):
-        r, n = X
-        return a * (r ** 2) * (np.log(n)**2) + b
-
-    # Constants aren't going to matter here since we're fitting, but not
-    # # to worry.
-    # rho = np.array(4 * df["N"] * df["L"] / 1e8)
-    # n = np.array(df["num_samples"])
-    # T = np.array(df["time"])
-    # popt, _ = scipy.optimize.curve_fit(objective, [rho, n], T, [1, 0])
-
-    fig, axes = plt.subplots(1, 2, figsize=(6, 3))
-
     # Plot the times
-    fig, axes = plt.subplots(1, 2, figsize=(6, 3))
+    fig, axes = plt.subplots(1, 2, figsize=(12, 6))
     rgb = matplotlib.cm.get_cmap("Set1")(np.linspace(0.0, 1.0, len(set(df["N"]))))
     time_lims = [5, 1e12]
-    for ax, tl  in zip(axes, time_lims):
+    for ax, tl in zip(axes, time_lims):
         legend_adds = []
         for ns, m in zip((1000, 100000), ("o", "v")):
             legend_adds.append(
-                    matplotlib.lines.Line2D(
-                        [], [], color='grey', marker=m,
-                        linestyle="none",
-                        label=f"num samples={ns}"
-                    )
+                matplotlib.lines.Line2D(
+                    [],
+                    [],
+                    color="grey",
+                    marker=m,
+                    linestyle="none",
+                    label=f"num samples={ns}",
+                )
             )
-            ut = np.logical_and(
-                    df["time"] <= tl,
-                    df["num_samples"] == ns
-            )
+            ut = np.logical_and(df["time"] <= tl, df["num_samples"] == ns)
             # fit a qudratic with no intercept:
             # in R this would be lm(time ~ 0 + L : N + I((N*L)^2))
             rho = 4 * df["N"] * df["L"] / 1e8
             X = np.empty((sum(ut), 3))
-            X[:,0] = rho[ut]
-            X[:,1] = ( rho ** 2 )[ut]
-            X[:,2] = 1
+            X[:, 0] = rho[ut]
+            X[:, 1] = (rho ** 2)[ut]
+            X[:, 2] = 1
             b, _, _, _ = np.linalg.lstsq(X, df["time"][ut], rcond=None)
 
-            ax.set_xlabel("rho (4NL/1e8)")
-            ax.set_ylabel("time (seconds)")
+            ax.set_xlabel("Scaled recombination rate $\\rho= 4NL/ 10^{8}$")
+            ax.set_ylabel("Time (seconds)")
             Nvals = sorted(list(set(df["N"])))
             for k, Nval in enumerate(Nvals):
                 utN = np.logical_and(ut, df["N"] == Nval)
@@ -223,69 +209,26 @@ def ancestry_perf():
                     if m == "o":
                         sargs["label"] = f"N={Nval}"
                     ax.scatter(
-                        rho[utN],
-                        df["time"][utN],
-                        color=rgb[k],
-                        marker=m,
-                        **sargs
+                        rho[utN], df["time"][utN], color=rgb[k], marker=m, **sargs
                     )
 
             xx = np.linspace(0, 1.05 * max(X[:, 0]), 51)
-
-            # ax.plot(xx, [objective((x,ns), *popt) for x in xx], color="red")
 
             # Note the two quadratic curves are not the same!
             pargs = {}
             if m == "o":
                 pargs["label"] = "quadratic"
             ax.plot(xx, b[2] + b[0] * xx + b[1] * (xx ** 2), color="black", **pargs)
-            print(f"Times less than {tl}: "
-                  f"{b[2]:.2f} + {b[0]} * rho + {b[1]} * rho^2")
+            print(
+                f"Times less than {tl}: " f"{b[2]:.2f} + {b[0]} * rho + {b[1]} * rho^2"
+            )
 
-    axes[0].legend(handles=legend_adds, prop={'size': 6})
-    axes[1].legend(prop={'size': 6})
+    axes[0].legend(handles=legend_adds)  # , prop={'size': 6})
+    axes[1].legend()
+    axes[0].set_title("A")
+    axes[1].set_title("B")
+
     save("ancestry-perf")
-
-
-@click.command()
-def ancestry_perf_expected():
-    """
-    Compare the ancestry benchark to Hein, Schierup & Wiuf:
-    recombination rate is 1e-8, so rho = N * L * 1e-8
-    """
-
-    df = pd.read_csv(
-        "data/ancestry-perf.csv", sep=",",
-    )
-
-    h = np.cumsum(1/np.arange(1, np.max(df["num_samples"]) + 1))
-    rho = df["L"] * df["N"] * 1e-8
-    expected = rho * (rho + 1) * (h[df["num_samples"].astype("int") - 1] ** 2)
-
-    fig, (ax0, ax1) = plt.subplots(1, 2, figsize=(6, 3))
-
-    ax0.set_xlabel("expected time (theory)")
-    ax0.set_ylabel("observed time (seconds)")
-    for ns, m in zip((1000, 100000), ("o", "v")):
-        ut = (df["num_samples"] == ns)
-        ax0.scatter(
-                expected[ut], df["time"][ut],
-                marker=m, label=f"num_samples={ns}",
-        )
-    ax0.legend(prop={'size': 6})
-
-    ax1.set_xlabel("rho (4NL/1e8)")
-    ax1.set_ylabel("observed / expected time")
-    for ns, m in zip((1000, 100000), ("o", "v")):
-        ut = (df["num_samples"] == ns)
-        ax1.scatter(
-                (4 * df["N"] * df["L"] / 1e8)[ut],
-                (df["time"] / expected)[ut],
-                marker=m,
-        )
-    ax1.set_yscale("log")
-
-    save("ancestry-perf-expected")
 
 
 @click.command()
@@ -308,7 +251,6 @@ cli.add_command(gc_perf)
 cli.add_command(sweeps_perf)
 cli.add_command(dtwf_perf)
 cli.add_command(ancestry_perf)
-cli.add_command(ancestry_perf_expected)
 cli.add_command(arg)
 
 if __name__ == "__main__":

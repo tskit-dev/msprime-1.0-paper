@@ -678,14 +678,10 @@ implement them more efficiently in future versions.
 \begin{figure}
 \begin{center}
     \includegraphics{figures/ancestry-perf}
-    \includegraphics{figures/ancestry-perf-expected}
 \end{center}
 \caption{\label{fig-ancestry-perf}
-    \jkcomment{This is a temporary version of the figure pending the outcome
-    of discussion in \#96}
-    \textbf{TOP}
     Approximate run time for \msprime\ simulations,
-    for \textbf{(left)} small, and \textbf{(right)} larger simulations.
+    for (A) small and (B) larger simulations.
     Each point is the runtime of one simulation,
     for various values of effective population size ($N$),
     genome length ($L$), and number of samples.
@@ -693,12 +689,8 @@ implement them more efficiently in future versions.
     since recombination rate in these simulations was $10^{-8}$,
     the scaled recombination rate here is $\rho = NL/10^8$,
     shown on the horizontal axis.
-    The black line is a quadratic fit separately in each panel.
-    \textbf{BOTTOM}
-    Time data from compared with
-    equation~\eqref{eqn-hsw-bound} (``expected'').
-    Left panel shows observed times plotted against expected number
-    of operations; right panel shows the ratio of the two, plotted against $\rho$.
+    The black lines are quadratic fits separately in each panel
+    and sample size.
 }
 \end{figure}
 
@@ -1318,7 +1310,7 @@ that statistical errors have not been introduced.
 More visibly to the end user, we also have a high standard for documentation,
 with precise, comprehensive, and cross-linked documentation
 that is automatically built from the code base
-and served through the website \url{https://tskit.dev}.
+and served through the website \texttt{https://tskit.dev}.
 With the goal of lowering the entry barrier to new users,
 we have invested significant effort in writing examples and introductions,
 and making common tasks discoverable.
