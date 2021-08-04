@@ -654,7 +654,7 @@ coalescent with recombination~\citep{mcvean2005approximating,marjoram2006fast},
 and was primarily motivated by the need to
 simulate longer genomes than was possible using tools like \ms.
 The SMC is a good approximation to the
-coalescent with recombination when we have four or fewer sampled
+coalescent with recombination when we have fewer than five sampled
 genomes~\citep{hobolth2014markovian,wilton2015smc}, but the
 effects of the approximation are less well understood for larger
 sample sizes, and several approaches have been proposed
@@ -676,12 +676,17 @@ implement them more efficiently in future versions.
     Approximate run time for \msprime\ simulations,
     for (A) small and (B) larger simulations.
     Each point is the runtime of one simulation,
-    for various values of effective population size ($N$),
-    genome length ($L$), and number of samples.
-    Runtime scales quadratically with the product of $N$ and $L$;
-    since recombination rate in these simulations was $10^{-8}$,
-    the scaled recombination rate here is $\rho = NL/10^8$,
-    shown on the horizontal axis.
+    for various values of effective population size ($N_e$),
+    genome length in Morgans ($L$), and number of samples ($n$).
+    Runtime scales quadratically with the product of $N_e$ and $L$,
+    shown on the horizontal axis---for instance, figure A shows that
+    1,000 samples of 1 Morgan-length chromosomes
+    from a population of $N_e=2,000$ diploids
+    would take about 2 seconds, and that the same number of
+    0.01 Morgan segments in a population of size 200,000
+    would take about the same time.
+    Since recombination rate in these simulations was $10^{-8}$,
+    $L$ is the number of base pairs divided by $10^8$.
     The black lines are quadratic fits separately in each panel
     and sample size.
 }
@@ -711,7 +716,7 @@ in this trapped material will dominate.
 $\rho (\rho + 1) \left( \sum_{i=1}^{n-1} \frac{1}{i} \right)^2$
 as an upper bound
 on the number of recombination events within trapped ancestral material
-in Hudson's algorithm.
+in Hudson's algorithm with $n$ samples.
 Since the sum is well approximated by $\log{n}$,
 a natural conjecture is that the time complexity of Hudson's
 algorithm is $O(\rho^2 \log^2 n)$.
@@ -723,7 +728,7 @@ a given simulation of a constant size population,
 and verifies that runtime scales quadratically with $\rho$,
 and depends much less strongly on the number of samples.
 Taking a typical chromosome to be 1 Morgan in length,
-these plot show, roughly, that simulating chromosome-length
+these plots show, roughly, that simulating chromosome-length
 samples from a population of thousands of individuals takes seconds,
 while samples from a population of tens of thousands takes minutes.
 However, it is important to note that the quadratic curves in the two
