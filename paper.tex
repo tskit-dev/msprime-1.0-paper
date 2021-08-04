@@ -98,7 +98,7 @@ While a genealogical tree relating $n$ samples in the single-locus coalescent
 can be simulated in $O(n)$ time~\citep{hudson1990gene},
 the coalescent with recombination, which generates multiple correlated trees, is
 far more challenging.
-% JK will need to revise this sentence, in light of what we'll be saying 
+% JK will need to revise this sentence, in light of what we'll be saying
 % down further about needing the SMC for very large rho.
 Programs such as Hudson's classical \ms~\citep{hudson2002generating}
 can only simulate short segments under the influence of recombination,
@@ -670,11 +670,11 @@ implement them more efficiently in future versions.
 
 \begin{figure}
 \begin{center}
-    \includegraphics{figures/ancestry-perf}
+    \includegraphics[width=\textwidth]{figures/ancestry-perf}
 \end{center}
 \caption{\label{fig-ancestry-perf}
-    Approximate run time for \msprime\ simulations,
-    for (A) small and (B) larger simulations.
+    Running time for \msprime\
+    for (A) small and (B) larger simulations on an Intel i7-6600U CPU.
     Each point is the runtime of one simulation,
     for various values of effective population size ($N_e$),
     genome length in Morgans ($L$), and number of samples ($n$).
@@ -688,9 +688,17 @@ implement them more efficiently in future versions.
     Since recombination rate in these simulations was $10^{-8}$,
     $L$ is the number of base pairs divided by $10^8$.
     The black lines are quadratic fits separately in each panel
-    and sample size.
+    and sample size. Also shown are the approximate values of
+    $\rho$ for chromosome 1 in three species, using values from
+    the \stdpopsim\ catalog~\citep{adrion2020community}.
 }
 \end{figure}
+
+% Output from  python3 evaluation/plot.py ancestry-perf
+% Predicted time for DroMel chr2L with n = 1000 = 107.85106995938845 hours
+% Predicted time for DroMel chr2L with n = 100000 = -511.74273443828514 hours
+% Predicted time for DroMel chr2L with n = 1000 = 177.40184421122058 hours
+% Predicted time for DroMel chr2L with n = 100000 = 361.90415260982536 hours
 
 In human-like parameter regimes and for large sample sizes,
 \msprime's implementation of the
@@ -712,7 +720,7 @@ recombinations in the trapped material will cause the two segments of ancestry
 to split apart into separate lineages again.
 For large $\rho$, recombination events
 in this trapped material will dominate.
-\citet[Eq.~5.10]{hein2004gene} gave 
+\citet[Eq.~5.10]{hein2004gene} gave
 $\rho (\rho + 1) \left( \sum_{i=1}^{n-1} \frac{1}{i} \right)^2$
 as an upper bound
 on the number of recombination events within trapped ancestral material
