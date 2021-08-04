@@ -173,11 +173,19 @@ def ancestry_perf():
     df = pd.read_csv("data/ancestry-perf.csv", sep=",")
 
     # Plot the times
-    fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+    fig, axes = plt.subplots(1, 2, figsize=(6, 3))
     rgb = matplotlib.cm.get_cmap("Set1")(np.linspace(0.0, 1.0, len(set(df["N"]))))
     time_lims = [5, 1e12]
     for ax, tl in zip(axes, time_lims):
-        legend_adds = []
+        legend_adds = [
+                matplotlib.lines.Line2D(
+                    [],
+                    [],
+                    color="black",
+                    linestyle="-",
+                    label=f"quadratic",
+                )
+        ]
         for ns, m in zip((1000, 100000), ("o", "v")):
             legend_adds.append(
                 matplotlib.lines.Line2D(
@@ -186,7 +194,7 @@ def ancestry_perf():
                     color="grey",
                     marker=m,
                     linestyle="none",
-                    label=f"num samples={ns}",
+                    label=f"n={ns}",
                 )
             )
             ut = np.logical_and(df["time"] <= tl, df["num_samples"] == ns)
@@ -199,7 +207,7 @@ def ancestry_perf():
             X[:, 2] = 1
             b, _, _, _ = np.linalg.lstsq(X, df["time"][ut], rcond=None)
 
-            ax.set_xlabel("Scaled recombination rate $\\rho= 4NL/ 10^{8}$")
+            ax.set_xlabel("Scaled recombination rate $\\rho/4 = N_e L$")
             ax.set_ylabel("Time (seconds)")
             Nvals = sorted(list(set(df["N"])))
             for k, Nval in enumerate(Nvals):
@@ -207,24 +215,21 @@ def ancestry_perf():
                 if np.sum(utN) > 0:
                     sargs = {}
                     if m == "o":
-                        sargs["label"] = f"N={Nval}"
+                        sargs["label"] = f"N_e={Nval}"
                     ax.scatter(
-                        rho[utN], df["time"][utN], color=rgb[k], marker=m, **sargs
+                        rho[utN]/4, df["time"][utN], color=rgb[k], marker=m, **sargs
                     )
 
             xx = np.linspace(0, 1.05 * max(X[:, 0]), 51)
 
             # Note the two quadratic curves are not the same!
-            pargs = {}
-            if m == "o":
-                pargs["label"] = "quadratic"
-            ax.plot(xx, b[2] + b[0] * xx + b[1] * (xx ** 2), color="black", **pargs)
+            ax.plot(xx/4, b[2] + b[0] * xx + b[1] * (xx ** 2), color="black")
             print(
                 f"Times less than {tl}: " f"{b[2]:.2f} + {b[0]} * rho + {b[1]} * rho^2"
             )
 
-    axes[0].legend(handles=legend_adds)  # , prop={'size': 6})
-    axes[1].legend()
+    axes[0].legend(handles=legend_adds, prop={'size': 7})
+    axes[1].legend(prop={'size': 7})
     axes[0].set_title("A")
     axes[1].set_title("B")
 
