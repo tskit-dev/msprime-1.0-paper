@@ -98,14 +98,14 @@ While a genealogical tree relating $n$ samples in the single-locus coalescent
 can be simulated in $O(n)$ time~\citep{hudson1990gene},
 the coalescent with recombination, which generates multiple correlated trees, is
 far more challenging.
-% Sentence is too long...
+% JK will need to revise this sentence, in light of what we'll be saying 
+% down further about needing the SMC for very large rho.
 Programs such as Hudson's classical \ms~\citep{hudson2002generating}
 can only simulate short segments under the influence of recombination,
 and, until recently, approximate models of
 recombination~\citep{mcvean2005approximating,staab2015scrm}
 were necessary to simulate whole chromosomes.
 
-%adk-- splitting this to new paragraph
 The second major challenge to existing coalescent simulators is the
 exponential increase in sample size of genetic studies. Human datasets such
 UK Biobank~\citep{bycroft2018genome} and
@@ -133,7 +133,6 @@ Through a rigorous open-source community development process,
 \msprime\ has gained a large number of features since its introduction,
 making it a highly efficient and flexible platform for population
 genetic simulation.
-% This is a bit flat --- anything else to say at the end here?
 This paper marks the release of \msprime\ 1.0, a state-of-the-art
 coalescent simulator both with respect to efficiency as well as feature-richness.
 Here we provide an overview of the extensive abilities of \msprime\ 1.0,
@@ -433,7 +432,7 @@ data, and methods avoid the bottleneck of parsing
 text-based file formats to compute these statistics
 by either developing their own
 simulators~\citep[e.g.][]{cornuet2008inferring,lopes2009popabc}
-or creating forked versions (i.e., independent copies) of existing
+or creating forked versions (i.e., modified copies) of existing
 simulators~\cite[e.g.][]{thornton2006approximate,
 hickerson2007msbayes,pavlidis2010msabc,huang2011mtml,quinto2018modeling},
 tightly integrated with the inference method.
@@ -452,12 +451,6 @@ and means that we cannot reliably infer information about ancestors
 from the output. Because Newick stores branch lengths rather
 than node times, numerical precision issues also arise when summing
 over many short branches~\citep{mcgill2013graphml}.
-% JK: not sure this is worth leaving in tbh
-This lack of reliable information about ancestors in simulation data
-has led, for example, to the definition of segments of
-identity by descent as a set of samples having approximately the same time
-to their most recent common ancestor along some section of the
-genome~\citep{yang2016rapidly}.
 Numerous forks  of simulators have been created to access information not provided
 in the output. For example, \ms\  has been forked to
 output information about migrating segments~\citep{rosenzweig2016powerful},
@@ -1324,10 +1317,10 @@ to write reliable, stable software if no-one used it?
 
 This release makes \msprime\ able to produce simulations
 with a great deal more biological realism, without a loss in speed and efficiency.
-This ability will allow researchers to perform more reliable % different word here
-power analyses, more robustly test new methods,
+This ability will allow researchers to perform more robust
+power analyses, more reliably test new methods,
 and carry out more reliable inferences,
-without worrying that gene conversion or backmutation might be sabatoging
+without worrying that gene conversion or back mutation might be sabotaging
 their applications to real data.
 These advances have only been possible thanks to a distributed,
 collaborative model of software development,
