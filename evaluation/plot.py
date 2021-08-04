@@ -172,19 +172,41 @@ def ancestry_perf():
 
     df = pd.read_csv("data/ancestry-perf.csv", sep=",")
 
-    # Plot the times
-    fig, axes = plt.subplots(1, 2, figsize=(6, 3))
+    # GRCh38, via stdpopsim
+    human_rho = lambda L: int(4 * 10 ** 4 * L * 1e-8)
+    human_chr1 = human_rho(248956422)
+
+    # TAIR10, via stdpopsim
+    r = 8.06e-10
+    aratha_rho = lambda L: int(4 * 10 ** 4 * L * r)
+    aratha_chr1 = aratha_rho(30427671)
+
+    canfam_chr1 = 4 * 13000 * 122678785 * 7.636001498077e-09
+    dromel_chr2l = 4 * 1720600 * 23513712 * 2.40462600791e-08
+
+    # This is the figsize used in other two-panel plots
+    fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+
+    def annotate_rho(ax, rho, x_offset, text):
+        ax.axvline(rho / 4, color="0.8", linestyle="-.")
+        ax.text(rho / 4 + x_offset, 0, text, fontstyle="italic")
+
+    annotate_rho(axes[0], aratha_chr1, 200, "Arabidopsis thaliana")
+    annotate_rho(axes[1], human_chr1, 1000, "Homo sapiens")
+    annotate_rho(axes[1], canfam_chr1, 1000, "Canis familiaris")
+    # axes[1].axvline(dromel_chr2l)
+
     rgb = matplotlib.cm.get_cmap("Set1")(np.linspace(0.0, 1.0, len(set(df["N"]))))
     time_lims = [5, 1e12]
     for ax, tl in zip(axes, time_lims):
         legend_adds = [
-                matplotlib.lines.Line2D(
-                    [],
-                    [],
-                    color="black",
-                    linestyle="-",
-                    label=f"quadratic",
-                )
+            matplotlib.lines.Line2D(
+                [],
+                [],
+                color="black",
+                linestyle="-",
+                label=f"quadratic",
+            )
         ]
         for ns, m in zip((1000, 100000), ("o", "v")):
             legend_adds.append(
@@ -208,6 +230,10 @@ def ancestry_perf():
             b, _, _, _ = np.linalg.lstsq(X, df["time"][ut], rcond=None)
 
             ax.set_xlabel("Scaled recombination rate $\\rho/4 = N_e L$")
+
+            def fitted_quadratic(x):
+                return b[2] + b[0] * x + b[1] * (x ** 2)
+
             ax.set_ylabel("Time (seconds)")
             Nvals = sorted(list(set(df["N"])))
             for k, Nval in enumerate(Nvals):
@@ -215,21 +241,31 @@ def ancestry_perf():
                 if np.sum(utN) > 0:
                     sargs = {}
                     if m == "o":
-                        sargs["label"] = f"N_e={Nval}"
+                        sargs["label"] = f"$N_e={Nval}$"
                     ax.scatter(
-                        rho[utN]/4, df["time"][utN], color=rgb[k], marker=m, **sargs
+                        rho[utN] / 4, df["time"][utN], color=rgb[k], marker=m, **sargs
                     )
 
             xx = np.linspace(0, 1.05 * max(X[:, 0]), 51)
 
             # Note the two quadratic curves are not the same!
-            ax.plot(xx/4, b[2] + b[0] * xx + b[1] * (xx ** 2), color="black")
+            pargs = {}
+            if m == "o":
+                pargs["label"] = "quadratic"
+            ax.plot(xx / 4, fitted_quadratic(xx), color="black", **pargs)
+            # print(
+            #     f"Times less than {tl}: " f"{b[2]:.2f} + {b[0]} * rho + {b[1]} * rho^2"
+            # )
             print(
-                f"Times less than {tl}: " f"{b[2]:.2f} + {b[0]} * rho + {b[1]} * rho^2"
+                "Predicted time for DroMel chr2L with n =",
+                ns,
+                "=",
+                fitted_quadratic(dromel_chr2l / 4) / 3600,
+                "hours",
             )
 
-    axes[0].legend(handles=legend_adds, prop={'size': 7})
-    axes[1].legend(prop={'size': 7})
+    axes[0].legend(handles=legend_adds)
+    axes[1].legend()
     axes[0].set_title("A")
     axes[1].set_title("B")
 
