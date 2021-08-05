@@ -1,7 +1,10 @@
 import time
 import subprocess
 import concurrent.futures
+import multiprocessing
 import tempfile
+import os
+import resource
 
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
@@ -11,6 +14,7 @@ import tskit
 import msprime
 import pandas as pd
 import cpuinfo
+import sys
 
 
 def sim_argon(sample_size, chrom_length_mb, count_trees=False):
@@ -73,19 +77,38 @@ def sim_msprime_hybrid(sample_size, chrom_length_mb):
     )
 
 
-def run_benchmark(work):
-    tool, L = work
-    sample_size = 500
+def process_resources():
+    utime = 0
+    stime = 0
+    mem = 0
+    for who in [resource.RUSAGE_CHILDREN, resource.RUSAGE_SELF]:
+        info = resource.getrusage(who)
+        utime += info.ru_utime
+        stime += info.ru_stime
+        mem += info.ru_maxrss
+    # Memory is returned in KiB, scale to bytes
+    return {"user_time": utime, "sys_time": stime, "memory": mem * 1024}
 
+
+def run_benchmark_process(tool, L, queue):
+    sample_size = 500
     func = tool_map[tool]
-    before = time.perf_counter()
     func(sample_size=sample_size, chrom_length_mb=L)
-    duration = time.perf_counter() - before
-    return {
-        "L": L,
-        "tool": tool,
-        "time": duration,
-    }
+    queue.put(process_resources())
+
+
+def run_benchmark(work):
+
+    tool, L = work
+    queue = multiprocessing.Queue()
+    p = multiprocessing.Process(target=run_benchmark_process, args=(tool, L, queue))
+    before = time.perf_counter()
+    p.start()
+    perf_metrics = queue.get()
+    p.join()
+    if p.exitcode < 0:
+        raise ValueError("Error occured", p.exitcode)
+    return {"L": L, "tool": tool, **perf_metrics}
 
 
 tool_map = {
