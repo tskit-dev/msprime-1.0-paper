@@ -752,11 +752,10 @@ We also see that the dependence on $n$ is quite weak,
 since increasing sample size 100-fold
 only increases run time by a factor of 2 or so. However, the
 $\log^2{n}$ factor implied by Eq.~\eqref{eqn-hsw-bound}
-(the sum is a Harmonic number, and approximated by $\log{n}$)
+(the sum is a harmonic number, and approximated by $\log{n}$)
 is not well supported by the data except possibly at very
-large values of $\rho$, and so it seems a tighter bound
-than Eq.~\eqref{eqn-hsw-bound} would
-be required to accurately predict simulation time for a
+large values of $\rho$, and so it seems a different dependence
+on $n$ would be required to accurately predict simulation time for a
 given $\rho$ and $n$.
 
 Fig.~\ref{fig-ancestry-perf} is a useful yardstick, allowing us
@@ -783,11 +782,6 @@ In practice, to predict the running time of a given
 simulation in \msprime, we recommend that users
 measure run time in a series of simulations with short genome lengths and
 the desired sample size,
-% possibly varying other parameters to check for interactions,
-% JK: why? ^
-% I'm worried people will take this as meaning "run every possible
-% combination of parameters". I think the genome length should be basically
-% independent of everything else, right?
 and then predict run time by fitting a quadratic curve to genome length
 as in Fig.~\ref{fig-ancestry-perf}.
 It is important to note that the quadratic curves in the two
@@ -837,11 +831,6 @@ proportional to $\rho^2$.
 What does this tell us about time-varying population sizes?
 The argument above implies that the work is spread out relatively
 evenly on the coalescent time scale.
-% JK: I just found this confusing tbh.
-% in other words,
-% more events happen in the time period from 0 to $N_e/2$ generations
-% than from $N_e/2$ to $N_e$ generations,
-% but the run time is not dominated by the more recent time period.
 Suppose that population size today is $N_1$,
 while longer ago than $T$ generations ago it was $N_2$:
 does the run time depend more on $4 N_1 L$ or $4 N_2 L$?
