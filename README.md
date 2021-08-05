@@ -1,9 +1,7 @@
 # msprime-1.0-paper
 
 This repo contains the manuscript for the publication describing the 
-msprime 1.0 paper. As decided in issue #1, this is currently intended 
-to be submitted to G3 as 
-a [software article](https://www.g3journal.org/content/article-types#software).
+msprime 1.0 paper. 
 
 ## Abstract
 
