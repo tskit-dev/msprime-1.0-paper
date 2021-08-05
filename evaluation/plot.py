@@ -183,6 +183,7 @@ def ancestry_perf():
 
     canfam_chr1 = 4 * 13000 * 122678785 * 7.636001498077e-09
     dromel_chr2l = 4 * 1720600 * 23513712 * 2.40462600791e-08
+    print(f"Dromel rho {dromel_chr2l:.2g}")
 
     # This is the figsize used in other two-panel plots
     fig, axes = plt.subplots(1, 2, figsize=(12, 6))
@@ -229,7 +230,10 @@ def ancestry_perf():
             X[:, 2] = 1
             b, _, _, _ = np.linalg.lstsq(X, df["time"][ut], rcond=None)
 
-            ax.set_xlabel("Scaled recombination rate $\\rho/4 = N_e L$")
+            # JK: I don't feel strongly about this, but maybe it's less
+            # confusing.
+            # ax.set_xlabel("Scaled recombination rate $\\rho/4 = N_e L$")
+            ax.set_xlabel("$N_e L$ (= scaled recombination rate $\\rho/4$)")
 
             def fitted_quadratic(x):
                 return b[2] + b[0] * x + b[1] * (x ** 2)
@@ -260,7 +264,8 @@ def ancestry_perf():
                 "Predicted time for DroMel chr2L with n =",
                 ns,
                 "=",
-                fitted_quadratic(dromel_chr2l / 4) / 3600,
+                # The quadratic is still fit to rho, so don't divide by 4 here
+                fitted_quadratic(dromel_chr2l) / 3600,
                 "hours",
             )
 
