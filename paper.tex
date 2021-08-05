@@ -514,7 +514,7 @@ the two have been conflated in practice.
     \includegraphics{illustrations/mutated_tree}
     \caption{
         \label{fig-mutated-trees}
-        Visualization of the separation between ancestry and mutation simulation:
+        Visualisation of the separation between ancestry and mutation simulation:
         \texttt{sim\_ancestry} produces ancestry
         (\textbf{left;} shown are two trees along a 1Kb chunk of genome
         relating 200 samples),
@@ -720,7 +720,7 @@ As mentioned above, common ancestor events in which the ancestral material
 of two lineages is merged only result in coalescences in the marginal trees
 if their ancestral segments overlap. If there is no overlap, the merged
 segments represent an ancestral chromosome that is a genetic ancestor
-of the two linages, but not the most recent common genetic ancestor
+of the two lineages, but not the most recent common genetic ancestor
 at any location along the genome.
 When this happens, the merged lineage carries ``trapped'' genetic material
 that is not ancestral to any samples, but where recombinations can still occur.
@@ -870,7 +870,7 @@ recombinations~\citep{korunes2017gene}.
 Hudson's \ms\ optionally includes gene conversion and so does
 MaCS~\citep{chen2009fast}, while scrm~\citep{staab2015scrm} does not
 support gene conversions.
-As bacterial recombination can be modeled analogously to eukaryotic allelic
+As bacterial recombination can be modelled analogously to eukaryotic allelic
 gene conversion, simulators for microbial evolution often include gene conversion
 instead of recombination.
 This includes the backward simulator SimBac~\citep{brown2016simbac},
@@ -926,7 +926,7 @@ including varying recombination rates and complex demographies.
 
 An important avenue for future work
 will be to add further features to model bacterial
-evolution. In particular, we aim to include bacterial gene transfer and utilize
+evolution. In particular, we aim to include bacterial gene transfer and utilise
 the succinct tree sequence structure to represent the resulting ancestral gene
 transfer graph~\citep{baumdicker2014AGTG}.
 
@@ -1230,7 +1230,7 @@ the \discoal\ implementation-- sweep trajectories are
 generated from a jump process approximation to the conditional diffusion
 of an allele bound for fixation~\citep{coop2004ancestral}.
 Details of our implementation are available in the Appendix.
-This implementation allows us to further generalize sweep models to
+This implementation allows us to further generalise sweep models to
 changing population sizes as well as selection from standing variation,
 both of which are features that are planned for the near future.
 Moreover because this implements the basic infrastructure for the structured
@@ -1402,7 +1402,7 @@ established development practices and infrastructure.
 % PLR- personally I have learned SO MUCH, and I'm passing it on to others
 Software development in a welcoming community,
 with mentorship by experienced developers,
-is a hugely useul experience for many users,
+is a hugely useful experience for many users,
 The skills that contributors learn
 can lead to greatly increased productivity in subsequent
 work (e.g., through more reliable code and better debugging skills).
@@ -1434,7 +1434,7 @@ with other methods---particularly, forwards simulators---through
 the succinct tree sequence data structure and \tskit\ library
 will be vital.
 
-\section*{Acknowledgments}
+\section*{Acknowledgements}
 JK is supported by the Robertson Foundation.
 Jere Koskela is supported in part by EPSRC grant EP/R044732/1.
 ADK was supported by NIH awards R01GM117241 and R01HG010774.
@@ -1478,7 +1478,7 @@ and then the ancestral and derived alleles of each mutation are generated.
 All mutation models share the code to place mutations,
 but choose alleles in different ways.
 
-First, mutations are placed on the tree sequence under an inhomgeneous Poisson model
+First, mutations are placed on the tree sequence under an inhomogeneous Poisson model
 by applying them independently to each edge.
 If an edge spans a region $[a, b)$ of the genome
 and connected parent and child nodes with times $s < t$,
@@ -1537,7 +1537,7 @@ This produces the correct distribution by Poisson thinning:
 a Poisson process with rate $\alpha$ in which each point is discarded independently
 with probability $\beta / (\alpha + \beta)$ is equivalent to a Poisson
 process with rate $\beta$.
-All finite-state models (implented under the generic \texttt{MatrixMutationModel} class)
+All finite-state models (implemented under the generic \texttt{MatrixMutationModel} class)
 work in this way: mutations are placed at the maximum mutation rate,
 and then some silent mutations will result.
 
@@ -1777,7 +1777,7 @@ coalescent process (as in~\citep{braverman1995hitchhiking}). During the
 is tracked separately in lineages linked to the beneficial allele or not,
 with those rates depending on the frequency of the beneficial allele in
 the population at a given time. The allele frequency trajectory of the
-sweeping allele is modeled using a jump process that approximates
+sweeping allele is modelled using a jump process that approximates
 the conditional diffusion of the allele, conditioning on its eventual
 fixation~\citep{coop2004ancestral}.
 The jump process moves back in time following the beneficial
