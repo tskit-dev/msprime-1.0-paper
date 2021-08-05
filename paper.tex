@@ -44,6 +44,10 @@
 % Cluster of Excellence "Controlling Microbes to Fight Infections", Mathematical and Computational Population Genetics, University of Tübingen, Germany
 
 
+% Consuelo D. Quinto-Cortés 
+%National Laboratory of Genomics for Biodiversity (LANGEBIO), Unit of Advanced Genomics, CINVESTAV, Irapuato, Mexico
+
+
 % \section*{Contact:} \href{jerome.kelleher@bdi.ox.ac.uk}{jerome.kelleher@bdi.ox.ac.uk}
 
 \maketitle
@@ -107,7 +111,7 @@ recombination~\citep{mcvean2005approximating,staab2015scrm}
 were necessary to simulate whole chromosomes.
 
 The second major challenge to existing coalescent simulators is the
-exponential increase in sample size of genetic studies. Human datasets such
+exponential increase in sample size of genetic studies. Human datasets like the
 UK Biobank~\citep{bycroft2018genome} and
 gnomAD~\citep{karczewski2020mutational} now consist of hundreds of
 thousands of genomes and many other datasets on a similar scale
@@ -117,7 +121,7 @@ such as \scrm\ simply cannot cope with such a large number of samples.
 
 The \msprime\ simulator~\citep{kelleher2016efficient,kelleher2020coalescent}
 has greatly increased the scope of coalescent simulations,
-and it now straightforward to simulate millions of whole chromosomes.
+and it is now straightforward to simulate millions of whole chromosomes.
 The ``succinct tree sequence'' data
 structure~\citep{kelleher2016efficient,kelleher2018efficient,kelleher2019inferring,
 wohns2021unified},
@@ -187,7 +191,7 @@ for four samples at ten sites.
 One of the key reasons for \msprime's substantial performance advantage
 over other simulators~\citep{kelleher2016efficient}
 is its usage of the ``succinct tree sequence''
- data stucture to represent simulation results.
+ data structure to represent simulation results.
 The succinct tree sequence (usually abbreviated to ``tree sequence'')
 is a data structure for concisely encoding
 genetic ancestry and sequence variation.
@@ -292,7 +296,7 @@ is several orders of magnitude faster than efficient variant matrix
 libraries for large sample sizes~\citep{ralph2020efficiently}.
 
 The vast genomic datasets produced during the SARS-CoV-2 pandemic
-have highlighed the advantages of storing genetic variation data using the underlying trees.
+have highlighted the advantages of storing genetic variation data using the underlying trees.
 \cite{turakhia2021ultrafast} propose the
 Mutation Annotated Tree (MAT)
 format (consisting of a Newick tree
@@ -1020,7 +1024,7 @@ generation~\citep{hedgecock_94}. These population dynamics violate basic
 assumptions of the Kingman coalescent, and are better modelled by
 `multiple-merger' coalescents \citep{DK99,P99,S99,S00,MS01}, in which more than
 two lineages can merge in a given event. Multiple-merger coalescent processes
-have also been shown to be relevant for modeling the effects of selection on
+have also been shown to be relevant for modelling the effects of selection on
 gene genealogies \citep{Gillespie909,DS04}.
 
 Although multiple merger coalescents have been of significant theoretical
@@ -1151,11 +1155,11 @@ or ``coalescence records'' in the terminology of~\citep{kelleher2016efficient}.
 
 Although by default \msprime\ outputs tree sequences that contain full information
 about the genealogical trees, their correlation structure along the genome,
-and the ancestral haplotypes on which coalescences occured, some information
+and the ancestral haplotypes on which coalescences occurred, some information
 is lost in this mapping down from ARG space to the minimal tree sequence
 form. In particular, we lose
 information about ancestral haplotypes that were common ancestors but
-in which no coalescences occured, and also information about the precise time
+in which no coalescences occurred, and also information about the precise time
 and genomic location of recombination events. In most cases, such
 information is of little relevance as it is in principle unknowable,
 but there are occasions such as visualisation or computing likelihoods (see
