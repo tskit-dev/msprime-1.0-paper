@@ -44,7 +44,7 @@
 % Cluster of Excellence "Controlling Microbes to Fight Infections", Mathematical and Computational Population Genetics, University of Tübingen, Germany
 
 
-% Consuelo D. Quinto-Cortés 
+% Consuelo D. Quinto-Cortés
 %National Laboratory of Genomics for Biodiversity (LANGEBIO), Unit of Advanced Genomics, CINVESTAV, Irapuato, Mexico
 
 
@@ -635,12 +635,15 @@ which is currently based on the assumption of independent sites.
 \subsection*{Recombination}
 
 Crossover recombination is implemented in \msprime\ using Hudson's algorithm, which
-works backwards in time, tracking the
-effects of common ancestor and recombination
-events~\citep{hudson1983properties,hudson1990gene,kelleher2016efficient}.
-Common ancestor events combine the ancestral material of two lineages, and may
-result in coalescences in the marginal trees. Recombination events
-split the ancestral material for some lineage, creating two independent
+works backwards in time, generating common ancestor and recombination
+events and tracking their effects on segments of ancestral
+material inherited from the
+sample~\citep{hudson1983properties,hudson1990gene,kelleher2016efficient}.
+Common ancestor events merge the ancestral material of two lineages,
+and result in coalescences in the marginal trees when ancestral
+segments overlap.
+Recombination events split the ancestral material for some lineage
+at a given breakpoint, creating two independent
 lineages. Using the appropriate data structures~\citep{kelleher2016efficient},
 this process is much more efficient to simulate than either
 methods based on the Ancestral Recombination Graph
@@ -651,7 +654,7 @@ us to simulate recombination hotspots and patterns
 of recombination from empirical maps.
 The implementation of recombination in \msprime\ is extensively validated
 against analytical results~\citep{hudson1983properties,kaplan1985use}
-and simulations by \ms.
+and simulations by \ms, \texttt{msHot} and \SLiM.
 
 The Sequentially Markovian Coalescent (SMC) is an approximation of the
 coalescent with recombination~\citep{mcvean2005approximating,marjoram2006fast},
@@ -679,22 +682,21 @@ implement them more efficiently in future versions.
 \caption{\label{fig-ancestry-perf}
     Running time for \msprime\
     for (A) small and (B) larger simulations on an Intel i7-6600U CPU.
-    Each point is the runtime of one simulation,
+    Each point is the run time of one simulation,
     for various values of effective population size ($N_e$),
     genome length in Morgans ($L$), and number of samples ($n$).
-    Runtime scales quadratically with the product of $N_e$ and $L$,
-    shown on the horizontal axis---for instance, figure A shows that
+    Run time scales quadratically with the product of $N_e$ and $L$,
+    shown on the horizontal axis. For example, (A) shows that
     1,000 samples of 1 Morgan-length chromosomes
     from a population of $N_e=2,000$ diploids
-    would take about 2 seconds, and that the same number of
-    0.01 Morgan segments in a population of size 200,000
-    would take about the same time.
+    would take about 2 seconds, and (equivalently) that the same number of
+    0.01 Morgan segments with $N_e= 200,000$ would take the same time.
     Since recombination rate in these simulations was $10^{-8}$,
     $L$ is the number of base pairs divided by $10^8$.
     The black lines are quadratic fits separately in each panel
     and sample size. Also shown are the approximate values of
-    $\rho$ for chromosome 1 in three species, using values from
-    the \stdpopsim\ catalog~\citep{adrion2020community}.
+    $N_e L$ for chromosome 1 in three species, using values from
+    the \stdpopsim\ catalogue~\citep{adrion2020community}.
 }
 \end{figure}
 
@@ -710,63 +712,92 @@ exact coalescent with recombination comprehensively outperforms
 all other simulators, including those based on SMC
 approximations~\citep{kelleher2016efficient}. However, it is important
 to note that although the implementation of Hudson's algorithm is
-very efficient, it is still quadratic in the scaled recombination rate
+very efficient, it is still quadratic in the population scaled recombination rate
 $\rho = 4 N_e L$, where $L$ is the length of the genome in units of recombination distance.
-This is because Hudson's algorithms tracks recombinations not only
+This is because Hudson's algorithm tracks recombinations not only
 in segments ancestral to the sample, but also between ancestral segments.
-In other words, lineages may ``coalesce'' even if the pieces of ancestral material they carry
-do not overlap---representing an ancestral chromosome
-that is a genetic ancestor to each of two linages,
-but not the most recent common genetic ancestor at any location along the genome.
-When this happens, the resulting merged lineage carries ``trapped'' genetic material
-that is not ancestral to any samples;
-recombinations in the trapped material will cause the two segments of ancestry
-to split apart into separate lineages again.
-For large $\rho$, recombination events
-in this trapped material will dominate.
+As mentioned above, common ancestor events in which the ancestral material
+of two lineages is merged only result in coalescences in the marginal trees
+if their ancestral segments overlap. If there is no overlap, the merged
+segments represent an ancestral chromosome that is a genetic ancestor
+of the two linages, but not the most recent common genetic ancestor
+at any location along the genome.
+When this happens, the merged lineage carries ``trapped'' genetic material
+that is not ancestral to any samples, but where recombinations can still occur.
+The SMC approximations work by disallowing common ancestor events
+that generate trapped material, greatly simplifying the process.
+However, this also removes subtle long-range
+correlations in the trees since there are many ways in which ancestry
+segments can merge without overlapping.
+
+For large $\rho$, recombination events in trapped ancestral material will
+dominate, and so we can use this as a proxy for the overall number
+of events in Hudson's algorithm.
 \citet[Eq.~5.10]{hein2004gene} gave
-$\rho (\rho + 1) \left( \sum_{i=1}^{n-1} \frac{1}{i} \right)^2$
+\begin{equation}\label{eqn-hsw-bound}
+\rho (\rho + 1) \left( \sum_{i=1}^{n-1} \frac{1}{i} \right)^2
+\end{equation}
 as an upper bound
 on the number of recombination events within trapped ancestral material
-in Hudson's algorithm with $n$ samples.
-Since the sum is well approximated by $\log{n}$,
-a natural conjecture is that the time complexity of Hudson's
-algorithm is $O(\rho^2 \log^2 n)$.
-This turns out to have the correct dependence on $\rho$---although
-caution is needed; see below---but the dependence on $n$ is less accurate.
+in Hudson's algorithm for $n$ samples.
+% Since the sum is well approximated by $\log{n}$,
+% a natural conjecture is that the time complexity of Hudson's
+% algorithm is $O(\rho^2 \log^2 n)$.
+Fig.~\ref{fig-ancestry-perf} shows the observed run time for
+simulations with a variety of population size, chromosome
+length and sample sizes, and demonstrates that Eq.~\eqref{eqn-hsw-bound}
+correctly predicts the quadratic dependence on $\rho$,
+as previously conjectured~\citep[Fig.~2]{kelleher2016efficient}.
+We also see that the dependence on $n$ is quite weak,
+since increasing sample size 100-fold
+only increases run time by a factor of 2 or so. However, the
+$\log^2{n}$ factor implied by Eq.~\eqref{eqn-hsw-bound}
+(the sum is a Harmonic number, and approximated by $\log{n}$)
+is not well supported by the data except possibly at very
+large values of $\rho$, and so it seems a tighter bound
+than Eq.~\eqref{eqn-hsw-bound} would
+be required to accurately predict simulation time for a
+given $\rho$ and $n$.
 
-Figure~\ref{fig-ancestry-perf} gives a rough idea of the runtime of
-a given simulation of a constant size population,
-and verifies that runtime scales quadratically with $\rho$,
-and depends much less strongly on the number of samples.
-Taking a typical chromosome to be 1 Morgan in length,
+Fig.~\ref{fig-ancestry-perf} is a useful yardstick, allowing us
+to predict how long simulations should take for a wide range of
+species. Taking a typical chromosome to be 1 Morgan in length,
 these plots show, roughly, that simulating chromosome-length
 samples from a population of thousands of individuals takes seconds,
 while samples from a population of tens of thousands takes minutes.
-However, it is important to note that the quadratic curves in the two
-panels are different---predicting the runtimes of days-long simulations
+Simulating whole chromosomes for many species is very fast,
+with 1000 samples of chromosome 1 for
+\emph{Arabidopsis thaliana} taking less than a second, and a few
+minutes for dogs and humans. However, the dependence on $\rho$
+\emph{is} quadratic, and if $\rho$ is sufficiently large simulations
+may not be feasible. For example, for
+\emph{Drosophila melanogaster} chromosome 2L, with
+$\rho\approx 3.9\times10^6$, Fig.~\ref{fig-ancestry-perf}
+predicts that simulation would require around 177 hours. For such
+large values of $\rho$  we recommend
+users consider approximate simulations. Since \msprime\ does not currently
+have efficient implementations of approximate coalescent with recombination
+models, we recommend using SMC based methods such as \scrm\,
+particularly for moderate sample sizes.
+In practice, to predict the running time of a given
+simulation in \msprime, we recommend that users
+measure run time in a series of simulations with short genome lengths and
+the desired sample size,
+% possibly varying other parameters to check for interactions,
+% JK: why? ^
+% I'm worried people will take this as meaning "run every possible
+% combination of parameters". I think the genome length should be basically
+% independent of everything else, right?
+and then predict run time by fitting a quadratic curve to genome length
+as in Fig.~\ref{fig-ancestry-perf}.
+It is important to note that the quadratic curves in the two
+panels of Fig.~\ref{fig-ancestry-perf} are different, and
+predicting the run times of days-long simulations
 using the timing of minutes-long runs is unlikely to be very accurate.
-Further experiments show that adding a $\log^2 n$ factor
-to predict runtimes across different sample sizes does not do well
-except possibly at very large values of $\rho$.
-
-% Although \citet{hein2004gene} refer to the bound in \eqref{eqn-hsw-bound}
-% as ``crude'', it predicts the scaling of run time quite well for large genomes
-% Figure~\ref{fig-expected-perf} shows the observed runtime
-% (from the same simulations as Figure~\ref{fig-ancestry-perf})
-% plotted against equation~\eqref{eqn-hsw-bound},
-% showing that for values of $\rho$ above $4 \times 10^4$ or so
-% (i.e., chromosome-length simulations in populations above $10^4$),
-% the ratio of observed time to the value from \eqref{eqn-hsw-bound} is constant.
-% This implies the runtime for a large sample
-% can be predicted from the runtime for a small sample.
-% For smaller values of $\rho$, however, the prediction
-% severely underestimates runtime.
-
 
 What about simulations with changing population size?
-To understand how runtime depends on demography
-it helps to consider why runtime is quadratic in $\rho$.
+To understand how run time depends on demography
+it helps to consider why run time is quadratic in $\rho$.
 At any point in time, \msprime\ must keep track of some number of lineages,
 each of which contains some number of chunks of genetic material.
 Common ancestor events reduce the number of lineages,
@@ -777,59 +808,50 @@ will involve overlapping segments of ancestry,
 and lead to coalescence in the marginal trees.
 Such disjoint segments are often far apart (on average, about distance $L/2$),
 and so recombine apart again immediately;
-it is these large numbers of rapid yet inconsequential events that
-lead to the quadratic runtime.
-\plrcomment{(this is discussed also in the ARG section; check for overlap)}
+it is these large numbers of rapid and inconsequential events that
+lead to the quadratic run time.
 The maximum number of lineages occurs when
 the increase and decrease in numbers of lineages due to
 common ancestor and recombination events balance out;
-to get an idea of runtime we can estimate when this occurs.
-Suppose that the maximal number of lineages is $M$;
+to get an idea of run time we can estimate when this occurs.
+Suppose that the maximum number of lineages is $M$;
 at this time the rate of common ancestor events is $M (M-1) / (4 N_e)$
 and the total rate of recombination is $M \ell$,
 where $\ell$ is the mean length of genome carried by each lineage
 (including ``trapped'' non-ancestral material).
-It is known that the maximum number of lineages is reached
+Since the maximum number of lineages is reached
 very quickly~\citep{nelson2020accounting},
-and at this maximum, recombination and coalescence rates are equal.
-Therefore, many (roughly half) of these lineages have at
+many (roughly half) of these lineages have at
 least two distant segments of ancestral material
 separated by a long segment of genome, implying that $\ell \approx L / 4$.
-This implies that $M$ is roughly $L N_e$.
-The number of linages decreases gradually,
-on the coalescent time scale---so, over roughly $2 N_e$ generations.
-Since the total rate of events when there are the maximum number of lineages
-happens is roughly $L^2 N_e / 4$,
+Then, since the rates of recombination and common ancestor events
+are equal the time the maximum number of lineages is present,
+we see that $M$ is roughly equal to $L N_e$.
+The number of lineages then decreases gradually from this maximum
+on the coalescent time scale, and therefore over roughly $2 N_e$ generations.
+Since the total rate of events when the maximum number of lineages is
+present is roughly $L^2 N_e / 4$,
 then the total number of events is proportional to $(L N_e)^2$---i.e.,
 proportional to $\rho^2$.
 
 What does this tell us about time-varying population sizes?
 The argument above implies that the work is spread out relatively
-evenly on the coalescent time scale: in other words,
-more events happen in the time period from 0 to $N_e/2$ generations
-than from $N_e/2$ to $N_e$ generations,
-but the runtime is not dominated by the more recent time period.
+evenly on the coalescent time scale.
+% JK: I just found this confusing tbh.
+% in other words,
+% more events happen in the time period from 0 to $N_e/2$ generations
+% than from $N_e/2$ to $N_e$ generations,
+% but the run time is not dominated by the more recent time period.
 Suppose that population size today is $N_1$,
 while longer ago than $T$ generations ago it was $N_2$:
-does the runtime depend more on $4 N_1 L$ or $4 N_2 L$?
+does the run time depend more on $4 N_1 L$ or $4 N_2 L$?
 The answer depends on how $T$ compares to $N_1$: if $T/N_1$ is large,
-then runtime will be similar to a population of size $N_1$;
+then run time will be similar to a population of size $N_1$;
 while if $T/N_1$ is small, it will be similar to a population of size $N_2$.
 For instance, in many agricultural species $N_1 \propto 100$, while $N_2 \propto 10^5$,
-and the runtime will depend critically on $T$---in other words,
+and the run time will depend critically on $T$---in other words,
 simulation will be quick in a species with a strong domestication bottleneck,
 and slow otherwise.
-
-In practice, we recommend that users estimate runtime by
-measuring runtime in a series of simulations with short genome lengths,
-possibly varying other parameters to check for interactions,
-and then predict runtime by fitting a quadratic curve to genome length.
-In these experiments, sample sizes should be roughly
-those desired---which is not a problem in practice because of
-the weak dependency on sample size
----notice that in Figure~\ref{fig-ancestry-perf} increasing sample size 100-fold
-only increases runtime by a factor of 2 or so.
-
 
 \subsection*{Gene conversion}
 
@@ -1209,7 +1231,7 @@ however none of them at present will output tree sequence formatted data.
 \begin{center}
 \includegraphics[width=6cm]{figures/sweeps-perf}
 \end{center}
-\caption{\label{fig-selection-perf}Comparison of the runtime for
+\caption{\label{fig-selection-perf}Comparison of the run time for
 \msprime\ and \discoal\ for simulating selective sweeps.
 }
 \end{figure}
@@ -1632,7 +1654,7 @@ These are commonly referred to as $\Xi$-coalescents, and
 often arise from population models incorporating diploidy or more general polyploidy
 \citep{BBE13,blath2016site}.
 To describe a general $\Xi$-coalescent, let $\Delta$ denote the
-infinite simplex 
+infinite simplex
 \begin{equation*}
  \Delta := \Bigg\{ (x_1,x_2,  \ldots ): x_1 \ge x_2 \ge \cdots \ge 0, \sum_{j = 1}^{ \infty} x_j \le 1\Bigg\}.
  \end{equation*}
@@ -1672,7 +1694,7 @@ and $\Xi$-coalescents to diploid or polyploid (e.g.\ autosomal) data \citep{blat
 In \msprime\ we have incorporated two examples of multiple-merger coalescents.
 One is a diploid extension \citep{BBE13} of the haploid Moran model adapted
 to sweepstakes reproduction considered by \cite{EW06}.
-Let $N$ denote the population size, and take $\psi \in (0,1]$ to be fixed. 
+Let $N$ denote the population size, and take $\psi \in (0,1]$ to be fixed.
 In every generation, with probability $1-\varepsilon_N$ a single individual
 (picked uniformly at random) perishes.
 With probability $\varepsilon_N$, $\lfloor \psi N \rfloor$ individuals picked uniformly
@@ -1685,8 +1707,8 @@ point mass at $\psi$.  The simplicity of this model does allow one to obtain
 some explicit mathematical results (see e.g.\
 \cite{Der2012, EF2018,Freund2020,Matuszewski2017}), and the model has also been
 used to simulate gene genealogies within phylogenies \citep{zhu2015hybrid}.
-As well as the haploid model of \cite{EW06}, \msprime\ provides the diploid version 
-of \cite{BBE13}, in which individuals perish as above, but replacements are 
+As well as the haploid model of \cite{EW06}, \msprime\ provides the diploid version
+of \cite{BBE13}, in which individuals perish as above, but replacements are
 generated by sampling a single pair of diploid individuals as parents, with
 children sampling one chromosome from each parent.
 Hence, there are four parent chromosomes involved in each reproduction event, which can lead to
@@ -1701,11 +1723,11 @@ giving rise to simultaneous multiple mergers occur at rate $(c\psi^2/4) / (1 + c
 
 
 The other multiple merger coalescent model incorporated in \msprime\ is
-the haploid population model considered by \cite{schweinsberg03}, 
+the haploid population model considered by \cite{schweinsberg03},
 as well as its diploid extension \citep{BLS15}.  In the haploid
 version, in each generation of fixed size $N$, individuals produce random numbers of
-juveniles $(X_1, \ldots, X_N)$ independently, each distributed according to a stable law satisfying 
-\be\label{jX} \lim_{k\to \infty} C k^\alpha \prb{X \ge k} = 1 \ee 
+juveniles $(X_1, \ldots, X_N)$ independently, each distributed according to a stable law satisfying
+\be\label{jX} \lim_{k\to \infty} C k^\alpha \prb{X \ge k} = 1 \ee
 with index $\alpha > 0$, and where $C > 0$ is a normalising constant.
 If the  total number of juveniles $S_N := X_1 + \ldots + X_n$ produced
 in this way is at least $N$, then $N$ juveniles are sampled uniformly at random
@@ -1726,7 +1748,7 @@ by \cite{BLS15}, and the resulting coalescent is $\Xi$-coalescent with merger ra
 where $k := k_1 + \ldots + k_r$ \citep{blath2016site,BLS15}. The interpretation of \eqref{xibeta} is  that the
 random number of lineages participating in a potential merger is governed by the
 $\Lambda$-coalescent with rate \eqref{Fbeta}, and all participating lineages are
-randomly allocated into one of four groups corresponding to the four parental 
+randomly allocated into one of four groups corresponding to the four parental
 chromosomes, giving rise to up to four simultaneous mergers.
 
 The stable law \eqref{jX} assumes that individuals can produce arbitrarily
@@ -1734,9 +1756,9 @@ large numbers of juveniles. Since juveniles are at least fertilised eggs,
 it may be desirable suppose that the number of juveniles
 surviving to reproductive maturity cannot be arbitrarily large.  Hence we also consider
 an adaptation of the \cite{schweinsberg03} model, where
-the random number of juveniles has a deterministic upper bound $\phi(N)$, 
+the random number of juveniles has a deterministic upper bound $\phi(N)$,
 and the distribution of the number of juveniles produced by a given parent
-(or pair of parents in the diploid case) is 
+(or pair of parents in the diploid case) is
 \be\label{jtr} \prb{X=k} =   \one{1 \le k \le \phi(N)}
 \frac{\phi(N+1)^\alpha }{ \phi(N+1)^\alpha - 1 }  \left( \frac{1}{k^\alpha} -
 \frac{1}{(k+1)^\alpha}  \right) . \ee
