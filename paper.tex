@@ -1626,8 +1626,8 @@ The rate at which  a given group of $k$ out of a total of  $b$ lineages merges  
 \lambda_{b, k} =  \int_0^1  x^{k-2}(1-x)^{b-k}\Lambda(dx) + a\one{k=2}, \quad 2 \le k \le b,
 \end{equation}
 where $a \geq 0$ is a constant and $\Lambda$ is a finite measure on the unit interval without an atom at zero \citep{DK99,P99,S99}.
-There is also a larger class of multiple merger coalescents involving simultaneous
-multiple mergers of distinct groups of ancestral lineages \citep{S00}.
+There is also a larger class of simultaneous multiple merger coalescents involving
+simultaneous mergers of distinct groups of lineages into several common ancestors \citep{S00}.
 These are commonly referred to as $\Xi$-coalescents, and
 often arise from population models incorporating diploidy or more general polyploidy
 \citep{BBE13,blath2016site}.
@@ -1697,7 +1697,7 @@ k_r;s } &= \frac{c \psi^2 / 4}{1 + c \psi^2 / 4} \frac{4}{ \psi^2}\sum_{\ell = 0
 k_r + \ell} + \frac{\one{r=1, k_1 = 2}}{1 + c \psi^2 / 4},  \\ \end{esplit}
 The interpretation of \eqref{Cconst} is that `small' reproduction events in which
 two lineages merge occur at rate $1/(1 + c\psi^2/4)$, while large reproduction events
-giving rise to simultaneous multiple mergers occur at rate $(c\psi^2/4) / (1 + c\psi^2/4)$.
+with the potential to result in simultaneous multiple mergers occur at rate $(c\psi^2/4) / (1 + c\psi^2/4)$.
 
 
 The other multiple merger coalescent model incorporated in \msprime\ is
@@ -1707,7 +1707,7 @@ version, in each generation of fixed size $N$, individuals produce random number
 juveniles $(X_1, \ldots, X_N)$ independently, each distributed according to a stable law satisfying 
 \be\label{jX} \lim_{k\to \infty} C k^\alpha \prb{X \ge k} = 1 \ee 
 with index $\alpha > 0$, and where $C > 0$ is a normalising constant.
-If the  total number of juveniles $S_N := X_1 + \ldots + X_n$ produced
+If the  total number of juveniles $S_N := X_1 + \ldots + X_N$ produced
 in this way is at least $N$, then $N$ juveniles are sampled uniformly at random
 without replacement to form the next generation.
 As long as $\EE{X_1} > 1$, one can show that $\{ S_N < N \}$ has exponentially small
@@ -1731,7 +1731,7 @@ chromosomes, giving rise to up to four simultaneous mergers.
 
 The stable law \eqref{jX} assumes that individuals can produce arbitrarily
 large numbers of juveniles. Since juveniles are at least fertilised eggs,
-it may be desirable suppose that the number of juveniles
+it may be desirable to suppose that the number of juveniles
 surviving to reproductive maturity cannot be arbitrarily large.  Hence we also consider
 an adaptation of the \cite{schweinsberg03} model, where
 the random number of juveniles has a deterministic upper bound $\phi(N)$, 
