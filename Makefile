@@ -56,6 +56,10 @@ paper.dvi: paper.tex paper.bib
 	latex paper.tex
 	latex paper.tex
 
+.PHONY: spellcheck
+spellcheck: aspell.conf
+	aspell --conf ./aspell.conf --check paper.tex
+
 clean:
 	rm -f *.log *.dvi *.aux
 	rm -f *.blg *.bbl
