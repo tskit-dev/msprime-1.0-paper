@@ -47,6 +47,9 @@
 % Consuelo D. Quinto-Cortés
 %National Laboratory of Genomics for Biodiversity (LANGEBIO), Unit of Advanced Genomics, CINVESTAV, Irapuato, Mexico
 
+% Peter L. Ralph
+% Institute of Ecology and Evolution, Departments of Mathematics and Biology, University of Oregon, USA
+
 
 % \section*{Contact:} \href{jerome.kelleher@bdi.ox.ac.uk}{jerome.kelleher@bdi.ox.ac.uk}
 
@@ -769,11 +772,14 @@ with 1000 samples of chromosome 1 for
 \emph{Arabidopsis thaliana} taking less than a second, and a few
 minutes for dogs and humans. However, the dependence on $\rho$
 \emph{is} quadratic, and if $\rho$ is sufficiently large simulations
-may not be feasible. For example, for
-\emph{Drosophila melanogaster} chromosome 2L, with
-$\rho\approx 3.9\times10^6$, Fig.~\ref{fig-ancestry-perf}
-predicts that simulation would require around 177 hours. For such
-large values of $\rho$  we recommend
+may not be feasible. For example,
+the \emph{Drosophila melanogaster} chromosome 2L
+is about 23.5Mb long and an average recombination rate of around $2.4 \times 10^{-8}$,
+so $L \approx 0.57$,
+and with $N_e = 1.7 \times 10^6$ \citep{li2006inferring},
+$N_e L \approx 10^6$, so extrapolating the curve in Fig.~\ref{fig-ancestry-perf}B
+predicts that simulation would require around 177 hours.
+For such large values of $\rho$  we recommend
 users consider approximate simulations. Since \msprime\ does not currently
 have efficient implementations of approximate coalescent with recombination
 models, we recommend using SMC based methods such as \scrm\,
@@ -813,18 +819,21 @@ at this time the rate of common ancestor events is $M (M-1) / (4 N_e)$
 and the total rate of recombination is $M \ell$,
 where $\ell$ is the mean length of genome carried by each lineage
 (including ``trapped'' non-ancestral material).
+At the maximum, coalescence and recombination rates are equal,
+so a typical segment of ancestry will spend roughly half its time
+in a lineage with at least one other such segment---and,
+since such lineages carry at least two segments,
+at most one-third of the lineages carry long trapped segments of ancesry.
 Since the maximum number of lineages is reached
 very quickly~\citep{nelson2020accounting},
-many (roughly half) of these lineages have at
-least two distant segments of ancestral material
-separated by a long segment of genome, implying that $\ell \approx L / 4$.
-Then, since the rates of recombination and common ancestor events
-are equal the time the maximum number of lineages is present,
-we see that $M$ is roughly equal to $L N_e$.
+this implies that $\ell \approx L / 6$.
+Setting the rates of recombination and common ancestor events
+to be equal and solving for $M$,
+we find that $M$ is roughly equal to $L N_e$.
 The number of lineages then decreases gradually from this maximum
 on the coalescent time scale, and therefore over roughly $2 N_e$ generations.
 Since the total rate of events when the maximum number of lineages is
-present is roughly $L^2 N_e / 4$,
+present is roughly $L^2 N_e / 6$,
 then the total number of events is proportional to $(L N_e)^2$---i.e.,
 proportional to $\rho^2$.
 

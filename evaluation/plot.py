@@ -230,9 +230,6 @@ def ancestry_perf():
             X[:, 2] = 1
             b, _, _, _ = np.linalg.lstsq(X, df["time"][ut], rcond=None)
 
-            # JK: I don't feel strongly about this, but maybe it's less
-            # confusing.
-            # ax.set_xlabel("Scaled recombination rate $\\rho/4 = N_e L$")
             ax.set_xlabel("$N_e L$ (= scaled recombination rate $\\rho/4$)")
 
             def fitted_quadratic(x):
