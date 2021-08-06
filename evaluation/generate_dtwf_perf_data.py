@@ -159,6 +159,10 @@ def validate(replicates):
     # at the qqplots, the distributions looks about the same, but there's
     # consistently more from ARGON. We've check the parameters as closely
     # as we can here, so I'm not sure there's much we can do.
+    # However, see the discussion here:
+    # https://github.com/tskit-dev/msprime-1.0-paper/pull/109
+    # When we export to a tree sequence and squash the trees down properly,
+    # we get the same distributions. So, this is fine.
     L = 1  # Megabases
     sample_size = 10
 
