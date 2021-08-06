@@ -20,6 +20,7 @@
 \newcommand{\msprime}[0]{\texttt{msprime}}
 \newcommand{\tskit}[0]{\texttt{tskit}}
 \newcommand{\ms}[0]{\texttt{ms}}
+\newcommand{\msHOT}[0]{\texttt{msHOT}}
 \newcommand{\scrm}[0]{\texttt{scrm}}
 \newcommand{\SLiM}[0]{\texttt{SLiM}}
 \newcommand{\fwdpy}[0]{\texttt{fwdpy11}}
@@ -28,9 +29,11 @@
 \newcommand{\Pyvolve}[0]{\texttt{Pyvolve}}
 \newcommand{\phastsim}[0]{\texttt{phastsim}}
 \newcommand{\discoal}[0]{\texttt{discoal}}
+\newcommand{\ARGON}[0]{\texttt{ARGON}}
 
 \newcommand{\jkcomment}[1]{\textcolor{red}{#1}}
 \newcommand{\plrcomment}[1]{\textcolor{cyan}{#1}}
+\newcommand{\grgcomment}[1]{\textcolor{yellow!60!red}{#1}}
 
 \begin{document}
 
@@ -51,6 +54,9 @@
 % Institute of Ecology and Evolution, Departments of Mathematics and Biology, University of Oregon, USA
 
 
+% \author[n]{Graham Gower}
+% \affil[n]{Lundbeck GeoGenetics Centre, Globe Institute, Faculty of Health and Medical Sciences, University of Copenhagen, Denmark}
+
 % \section*{Contact:} \href{jerome.kelleher@bdi.ox.ac.uk}{jerome.kelleher@bdi.ox.ac.uk}
 
 \maketitle
@@ -67,9 +73,10 @@ coalescent simulation, making it possible to simulate millions
 of whole genomes for the first time. We summarise the many features
 of \msprime\ 1.0, which is built around a core model of efficiently
 implementing recombination via the succinct tree sequence data
-structure. Moreover, \msprime\ is a community oriented open-source development
-project, aimed as a way to reduce duplication of effort and increase
-the quality of key simulation software.
+structure. Moreover, development of \msprime\ is collaborative
+and open source, which reduces duplication of effort and promotes
+software quality via community engagement.
+% "Bazaar" development model: https://en.wikipedia.org/wiki/The_Cathedral_and_the_Bazaar
 \end{abstract}
 
 
@@ -143,8 +150,8 @@ genetic simulation.
 This paper marks the release of \msprime\ 1.0, a state-of-the-art
 coalescent simulator both with respect to efficiency as well as feature-richness.
 Here we provide an overview of the extensive abilities of \msprime\ 1.0,
-demonstrate through numerous performance comparisons its advantages over
-current, alternative software packages, and finally lay out future plans for
+demonstrate its performance advantages over alternative software,
+and finally lay out future plans for
 further open-source development of what we hope will become an industry
 standard piece of computational infrastructure for the genetics community.
 
@@ -205,7 +212,7 @@ from \msprime\ into
 a standalone Python and C library, called \tskit~\citep{tskit2021tskit}.
 While a full discussion of tree sequences and the capabilities
 of \tskit\ is beyond the scope of this article, we summarise
-some aspects that are important for simulation here.
+some aspects that are important for simulation.
 
 % Encoding ancestry
 Given a set of sample chromosomes, the topology
@@ -236,7 +243,7 @@ and is the key to the efficiency of tree
 sequences~\citep{
 kelleher2018efficient,kelleher2019inferring,ralph2020efficiently}.
 
-The tree sequence encoding of ancestry as set of nodes and edges
+The tree sequence encoding of ancestry as a set of nodes and edges
 as just described, is equivalent to a graph in which edges
 are annotated with a set of disjoint genomic intervals.
 This is closely related to the Ancestral Recombination Graph (ARG),
@@ -361,7 +368,7 @@ to generate the required command lines or input parameter files,
 invoke the simulation engine, and process the results in some way.
 This process is cumbersome and labour intensive, and
 a number of packages have been developed
-to allow simulations be run directly in a high-level
+to allow simulations to be run directly in a high-level
 scripting language~\citep{staab2016coala,parobek2017skelesim,gladstein2018simprily}.
 
 The more recent trend has been to move away from this file and command-line
@@ -403,7 +410,7 @@ command line interface to support existing workflows. The
 for simulating ancestry and mutations separately. A particularly useful
 feature is the ability to specify demographic models in
 Demes format~\citep{gower2021demes} from the command line,
-making simulating complex demography models straightforward.
+making simulation of complex demographies straightforward.
 
 % The output - what do we get out?
 \subsection*{Data analysis}
@@ -464,7 +471,7 @@ output information about migrating segments~\citep{rosenzweig2016powerful},
 information about ancestral lineages~\citep{chen2013asymptotic},
 an array of population genetic statistics~\citep{ramos2007mlcoalsim}
 % Any more?
-and \ms's fork \texttt{msHOT}~\citep{hellenthal2007mshot},
+and \ms's fork \msHOT~\citep{hellenthal2007mshot},
 has in turn been forked to output information on local
 ancestry~\citep{racimo2017archaic}.
 All of this information
@@ -526,6 +533,7 @@ the two have been conflated in practice.
         Graphics produced with \tskit's \texttt{draw\_svg} method.
         \plrcomment{TODO: fix up the axis labels, if we like this figure?}
         \jkcomment{Why 200 samples? Seems like far too many to me, how about 5?}
+        \grgcomment{Add \texttt{sim\_ancestry} and \texttt{sim\_mutations} as subfigure titles?}
     }
 \end{figure}
 
@@ -534,11 +542,11 @@ lack of standardised file formats, and in particular, the absence of common
 library infrastructure to abstract the details of interchanging simulation
 data. Although \msprime\ also supports simulating both ancestry and mutations,
 the two aspects are functionally independent within the software.
-Both ancestry and mutation simulators are present in \msprime
+Both ancestry and mutation simulators are present in \msprime\ 
 for reasons of convenience and history,
 and could be split into separate packages.
 The mature and efficient C and Python interfaces for
-\tskit\ makes it straightforward to add further information to
+\tskit\ make it straightforward to add further information to
 an existing file, and because of its efficient data interchange mechanisms,
 there is no performance penalty for performing additional operations
 in a different Python package.
@@ -551,29 +559,30 @@ It is a modular
 component intended to fit into a larger software ecosystem, and
 is in no way dependent on \msprime's ancestry simulator.
 
-As well as providing a new API (see the \nameref{sec-sim-interface} section)
-which emphasises the logical split between ancestry and mutation simulation,
+As well as providing a new API
+that emphasises the logical split between ancestry and mutation simulation
+(see the \nameref{sec-sim-interface} section),
 we have greatly extended the sophistication of
 \msprime's mutation generation engine for version 1.0,
 achieving near feature-parity with \SeqGen.
-We  support a large number of mutation models, including the
+We support a large number of mutation models, including the
 JC69~\citep{jukes1969evolution},
 F84~\citep{felsenstein1996hidden},
 and GTR~\citep{tavare1986some} nucleotide models
 and the BLOSUM62~\citep{henikoff1992amino}
 and PAM~\citep{dayhoff1978} amino acid models.
-A general model accepts an arbitrary transition matrix between
-any number of alleles (which can be arbitrary unicode strings),
-so that other models, such as the Kimura two and three
+Other models, such as the Kimura two and three
 parameter models~\citep{kimura1980simple,kimura1981estimation},
-can be easily and efficiently defined in user code.
+can be defined easily and efficiently in
+user code by specifying an arbitrary transition matrix between
+any number of alleles (which can be arbitrary unicode strings).
 Mutation rates can vary along the genome, and multiple mutation
 models can be imposed on a tree sequence by overlaying mutations
 in multiple passes.
 We have extensively validated the results of mutation simulations
 against both theoretical expectations and output from
 \SeqGen~\citep{rambaut1997seq} and
-Pyvolve~\citep{spielman2015pyvolve}.
+\Pyvolve~\citep{spielman2015pyvolve}.
 
 \begin{figure}
     \includegraphics[width=\textwidth]{figures/mutations-perf}
@@ -581,7 +590,7 @@ Pyvolve~\citep{spielman2015pyvolve}.
 \texttt{sim\_mutations} on tree sequences generated
 by \texttt{sim\_ancestry} (with a population size of $10^4$
 and recombination rate of $10^{-8}$) for varying (haploid) sample
-size and sequence length. We run 10 replicate mutation simulations
+size and sequence length. We ran 10 replicate mutation simulations
 each for three different mutation rates, and report the average
 CPU time required (Intel Core i7-9700).
 (A) Holding sequence length fixed at 10 megabases and varying the
@@ -610,7 +619,7 @@ rather than tree-by-tree and branch-by-branch as would otherwise be required.
 In the above example from Fig.~\ref{fig-mutations-perf}B,
 if we generated mutations tree-by-tree, we would have to iterate over 273,887,838 branches
 (since there are 137,081 trees and 1,998 branches in each
-tree) rather than 508,125 edges, resulting in $\sim500$ times more work.
+tree) rather than 508,125 edges, resulting in $\sim$500 times more work.
 % python3 evaluation/generate_mutations_perf_data.py benchmark-single-tree
 Even if we have a tree sequence consisting of a single tree
 (negating the advantage of working edge-by-edge),
@@ -632,7 +641,7 @@ in \msprime\ could be extended. For example, we intend to add support for
 microsatellites~\citep{mailund2005coasim},
 codon models~\citep{arenas2007recodon}
 and indels~\citep{cartwright2005dna,fletcher2009indelible},
-although some may also require upstream additions to \tskit's data model
+although changes may be required to \tskit's data model
 which is currently based on the assumption of independent sites.
 
 \subsection*{Recombination}
@@ -657,7 +666,7 @@ us to simulate recombination hotspots and patterns
 of recombination from empirical maps.
 The implementation of recombination in \msprime\ is extensively validated
 against analytical results~\citep{hudson1983properties,kaplan1985use}
-and simulations by \ms, \texttt{msHot} and \SLiM.
+and simulations by \ms, \msHOT\ and \SLiM.
 
 The Sequentially Markovian Coalescent (SMC) is an approximation of the
 coalescent with recombination~\citep{mcvean2005approximating,marjoram2006fast},
@@ -697,7 +706,7 @@ implement them more efficiently in future versions.
     Since recombination rate in these simulations was $10^{-8}$,
     $L$ is the number of base pairs divided by $10^8$.
     The black lines are quadratic fits separately in each panel
-    and sample size. Also shown are the approximate values of
+    and sample size. Vertical grey lines show the approximate values of
     $N_e L$ for chromosome 1 in three species, using values from
     the \stdpopsim\ catalogue~\citep{adrion2020community}.
 }
@@ -823,7 +832,7 @@ At the maximum, coalescence and recombination rates are equal,
 so a typical segment of ancestry will spend roughly half its time
 in a lineage with at least one other such segment---and,
 since such lineages carry at least two segments,
-at most one-third of the lineages carry long trapped segments of ancesry.
+at most one-third of the lineages carry long trapped segments of ancestry.
 Since the maximum number of lineages is reached
 very quickly~\citep{nelson2020accounting},
 this implies that $\ell \approx L / 6$.
@@ -852,6 +861,7 @@ simulation will be quick in a species with a strong domestication bottleneck,
 and slow otherwise.
 
 \subsection*{Gene conversion}
+\grgcomment{TODO: discuss Fig~\ref{fig-gc-perf} in text of GC section.}
 
 %introduction
 Gene conversion is a form of recombination that results in unidirectional transfer
@@ -1034,7 +1044,7 @@ site frequency spectrum~\citep{bunnefeld2015inferring}.
 \subsection*{Multiple merger coalescents}
 
 Kingman's coalescent assumes that only two ancestral lineages can merge at
-each merger event. Although this is generally a reasonable approximation there
+each merger event. Although this is generally a reasonable approximation, there
 are certain situations in which the underlying mathematical assumptions are
 violated. For example in certain highly fecund organisms
 \citep{hedgecock_94,B94,HP11,A04,irwin16}, where individuals have the ability
@@ -1130,12 +1140,12 @@ have fully coalesced (like Hudson's algorithm).
 \includegraphics[width=3.8cm]{figures/arg.pdf}
 
 \end{center}
-\caption{\label{fig-arg} (A) An simple ARG in which a recombination
+\caption{\label{fig-arg} (A) A simple ARG in which a recombination
 occurs at position 0.3; (B) the equivalent topology depicted as a tree
 sequence, including the recombination node; (C) the same tree sequence
 topology ``simplified'' down to its minimal tree sequence representation;
 (D) the fraction of nodes in a tree sequence that are concerned with
-extra ARG information in a tree sequences returned using \msprime's
+extra ARG information in a tree sequence returned using \msprime's
 \texttt{record\_full\_arg} mode}
 \end{figure}
 
@@ -1170,7 +1180,7 @@ present through the extant lineages and the ancestral material they carry
 over time. Since the ARG is a large and unwieldy object
 (Fig.~\ref{fig-arg}) we do not use it as output, but
 rather store the information required to recover the genealogical
-history as nodes and edges in a tree sequence (see section XX),
+history as nodes and edges in a tree sequence (see the \nameref{sec-ts} section),
 or ``coalescence records'' in the terminology of~\citep{kelleher2016efficient}.
 
 Although by default \msprime\ outputs tree sequences that contain full information
@@ -1213,8 +1223,9 @@ is the addition of selective sweeps~\citep{kaplan1989hitchhiking,braverman1995hi
 In the context of the coalescent this amounts to creating a structured population
 during the sojourn of the beneficial mutation through the population (i.e., the sweep phase)
 in which lineages may transit between favoured and unfavoured backgrounds through
-recombination. This allows for many selective sweep scenarios, including recurrent, partial,
-and soft selective sweeps to be simulated efficiently, however in general this
+recombination. This allows for many selective sweep scenarios to be simulated
+efficiently, including recurrent, partial,
+and soft selective sweeps. However in general this
 efficiency comes at the cost of flexibility in comparison to forwards in
 time simulation.
 
@@ -1235,11 +1246,11 @@ however none of them at present will output tree sequence formatted data.
 \end{figure}
 
 We have implemented selective sweeps in \msprime\ similarly to
-the \discoal\ implementation-- sweep trajectories are
+the \discoal\ implementation---sweep trajectories are
 generated from a jump process approximation to the conditional diffusion
 of an allele bound for fixation~\citep{coop2004ancestral}.
 Details of our implementation are available in the Appendix.
-This implementation allows us to further generalise sweep models to
+This implementation facilitates future changes to generalise sweep models to
 changing population sizes as well as selection from standing variation,
 both of which are features that are planned for the near future.
 Moreover because this implements the basic infrastructure for the structured
@@ -1277,20 +1288,20 @@ described in more detail in~\cite{nelson2020accounting}.
 \includegraphics[width=\textwidth]{figures/dtwf-perf}
 \end{center}
 \caption{\label{fig-dtwf-perf} Comparison of \msprime's DTWF
-simulations with ARGON. To ensure the comparison with ARGON is
+simulations with \ARGON. To ensure the comparison with \ARGON\ is
 as fair as possible we run it with a mutation rate of 0 and with
-the minimum output options (so that it writes out only an empty VCF file)}
+the minimum output options (so that it writes out only an empty VCF file).}
 \end{figure}
 
 We support changing the simulation model at specified times so that we can
-easily run hybrid simulations, as proposed by~\cite{bhaskar2014distortion}. We
-can combine any number of different simulation models, allowing for the
+easily run hybrid simulations, as proposed by~\cite{bhaskar2014distortion}.
+Any number of different simulation models can be combined, allowing for the
 flexible choice of simulation scenarios without severely damaging efficiency.
 As the discrete time Wright-Fisher model improves accuracy of genealogical
 patterns in the recent past, we can simulate the recent history using this
 model and then switch to the standard coalescent to more efficiently simulate
 the more ancient history. Fig.~\ref{fig-dtwf-perf} compares the performance of
-this approach with ARGON~\citep{palamara2016argon}, a specialised DTWF
+this approach with \ARGON~\citep{palamara2016argon}, a specialised DTWF
 simulator.  The Wright-Fisher approach in \msprime\ is more efficient at
 simulating chromosome-scale sequences (larger than $\approx10$Mb), while the
 hybrid approach provides large efficiency gains.
@@ -1305,7 +1316,7 @@ is complete up until time $t$ as input
 present at this time, and then run the simulation backwards in time from there.
 This allows a simulated ancestry to be produced by any
 number of different processes across disjoint time slices.
-In practise this feature is used to ``complete''
+In practice this feature is used to ``complete''
 forwards-time ancestry simulations~\citep{kelleher2018efficient}
 that may have not fully coalesced. This process
 (``recapitation'') can be orders of magnitude faster than
@@ -1331,7 +1342,7 @@ As of the 1.0.0 release \msprime\ consists of around 13K lines of C and 11K
 lines of Python, with suites of 122 C tests (7K lines of code) and
 1350 Python tests (22K lines of code). These tests are run
 automatically on different operating systems on each pull request
-(where a contributor updates the codebase), using standard Continuous
+(where a contributor proposes a code change), using standard Continuous
 Integration (CI) methodology. Other CI services check code formatting
 and for common errors, as well as producing reports on the level of
 test coverage, e.g., pinpointing areas where additional unit tests may
@@ -1342,12 +1353,11 @@ they are usually of little value in assessing the statistical properties
 of simulations. To validate the correctness of simulation output
 we maintain a suite of statistical tests (as of 1.0.0,
 217 validation tests, in 6K lines of code). These consist of running many
-replicate simulations, and checking the properties of the output
-against either analytical results of the output of other simulators
-where such results are not available.
+replicate simulations to check the properties of the output
+against other simulators, and where possible against analytical results.
 For example, simulations of complex demography are validated against \ms,
 selective sweeps against \discoal, and Wright-Fisher simulations
-against forwards-time simulations in \SLiM.
+against forwards in time simulations in \SLiM.
 This suite of tests is run before every release, to ensure
 that statistical errors have not been introduced.
 
@@ -1400,6 +1410,7 @@ in shared infrastructure and mentorship in good software development practice.
 Scientific software is vital apparatus, and must be engineered
 to a high quality if we are to trust its results. There is a growing
 realisation across the sciences \citet[OTHER CITATIONS]{siepel2019challenges}
+% Maybe cite: https://www.biorxiv.org/content/10.1101/092205v3
 that investing in
 shared community infrastructure produces better results than a
 proliferation of individually maintained tools, allowing scientists
@@ -1417,7 +1428,7 @@ can lead to greatly increased productivity in subsequent
 work (e.g., through more reliable code and better debugging skills).
 We hope that users who find that
 features they require are missing will continue to contribute to
-\msprime, leading to a community project that is both high-quality
+\msprime, leading to a community project that is both high quality
 and sustainable in the long term.
 
 
@@ -1437,11 +1448,12 @@ becomes the input for other downstream inferences, it is vitally
 important that these primary inferences are thoroughly validated,
 with the detailed properties of the inferred ancestries
 catalogued and understood.
-\texttt{Msprime} will be an important tool for these inferences and validations,
+\texttt{Msprime} will continue to be an important tool for these inferences and validations,
 and in this context the ability to interoperate
-with other methods---particularly, forwards simulators---through
+with other methods---particularly forwards simulators---through
 the succinct tree sequence data structure and \tskit\ library
-will be vital.
+will be essential.
+% this final sentence is hard to parse
 
 \section*{Acknowledgements}
 JK is supported by the Robertson Foundation.
@@ -1449,6 +1461,7 @@ Jere Koskela is supported in part by EPSRC grant EP/R044732/1.
 ADK was supported by NIH awards R01GM117241 and R01HG010774.
 Franz Baumdicker is funded by the Deutsche Forschungsgemeinschaft
 EXC 2064/1 -- Project number 390727645, and EXC 2124 -- Project number 390838134.
+Graham Gower was supported by a Villum Fonden Young Investigator award to Fernando Racimo (project no. 00025300).
 
 \bibliographystyle{plainnat}
 \bibliography{paper}
