@@ -1,7 +1,8 @@
 import concurrent.futures
 import subprocess
 import tempfile
-import time
+import multiprocessing
+import resource
 
 import cpuinfo
 import pandas as pd
@@ -93,24 +94,46 @@ def run_msprime(*, sample_size, L, gc_rate, gc_tract_length, ret_breakpoints=Tru
     return treenumber
 
 
-def run_benchmark(work):
-    tool, sample_size = work
+def get_process_resources():
+    utime = 0
+    stime = 0
+    mem = 0
+    for who in [resource.RUSAGE_CHILDREN, resource.RUSAGE_SELF]:
+        info = resource.getrusage(who)
+        utime += info.ru_utime
+        stime += info.ru_stime
+        mem += info.ru_maxrss
+    # Memory is returned in KiB on Linux, scale to bytes
+    return {"user_time": utime, "sys_time": stime, "memory": mem * 1024}
 
+
+def run_benchmark_process(tool, sample_size, queue):
     L = 4_500_000
     gc_rate = 0.015
     gc_tract_length = 500
-
     func = tool_map[tool]
-    before = time.perf_counter()
     func(
-        sample_size=sample_size, L=L, gc_rate=gc_rate, gc_tract_length=gc_tract_length,
+        sample_size=sample_size,
+        L=L,
+        gc_rate=gc_rate,
+        gc_tract_length=gc_tract_length,
     )
-    duration = time.perf_counter() - before
-    return {
-        "sample_size": sample_size,
-        "tool": tool,
-        "time": duration,
-    }
+    queue.put(get_process_resources())
+
+
+def run_benchmark(work):
+
+    tool, sample_size = work
+    queue = multiprocessing.Queue()
+    p = multiprocessing.Process(
+        target=run_benchmark_process, args=(tool, sample_size, queue)
+    )
+    p.start()
+    perf_metrics = queue.get()
+    p.join()
+    if p.exitcode < 0:
+        raise ValueError("Error occured", p.exitcode)
+    return {"sample_size": sample_size, "tool": tool, **perf_metrics}
 
 
 @click.command()
