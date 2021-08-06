@@ -77,7 +77,7 @@ def sim_msprime_hybrid(sample_size, chrom_length_mb):
     )
 
 
-def process_resources():
+def get_process_resources():
     utime = 0
     stime = 0
     mem = 0
@@ -86,7 +86,7 @@ def process_resources():
         utime += info.ru_utime
         stime += info.ru_stime
         mem += info.ru_maxrss
-    # Memory is returned in KiB, scale to bytes
+    # Memory is returned in KiB on Linux, scale to bytes
     return {"user_time": utime, "sys_time": stime, "memory": mem * 1024}
 
 
@@ -94,7 +94,7 @@ def run_benchmark_process(tool, L, queue):
     sample_size = 500
     func = tool_map[tool]
     func(sample_size=sample_size, chrom_length_mb=L)
-    queue.put(process_resources())
+    queue.put(get_process_resources())
 
 
 def run_benchmark(work):

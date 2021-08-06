@@ -54,25 +54,31 @@ def gc_perf():
     Plot the gene-conversion benchmark.
     """
     df = pd.read_csv("data/gc-perf.csv")
-    # Get the mean among replicates
-    df.time /= 3600
-    dfg = df.groupby(["sample_size", "tool"]).mean().reset_index()
+    df = df.groupby(["sample_size", "tool"]).mean().reset_index()
+    print(df)
 
-    fig, ax1 = plt.subplots(1, 1)
+    df.memory /= 1024 ** 3
+    df.user_time /= 3600
+
     lines = {}
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
     for tool in ["SimBac", "fastSimBac", "msprime"]:
-        dft = dfg[dfg["tool"] == tool]
-        (line,) = ax1.plot(dft.sample_size, dft.time, label=tool)
+        dft = df[df.tool == tool]
+        (line,) = ax1.plot(dft.sample_size, dft.user_time, label=tool)
+        ax2.plot(dft.sample_size, dft.memory, label=tool, color=line.get_color())
         lines[tool] = line
 
     ax1.set_xlabel("Sample size")
     ax1.set_ylabel("Time (hours)")
-    # We could set a log-scale on the y-axis here but it really
-    # doesn't make much difference
+    ax1.set_ylim(0, None)
+    ax2.set_ylim(0, None)
+    ax2.set_xlabel("Sample size")
+    ax2.set_ylabel("Memory (GiB)")
+    ax1.legend()
 
-    dfmsp = dfg[dfg["tool"] == "msprime"]
+    dfmsp = df[df["tool"] == "msprime"]
     largest_n = np.array(dfmsp.sample_size)[-1]
-    largest_value = np.array(dfmsp.time)[-1]
+    largest_value = np.array(dfmsp.user_time)[-1]
     ax1.plot([largest_n], [largest_value], "o", color=lines["msprime"].get_color())
     ax1.annotate(
         f"{round(largest_value * 60)} mins",
@@ -81,8 +87,8 @@ def gc_perf():
         xy=(largest_n, largest_value),
         xycoords="data",
     )
-    ax1.legend()
     plt.tight_layout()
+
     save("gc-perf")
 
 
@@ -116,8 +122,7 @@ def dtwf_perf():
     # print(df)
 
     df.memory /= 1024 ** 3
-    label_map = {"ARGON": "ARGON", "msprime": "DTWF",
-            "hybrid": "DTWF + Hudson"}
+    label_map = {"ARGON": "ARGON", "msprime": "DTWF", "hybrid": "DTWF + Hudson"}
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
     for tool in ["ARGON", "msprime", "hybrid"]:
@@ -171,22 +176,13 @@ def ancestry_perf():
     for ax, tl in zip(axes, time_lims):
         legend_adds = [
             matplotlib.lines.Line2D(
-                [],
-                [],
-                color="black",
-                linestyle="-",
-                label=f"quadratic",
+                [], [], color="black", linestyle="-", label=f"quadratic",
             )
         ]
         for ns, m in zip((1000, 100000), ("o", "v")):
             legend_adds.append(
                 matplotlib.lines.Line2D(
-                    [],
-                    [],
-                    color="grey",
-                    marker=m,
-                    linestyle="none",
-                    label=f"n={ns}",
+                    [], [], color="grey", marker=m, linestyle="none", label=f"n={ns}",
                 )
             )
             ut = np.logical_and(df["time"] <= tl, df["num_samples"] == ns)
