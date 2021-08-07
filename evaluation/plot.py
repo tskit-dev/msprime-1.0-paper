@@ -98,16 +98,50 @@ def sweeps_perf():
     Plot the sweeps benchmark.
     """
     df = pd.read_csv("data/sweeps_perf.csv")
+    df = df.groupby(["L", "tool"]).mean().reset_index()
+    print(df)
 
-    fig, ax1 = plt.subplots(1, 1)
-    for tool in set(df.tool):
+    df.memory /= 1024 ** 3
+    df.L /= 1000
+    # discoal has very high systime usage, so we need to
+    # include it here as well.
+    df["time"] = (df.user_time + df.sys_time) / 60
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+    lines = {}
+    for tool in ["msprime", "discoal"]:
         dft = df[df.tool == tool]
-        ax1.plot(dft.L, dft.time, label=tool)
+        (line,) = ax1.plot(dft.L, dft.time, label=tool)
+        lines[tool] = line
+        ax2.plot(dft.L, dft.memory, label=tool)
 
-    ax1.set_xlabel("Sequence length")
-    ax1.set_ylabel("Time (seconds)")
-
+    ax1.set_xlabel("Sequence length (Kilobases)")
+    ax1.set_ylabel("Time (minutes)")
+    ax2.set_xlabel("Sequence length (Kilobases)")
+    ax2.set_ylabel("Memory (GiB)")
     ax1.legend()
+
+    dfmsp = df[df["tool"] == "msprime"]
+    largest_L = np.array(dfmsp.L)[-1]
+    largest_value = np.array(dfmsp.time)[-1]
+    ax1.plot([largest_L], [largest_value], "o", color=lines["msprime"].get_color())
+    ax1.annotate(
+        f"{round(largest_value * 60)} seconds",
+        textcoords="offset points",
+        xytext=(-30, 15),
+        xy=(largest_L, largest_value),
+        xycoords="data",
+    )
+    largest_value = np.array(dfmsp.memory)[-1]
+    ax2.plot([largest_L], [largest_value], "o", color=lines["msprime"].get_color())
+    ax2.annotate(
+        f"{round(largest_value * 1024)} MiB",
+        textcoords="offset points",
+        xytext=(-30, 15),
+        xy=(largest_L, largest_value),
+        xycoords="data",
+    )
+    plt.tight_layout()
     save("sweeps-perf")
 
 

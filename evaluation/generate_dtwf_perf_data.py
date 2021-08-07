@@ -1,20 +1,16 @@
-import time
 import subprocess
 import concurrent.futures
 import multiprocessing
 import tempfile
-import os
 import resource
 
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
 import numpy as np
 import click
-import tskit
 import msprime
 import pandas as pd
 import cpuinfo
-import sys
 
 
 def sim_argon(sample_size, chrom_length_mb, count_trees=False):
@@ -102,7 +98,6 @@ def run_benchmark(work):
     tool, L = work
     queue = multiprocessing.Queue()
     p = multiprocessing.Process(target=run_benchmark_process, args=(tool, L, queue))
-    before = time.perf_counter()
     p.start()
     perf_metrics = queue.get()
     p.join()
