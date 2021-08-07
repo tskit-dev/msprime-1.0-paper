@@ -1,21 +1,13 @@
 import subprocess
 import concurrent.futures
 import multiprocessing
-import tempfile
-import os
 import resource
 
-import subprocess
-
-import matplotlib.pyplot as plt
-import statsmodels.api as sm
 import numpy as np
 import click
-import tskit
 import msprime
 import pandas as pd
 import cpuinfo
-import sys
 
 
 def _discoal_str_to_msprime(args):
