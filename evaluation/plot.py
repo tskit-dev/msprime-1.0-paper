@@ -98,17 +98,26 @@ def sweeps_perf():
     Plot the sweeps benchmark.
     """
     df = pd.read_csv("data/sweeps_perf.csv")
+    df = df.groupby(["L", "tool"]).mean().reset_index()
+    print(df)
 
-    fig, ax1 = plt.subplots(1, 1)
-    for tool in set(df.tool):
+    df.memory /= 1024 ** 3
+    df.L /= 1000
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+    for tool in ["msprime", "discoal"]:
         dft = df[df.tool == tool]
-        ax1.plot(dft.L, dft.time, label=tool)
+        ax1.plot(dft.L, dft.user_time, label=tool)
+        ax2.plot(dft.L, dft.memory, label=tool)
 
-    ax1.set_xlabel("Sequence length")
+    ax1.set_xlabel("Sequence length (Kilobases)")
     ax1.set_ylabel("Time (seconds)")
-
+    ax2.set_xlabel("Sequence length (Kilobases)")
+    ax2.set_ylabel("Memory (GiB)")
     ax1.legend()
     save("sweeps-perf")
+
+
 
 
 @click.command()

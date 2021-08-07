@@ -1,8 +1,21 @@
-import numpy as np
-import pandas as pd
-import msprime
-import time
 import subprocess
+import concurrent.futures
+import multiprocessing
+import tempfile
+import os
+import resource
+
+import subprocess
+
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+import numpy as np
+import click
+import tskit
+import msprime
+import pandas as pd
+import cpuinfo
+import sys
 
 
 def _discoal_str_to_msprime(args):
@@ -93,36 +106,88 @@ def run_msprime(args):
         pass
 
 
-def main():
+def get_process_resources():
+    utime = 0
+    stime = 0
+    mem = 0
+    for who in [resource.RUSAGE_CHILDREN, resource.RUSAGE_SELF]:
+        info = resource.getrusage(who)
+        utime += info.ru_utime
+        stime += info.ru_stime
+        mem += info.ru_maxrss
+    # Memory is returned in KiB on Linux, scale to bytes
+    return {"user_time": utime, "sys_time": stime, "memory": mem * 1024}
+
+
+def run_benchmark_process(tool, cmd, queue):
+    func = tool_map[tool]
+    func(cmd)
+    queue.put(get_process_resources())
+
+
+def run_benchmark(work):
+
+    tool, L, cmd = work
+    queue = multiprocessing.Queue()
+    p = multiprocessing.Process(target=run_benchmark_process, args=(tool, cmd, queue))
+    p.start()
+    perf_metrics = queue.get()
+    p.join()
+    if p.exitcode < 0:
+        raise ValueError("Error occured", p.exitcode)
+    return {"L": L, "tool": tool, **perf_metrics}
+
+
+tool_map = {
+    "msprime": run_msprime,
+    "discoal": run_discoal,
+}
+
+
+@click.command()
+@click.option("--replicates", type=int, default=100)
+@click.option("--processes", type=int, default=None)
+def benchmark(replicates, processes):
+    """
+    Runs the benchmark between msprime and discoal
+    """
+
+    cpu = cpuinfo.get_cpu_info()
+    with open("data/sweeps_perf_cpu.txt", "w") as f:
+        for k, v in cpu.items():
+            print(k, "\t", v, file=f)
+
     r = 1e-9
     # Set theta to 0 to avoid conflating mutation generation
     theta = 0
     refsize = 1e6
-    # seqlen = np.linspace(200,200000, 10)
-    seqlen = np.linspace(200, 200000, 5)
-    data = []
-    tool_map = {
-        "msprime": run_msprime,
-        "discoal": run_discoal,
-    }
-    for l in seqlen:
-        rho = 4 * refsize * (l - 1) * r
-        cmd = f"10 100 {int(l)} -t {theta} -r {rho} -ws 0 -a 1000 -x 0.5 -N 10000"
-        for tool, func in tool_map.items():
-            before = time.perf_counter()
-            func(cmd)
-            duration = time.perf_counter() - before
-            data.append(
-                {
-                    "L": l,
-                    "tool": tool,
-                    "time": duration,
-                }
+    # 1kb up to 200kb
+    Ls = np.linspace(1_000, 200_000, 20).astype(int)
+    work = []
+    for L in Ls:
+        for name in tool_map.keys():
+            rho = 4 * refsize * (L - 1) * r
+            cmd = (
+                f"10 {replicates} {L} -t {theta} -r {rho} -ws 0 -a 1000 -x 0.5 -N 10000"
             )
+            work.extend([(name, L, cmd)])
+
+    data = []
+    with concurrent.futures.ProcessPoolExecutor(max_workers=processes) as executor:
+        futures = [executor.submit(run_benchmark, item) for item in work]
+        for future in concurrent.futures.as_completed(futures):
+            data.append(future.result())
             print(data[-1])
             df = pd.DataFrame(data)
             df.to_csv("data/sweeps_perf.csv")
 
 
+@click.group()
+def cli():
+    pass
+
+
+cli.add_command(benchmark)
+
 if __name__ == "__main__":
-    main()
+    cli()
