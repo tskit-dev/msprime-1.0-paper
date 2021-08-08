@@ -20,6 +20,8 @@
 \newcommand{\msprime}[0]{\texttt{msprime}}
 \newcommand{\tskit}[0]{\texttt{tskit}}
 \newcommand{\ms}[0]{\texttt{ms}}
+\newcommand{\msms}[0]{\texttt{msms}}
+\newcommand{\cosiTwo}[0]{\texttt{cosi2}}
 \newcommand{\msHOT}[0]{\texttt{msHOT}}
 \newcommand{\scrm}[0]{\texttt{scrm}}
 \newcommand{\SLiM}[0]{\texttt{SLiM}}
@@ -919,7 +921,7 @@ conversion in \msprime\ 1.0, and validated the output against
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=7cm]{figures/gc-perf}
+\includegraphics[width=\textwidth]{figures/gc-perf}
 \end{center}
 \caption{\label{fig-gc-perf}Comparison of the running time
 for E-coli simulations using \msprime\ and SimBac for varying
@@ -1219,43 +1221,52 @@ See the Appendix for details.
 \subsection*{Selection}
 \label{sec-selection}
 Another elaboration of the standard neutral coalescent with recombination
-is the addition of selective sweeps~\citep{kaplan1989hitchhiking,braverman1995hitchhiking,kim2002detecting}.
-In the context of the coalescent this amounts to creating a structured population
+is the addition of selective
+sweeps~\citep{kaplan1989hitchhiking,braverman1995hitchhiking,kim2002detecting}.
+Sweeps are modelled by creating a structured population
 during the sojourn of the beneficial mutation through the population (i.e., the sweep phase)
 in which lineages may transit between favoured and unfavoured backgrounds through
 recombination. This allows for many selective sweep scenarios to be simulated
-efficiently, including recurrent, partial,
-and soft selective sweeps. However in general this
+efficiently, including recurrent, partial, and soft selective sweeps.
+However in general this
 efficiency comes at the cost of flexibility in comparison to forwards in
 time simulation.
-
-Currently a small number of other simulators generate
-coalescent samples with sweeps, including SelSim~\citep{spencer2004selsim},
-mbs~\citep{teshima2009mbs}, msms~\citep{ewing2010msms},
-Cosi2~\citep{shlyakhter2014cosi2}, and \discoal~\citep{kern2016discoal}.
-Each of these packages has their own benefits and possible drawbacks,
-however none of them at present will output tree sequence formatted data.
+Several specialised simulators have been developed to simulate
+sweeps in the coalescent,
+including \texttt{SelSim}~\citep{spencer2004selsim},
+\texttt{mbs}~\citep{teshima2009mbs}, \msms~\citep{ewing2010msms},
+\cosiTwo~\citep{shlyakhter2014cosi2}
+and \discoal~\citep{kern2016discoal}.
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=6cm]{figures/sweeps-perf}
+\includegraphics[width=\textwidth]{figures/sweeps-perf}
 \end{center}
-\caption{\label{fig-selection-perf}Comparison of the run time for
-\msprime\ and \discoal\ for simulating selective sweeps.
-}
+\caption{\label{fig-selection-perf}Comparison of selective sweep simulation
+performance in \msprime\ and \discoal\ (Intel Xeon E5-2680 CPU).
+We report the total CPU time and maximum memory usage when simulating 100
+replicates for 10 samples in a model
+with \jkcomment{[ADK: fill in the details here please]} and a
+per-base recombination rate of $10^{-9}$.}
 \end{figure}
 
-We have implemented selective sweeps in \msprime\ similarly to
-the \discoal\ implementation---sweep trajectories are
-generated from a jump process approximation to the conditional diffusion
-of an allele bound for fixation~\citep{coop2004ancestral}.
-Details of our implementation are available in the Appendix.
+Following the approach taken in \discoal, we
+have implemented selective sweeps in \msprime\ by generating
+sweep trajectories from a jump process approximation to the conditional diffusion
+of an allele bound for
+fixation~\citep{coop2004ancestral}---see the appendix for more details.
 This implementation facilitates future changes to generalise sweep models to
 changing population sizes as well as selection from standing variation,
 both of which are features that are planned for the near future.
 Moreover because this implements the basic infrastructure for the structured
 coalescent, adding support for similar situations,
-such as inversions, is straightforward~\citep{peischl2013sequential}.
+such as inversions~\citep{peischl2013sequential}, is straightforward.
+Fig.~\ref{fig-selection-perf} shows that \msprime\ has far better
+CPU time and memory performance than \discoal. We have previously shown
+that \msprime\ is much more efficient than \msms\ and \cosiTwo\
+when simulating without selection~\citep{kelleher2016efficient}.
+% JK: do we need an extra proviso like this?
+% and this is unlikely to change unless sweeps dominate the ancestral process.
 
 \subsection*{Discrete time Wright-Fisher}
 The coalescent is an idealised model and makes many simplifying assumptions,
@@ -1302,7 +1313,7 @@ more quickly and requires substantially less memory than
 However, the generation-by-generation approach of the DTWF is less
 efficient than the coalescent with recombination when the
 number of lineages is significantly less than the population size
-(the regime where the coalescent is an accurate approximat),
+(the regime where the coalescent is an accurate approximation),
 which usually happens in the quite recent
 past~\cite{bhaskar2014distortion}.
 We therefore support changing the simulation model during a simulation
