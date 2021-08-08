@@ -225,6 +225,10 @@ def benchmark_ecoli(replicates, processes):
         for k, v in cpu.items():
             print(k, "\t", v, file=f)
 
+    # NOTE: if we're doing this again it would be simpler to use the *exact*
+    # estimates from Lapierre et al rather than these rough values we using
+    # now. Just easier to explain in the paper.
+
     sample_sizes = np.linspace(10, 500, 20).astype(int)
     work = []
     for sample_size in sample_sizes:

@@ -68,6 +68,8 @@ def gc_perf():
         ax2.plot(dft.sample_size, dft.memory, label=tool, color=line.get_color())
         lines[tool] = line
 
+    ax1.set_title("(A)")
+    ax2.set_title("(B)")
     ax1.set_xlabel("Sample size")
     ax1.set_ylabel("Time (hours)")
     ax1.set_ylim(0, None)
@@ -115,6 +117,8 @@ def sweeps_perf():
         lines[tool] = line
         ax2.plot(dft.L, dft.memory, label=tool)
 
+    ax1.set_title("(A)")
+    ax2.set_title("(B)")
     ax1.set_xlabel("Sequence length (Kilobases)")
     ax1.set_ylabel("Time (minutes)")
     ax2.set_xlabel("Sequence length (Kilobases)")
