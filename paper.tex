@@ -306,18 +306,23 @@ some aspects that are important for simulation.
 Given a set of sample chromosomes, the topology
 of their genetic ancestry is described by a set of \emph{nodes}
 and \emph{edges} (Fig.~\ref{fig-ts-example}).
-A node in tree sequence terminology corresponds
-to a single chromosome strand, associated with its birth time
-and other optional information. A node may be
-associated with an \emph{individual}, so that, for example, a diploid
-individual is associated with two separate nodes (we omit
-the individual table in Fig.~\ref{fig-ts-example} as it is optional).
-Nodes define haplotypes that exist at a specific time within
-some individual, and edges define genetic inheritance
-between these nodes. An \emph{edge} consists of a
+A node in tree sequence terminology corresponds to a 
+haplotype that existed within a past individual, 
+and is ancestral to the sample. 
+A diploid individual, for example, is associated with at 
+most two separate nodes spanning a given locus. 
+The birth time of the individual is recorded as a node 
+property. By contrast, recording the identity of the ancestral 
+individual is optional because it does not affect sample 
+relatedness. Edges define genetic inheritance
+between nodes. An \emph{edge} consists of a
 parent node, a child node and the left and right coordinates
 of the contiguous genomic interval over which
-the child inherited genetic material from the parent.
+the child node inherited genetic material from the parent node.
+Parent and child nodes may correspond to ancestor and descendant 
+individuals separated by 
+many generations. 
+
 Critically, edges can span multiple marginal trees: for
 example, in Fig.~\ref{fig-ts-example} the branch from node
 0 to 4 is present in both marginal trees, and represented
