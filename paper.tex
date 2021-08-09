@@ -1316,8 +1316,10 @@ and \discoal~\citep{kern2016discoal}.
 performance in \msprime\ and \discoal\ (Intel Xeon E5-2680 CPU).
 We report the total CPU time and maximum memory usage when simulating 100
 replicates for 10 samples in a model
-with \jkcomment{[ADK: fill in the details here please]} and a
-per-base recombination rate of $10^{-9}$.}
+with a single selective sweep in its history where the benefical
+allele had a scaled selection coefficient of $2Ns=1000$,
+the per-base recombination rate of $10^{-9}$, and we allowed
+the sequence length to vary between 1kb-200kb.}
 \end{figure}
 
 Following the approach taken in \discoal, we
@@ -1334,7 +1336,9 @@ such as inversions~\citep{peischl2013sequential}, is straightforward.
 Fig.~\ref{fig-selection-perf} shows that \msprime\ has far better
 CPU time and memory performance than \discoal. We have previously shown
 that \msprime\ is much more efficient than \msms\ and \cosiTwo\
-when simulating without selection~\citep{kelleher2016efficient}.
+when simulating without selection~\citep{kelleher2016efficient},
+thus we believe \msprime\ to be the highest performing
+coalescent simulator that allows for sweeps currently.
 % JK: do we need an extra proviso like this?
 % and this is unlikely to change unless sweeps dominate the ancestral process.
 
