@@ -649,6 +649,7 @@ although changes may be required to \tskit's data model
 which is currently based on the assumption of independent sites.
 
 \subsection*{Recombination}
+\label{sec-recombination}
 
 Crossover recombination is implemented in \msprime\ using Hudson's algorithm, which
 works backwards in time, generating common ancestor and recombination
@@ -895,7 +896,7 @@ a 4.5Mb genome with scaled gene conversion rate of 0.015 and
 a mean tract length of 500.
 We report (A) the total CPU time and (B) maximum memory usage
 averaged over 5 replicates (Intel Xeon E5-2680 CPU).
-We did not simulate \SimBac\ after the first two sample sizes because
+We did not run \SimBac\ beyond first two data points because
 of the very long running times.}
 % The genome length was set to 4.5 Mb, the scaled per site
 % gene conversion rate was set to $N_e g = \gamma = 0.015$ and
@@ -1074,19 +1075,36 @@ Please see the Appendix for more details and model derivations.
 
 The Ancestral Recombination Graph (ARG) was introduced by
 Griffiths~\citep{griffiths1991two,griffiths1997ancestral}
-as a representation of the coalescent with recombination in terms of a graph.
-This formulation was complementary to Hudson's earlier
+as a representation of the coalescent with recombination
+stochastic process as a graph.
+This formulation is complementary to Hudson's earlier
 work~\citep{hudson1983properties}, and substantially increased our theoretical
 understanding of recombination. In Griffiths' ARG formulation,
 a realisation of the coalescent with recombination is a graph in which
 vertices represent common ancestor or recombination events, and edges represent
-lineages through which ancestral material flows.
-We may consider the big ARG, in which we track lineages arising out of
-recombinations regardless of whether they carry ancestral material and
-consequently wait an exponentially large time until all sampled lineages
-coalesce into a single ancestor~\citep{ethier1990two}, or the little ARG in
-which we only track genetic ancestors, and wait until all marginal trees
-have fully coalesced (like Hudson's algorithm).
+lineages. There is the ``big'' ARG, in which we track lineages arising out of
+recombinations regardless of whether they carry ancestral
+material~\citep{ethier1990two},
+% and
+% consequently wait an exponentially large time until all sampled lineages
+% coalesce into a single ancestor~\citep{ethier1990two},
+and the ``little'' ARG in which we only track genetic ancestors.
+Over time, the interpretation of the term
+has shifted away from the original definition as a stochastic
+process, to a representation of a \emph{particular} genetic ancestry
+using common ancestor and recombination
+events~\citep[e.g.][]{minichiello2006mapping}.
+More recently, ARGs have essentially come to mean any graph-like representation
+of genetic ancestry; for example,
+\cite{mathieson2020ancestry} informally define an ARG as the subset of an
+individual's pedigree from which they have inherited ancestral material.
+% Do we include this sentence? It's true, I'm sure: someone new to the field reads
+% Iain and Aylwyn's paper, and goes, hmm, this ARG thing sounds interesting,
+% let's follow up on that Griffiths reference... Maybe this is part of the
+% reason why ARGs have such a fearsome reputation for being difficult:
+% there's a basic confusion about what they actually *are*.
+Such usage is entirely reasonable, but referring readers back to the
+original Griffiths papers does little to clarify.
 
 \begin{figure}
 
@@ -1125,51 +1143,38 @@ have fully coalesced (like Hudson's algorithm).
 % \begin{column}{5cm}
 \includegraphics[width=3.8cm]{illustrations/arg-ts.pdf}
 \includegraphics[width=3.8cm]{illustrations/arg-ts-simplified.pdf}
-\includegraphics[width=3.8cm]{figures/arg.pdf}
+% \includegraphics[width=3.8cm]{figures/arg.pdf}
 
 \end{center}
 \caption{\label{fig-arg} (A) A simple ARG in which a recombination
 occurs at position 0.3; (B) the equivalent topology depicted as a tree
 sequence, including the recombination node; (C) the same tree sequence
-topology ``simplified'' down to its minimal tree sequence representation;
-(D) the fraction of nodes in a tree sequence that are concerned with
-extra ARG information in a tree sequence returned using \msprime's
-\texttt{record\_full\_arg} mode}
+topology ``simplified'' down to its minimal tree sequence representation.
+% (D) the fraction of nodes in a tree sequence that are concerned with
+% extra ARG information in a tree sequence returned using \msprime's
+% \texttt{record\_full\_arg} mode}
+}
 \end{figure}
 
-However, this original definition of the ARG in terms of a stochastic process
-is rarely what is meant when the term is currently used. The term has come to
-essentially mean any graph-like representation of genetic ancestry in the presence
-of recombination; for example,
-\cite{mathieson2020ancestry} informally define an ARG as the subset of an
-individual's pedigree from which they have inherited ancestral material.
-Others state that an ARG is equivalent to the sequence of marginal
-% Also SARGE paper
-trees along the genome~\citep{yang2016rapidly,mirzaei2016rent}
-
-Such
-imprecision is unfortunate, since there are many ways to encode genetic
-ancestry as a graph, and referring to the original Griffiths papers does little to
-clarify. As we see below, there are situations in which the precise information
-stored in the graph is important, and conflating a high-level
-discussion of genetic ancestry with this mathematical object is not
-helpful. The point of technical terms is to provide clarity and
-precision on what is being discussed, and it is now essentially
-impossible to know what is meant by the term ``ARG'';
-we therefore use the term ``genetic ancestry'' in high-level
-discussions.
-
 For our purposes, an ARG is a realisation of the coalescent with
-recombination, in the Griffiths (little ARG) sense.
+recombination, in the Griffiths sense.
 As described in detail by~\cite{kelleher2016efficient}, Hudson's algorithm
 works by dynamically generating and traversing a little ARG.
 The graph is not explicitly represented in memory, but is partially
 present through the extant lineages and the ancestral material they carry
-over time. Since the ARG is a large and unwieldy object
-(Fig.~\ref{fig-arg}) we do not use it as output, but
+over time. We do not output the graph directly, but
 rather store the information required to recover the genealogical
 history as nodes and edges in a tree sequence (see the \nameref{sec-ts} section),
-or ``coalescence records'' in the terminology of~\citep{kelleher2016efficient}.
+or ``coalescence records'' in original terminology~\citep{kelleher2016efficient}.
+This is far more efficient than outputting the simulated ARG in its entirety:
+we know that the number of ARG nodes is bounded by
+$\rho^2 \log^2 n$ for
+scaled recombination rate $\rho$ and sample size $n$
+(see the \nameref{sec-recombination} section),
+whereas the size of the tree sequence encoding is
+$O(n + \rho \log n)$~\citep{kelleher2016efficient}. This difference between a
+quadratic and a linear dependency on $\rho$ is profound, and shows why ARG
+based approaches are not suitable for large scale simulation.
 
 Although by default \msprime\ outputs tree sequences that contain full information
 about the genealogical trees, their correlation structure along the genome,
@@ -1185,12 +1190,8 @@ below) in which is useful. We therefore provide
 the \texttt{record\_full\_arg} option in \msprime\
 to store a representation of the complete ARG traversed during simulation.
 This is done by storing extra nodes (marked with specific flags, so they
-can be easily identified later) and edges in the tree sequence.
-Fig.~\ref{fig-arg} shows that this extra ARG information
-quickly comes to dominate the output as we increase the sequence length,
-and the resulting tree sequence files are many times larger
-than the standard minimal tree sequence representation.
-
+can be easily identified later) and edges in the tree sequence
+(Fig.~\ref{fig-arg}).
 One situation in which a record of the full ARG is necessary is when we
 wish to compute likelihoods during inference.
 The likelihood is a central quantity in evaluating the plausibility of a putative
@@ -1199,10 +1200,9 @@ e.g.~approaches based on maximum likelihood, and as an ingredient of
 methods such as
 Metropolis-Hastings~\citep{kuhner2000maximum,nielsen2000estimation,wang2008bayesian}.
 We provide functions to compute the likelihood of ARG realisations
-(encoded using the representation of the \texttt{record\_full\_arg} option)
 and mutational patterns under
 the standard coalescent and infinite sites mutation model.
-See the Appendix for details.
+See the Appendix for details on these likelihood calculations.
 
 \subsection*{Selection}
 \label{sec-selection}
