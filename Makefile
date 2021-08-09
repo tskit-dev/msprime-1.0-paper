@@ -1,8 +1,6 @@
-DATA=data/arg.csv\
-     data/mutations_perf.csv
+DATA=data/mutations_perf.csv
 
 FIGURES=figures/mutations-perf.pdf\
-	figures/arg.pdf\
 	figures/sweeps-perf.pdf\
 	figures/gc-perf.pdf\
 	figures/dtwf-perf.pdf\
@@ -36,9 +34,6 @@ illustrations/arg-ts.svg: pretty_pictures.py
 
 %.pdf : %.ink.svg
 	inkscape $< --export-pdf=$@
-
-data/arg.csv:
-	python3 evaluation/generate_arg_data.py
 
 data/mutations_perf.csv:
 	python3 evaluation/generate_mutations_perf_data.py generate-trees
