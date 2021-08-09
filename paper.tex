@@ -1157,7 +1157,7 @@ topology ``simplified'' down to its minimal tree sequence representation.
 \end{figure}
 
 For our purposes, an ARG is a realisation of the coalescent with
-recombination, in the Griffiths sense.
+recombination, in the Griffiths (little ARG) sense.
 As described in detail by~\cite{kelleher2016efficient}, Hudson's algorithm
 works by dynamically generating and traversing a little ARG.
 The graph is not explicitly represented in memory, but is partially
@@ -1169,8 +1169,8 @@ or ``coalescence records'' in original terminology~\citep{kelleher2016efficient}
 This is far more efficient than outputting the simulated ARG in its entirety.
 For a given scaled recombination rate $\rho$
 (setting aside the dependency on the sample size $n$)
-we know from Eq.~\eqref{eqn-hsw-bound} that the number of ARG
-nodes is $O(\rho^2)$,
+we know from Eq.~\eqref{eqn-hsw-bound} that the number nodes
+in an ARG is $O(\rho^2)$,
 whereas the size of the tree sequence encoding is
 $O(\rho)$~\citep{kelleher2016efficient}.
 This difference between a
