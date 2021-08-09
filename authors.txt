@@ -1,0 +1,43 @@
+First:
+
+Baumdicker, Franz, @fbaumdicker, Gene conversion
+Bisschop, Gertjan, @GertjanBisschop, Mutation models implementation & verification
+Goldstein, Daniel, @daniel-goldstein, Simulate in physical coordinates
+Gower, Graham, @grahamgower, RecombinationMap APIs, demography, bugfixes
+Ragsdale, Aaron, @apragsdale, Miscellaneous docs, multiple chromosomes, demography
+Tsambos, Georgia, @gtsambos, Documentation, Census events
+Zhu, Sha, @shajoezhu, Lambda coalescents
+
+Middle:
+
+Eldon, Bjarki, @eldonb, Lambda coalescents
+Ellerman, E. Castedo, @castedo, C refactoring, performance improvements
+Galloway, Jared, @jgallowa07, Population size trajectory
+Gladstein, Ariella, @agladstein, Documentation, Docker
+Gorjanc, Gregor, @gregorgorjanc, Writing
+Guo, Bing, @gbinux, Verication for sweeps, documentation
+Jeffery, Ben, @benjeffery, Infrastructure, bug fixes
+Kretzschmar, Warren W., @winni2k, CLI improvements
+Krukov, Ivan, @ivan-krukov, Recombination rate performance
+Lohse, Konrad, @KLohse, Bottlenecks
+Matschiner, Michael, @mmatschiner, Species tree parsing
+Nelson, Dominic, @DomNelson, DTWF
+Pope, Nathaniel, @nspope, C code refactoring, DTWF migration rate clarification
+Quinto-Cortés, Consuelo D., @cdquinto, Documentation
+Rodrigues, Murillo, F. @mufernando, Mutation time
+Saunack, Kumar, @saunack, Refactor verification tests
+Sellinger, Thibaut, @TPPSellinger, Verification for Lambda coalescents
+Thornton, Kevin, @molpopgen, Documentation, nextafter bugfix, community
+Van Kemenade, Hugo, @hugovk, Remove Python 2 support
+Wohns, Anthony W, @awohns, Documentation
+Wong, Yan, @hyanwong, Documentation, RecombinationMap IO
+
+Senior:
+
+Gravel, Simon, @sgravel, DTWF
+Kern, Andrew, @andrewkern, Selective sweeps
+Koskela, Jere, @JereKoskela, Full ARG, Likelihoods, Lambda coalescents
+Ralph, Peter, @petrelharp, Lots of things
+
+Corresponding
+Kelleher, Jerome, @jeromekelleher
