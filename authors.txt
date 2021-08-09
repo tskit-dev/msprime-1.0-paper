@@ -24,7 +24,7 @@ Matschiner, Michael, @mmatschiner, Species tree parsing
 Nelson, Dominic, @DomNelson, DTWF
 Pope, Nathaniel, @nspope, C code refactoring, DTWF migration rate clarification
 Quinto-Cortés, Consuelo D., @cdquinto, Documentation
-Rodrigues, Murillo, F. @mufernando, Mutation time
+Rodrigues, Murillo, F., @mufernando, Mutation time
 Saunack, Kumar, @saunack, Refactor verification tests
 Sellinger, Thibaut, @TPPSellinger, Verification for Lambda coalescents
 Thornton, Kevin, @molpopgen, Documentation, nextafter bugfix, community
