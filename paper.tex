@@ -1808,8 +1808,9 @@ We provide two functions to facilitate likelihood-based inference.
 Both are implemented only for the simplest case of the standard ARG with a
 constant population size, and require tree sequences compatible with the
 \texttt{record\_full\_arg} option as their arguments.
-\begin{itemize}
-\item \texttt{msprime.log\_arg\_likelihood(ts, r, N)} returns the natural logarithm of
+
+The \texttt{msprime.log\_arg\_likelihood(ts, r, N)} function
+returns the natural logarithm of
 the sampling probability of the tree sequence \texttt{ts} under the ARG with per-link,
 per-generation recombination probability \texttt{r} and population size \texttt{N}.
 Specifically, the function returns the logarithm of
@@ -1830,7 +1831,8 @@ A recombination in ancestral material will always have $g_i = 1$, while a recomb
 in trapped non-ancestral material can result in other values of $g_i$.
 For a continuous model of the genome and a recombination in ancestral material,
 we set $g_i = 1$ and interpret the result as a density.
-\item \texttt{msprime.unnormalised\_log\_mutation\_likelihood(ts, m)} returns the
+
+The \texttt{msprime.unnormalised\_log\_mutation\_likelihood(ts, m)} function returns the
 natural logarithm of the probability of the mutations recorded in the tree sequence
 \texttt{ts} given the corresponding ancestry, assuming the infinite sites model, up to
 a normalising constant which depends on the pattern of mutations,
@@ -1848,7 +1850,7 @@ of the leaves of \texttt{ts} it does, and on no others.
 Unary nodes on marginal trees arising from the \texttt{record\_full\_arg} option
 mean that, in general $h_{ \gamma }$ corresponds to the length of one or more
 edges.
-\end{itemize}
+% \end{itemize}
 
 
 \label{app-multiple-mergers}
