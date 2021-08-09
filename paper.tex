@@ -1166,15 +1166,16 @@ over time. We do not output the graph directly, but
 rather store the information required to recover the genealogical
 history as nodes and edges in a tree sequence (see the \nameref{sec-ts} section),
 or ``coalescence records'' in original terminology~\citep{kelleher2016efficient}.
-This is far more efficient than outputting the simulated ARG in its entirety:
-we know that the number of ARG nodes is bounded by
-$\rho^2 \log^2 n$ for
-scaled recombination rate $\rho$ and sample size $n$
-(see the \nameref{sec-recombination} section),
+This is far more efficient than outputting the simulated ARG in its entirety.
+For a given scaled recombination rate $\rho$
+(setting aside the dependency on the sample size $n$)
+we know from Eq.~\eqref{eqn-hsw-bound} that the number of ARG
+nodes is $O(\rho^2)$,
 whereas the size of the tree sequence encoding is
-$O(n + \rho \log n)$~\citep{kelleher2016efficient}. This difference between a
-quadratic and a linear dependency on $\rho$ is profound, and shows why ARG
-based approaches are not suitable for large scale simulation.
+$O(\rho)$~\citep{kelleher2016efficient}.
+This difference between a
+quadratic and a linear dependency on $\rho$ is profound, and shows why
+large simulations cannot output an ARG in practice.
 
 Although by default \msprime\ outputs tree sequences that contain full information
 about the genealogical trees, their correlation structure along the genome,
