@@ -1,21 +1,21 @@
-import time
 import subprocess
+import concurrent.futures
+import multiprocessing
+import tempfile
+import resource
 
-import tskit
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+import numpy as np
+import click
 import msprime
 import pandas as pd
+import cpuinfo
 
-# Methods for simulating with ARGON and msprime.
 
-
-def sim_argon(
-    sample_size,
-    chrom_length,
-    min_length=0,
-    no_rec=False,
-    ibd=True,
-    trees=True,
-):
+def sim_argon(sample_size, chrom_length_mb, count_trees=False):
+    tmpdir = tempfile.TemporaryDirectory()
+    prefix = tmpdir.name + "/x"
     # Defaults: mutation rate 1.65e-8, rec rate 1e-8
     diploid_size = 2 * sample_size
     arguments = [
@@ -26,146 +26,177 @@ def sim_argon(
         "10000",
         "-pop",
         "1",
-        "%i" % diploid_size,
+        f"{diploid_size}",
         "-size",
-        "%i" % int(chrom_length / 1_000_000),
+        f"{chrom_length_mb}",
         "-mut",
         "0",
         "-quiet",
+        "-out",
+        prefix,
     ]
-    if trees:
+    if count_trees:
         arguments.extend(["-trees"])
-    if ibd:
-        arguments.extend(["-IBD", "%i" % min_length])
-    if no_rec:
-        arguments.extend(["-rec", "0"])
+    # print("  ".join(arguments))
+    subprocess.run(arguments, check=True, capture_output=True)
+    num_trees = 0
+    if count_trees:
+        treefile = prefix + ".trees"
+        # count the unique trees in the output. Technically we only want to
+        # count *adjacent* identical trees, though.
+        cmd = f"cut -f 4 {treefile} | uniq | wc -l"
+        output = subprocess.run(cmd, shell=True, check=True, capture_output=True)
+        num_trees = int(output.stdout)
+    return num_trees
 
-    output = subprocess.run(arguments, check=True, capture_output=True)
-    return (output.stdout, output.stderr)
 
-
-# Methods for simulating with msprime.
-
-
-def sim_msprime(
-    sample_size, chrom_length, min_length=0, max_time=None, ibd=True, no_rec=False
-):
-    if no_rec:
-        rho = 0
-    else:
-        rho = 1e-8
+def sim_msprime(sample_size, chrom_length_mb, model="dtwf"):
     ts = msprime.sim_ancestry(
         samples=sample_size,
-        sequence_length=chrom_length,
+        sequence_length=chrom_length_mb * 10 ** 6,
         discrete_genome=True,
-        recombination_rate=rho,
+        recombination_rate=1e-8,
         population_size=5000,
-        model="dtwf",
+        model=model,
     )
-    # ts = msprime.sim_mutations(ts, rate=1e-20)
-    if not ibd:
-        return ts
-    else:
-        samples = list(itertools.combinations(range(sample_size), 2))
-        ibd = ts.tables.find_ibd(
-            min_length=min_length, samples=samples, max_time=max_time
-        )
-        # print("Number of simulated trees:", ts.num_trees)
-        return ibd
+    return ts.num_trees
 
 
-def sim_msprime_hybrid(
-    sample_size, chrom_length, min_length=0, max_time=None, ibd=True, no_rec=False
-):
-    if no_rec:
-        rho = 0
-    else:
-        rho = 1e-8
-    ts = msprime.sim_ancestry(
-        samples=sample_size,
-        sequence_length=chrom_length,
-        discrete_genome=True,
-        recombination_rate=rho,
-        population_size=5000,
+def sim_msprime_hybrid(sample_size, chrom_length_mb):
+    return sim_msprime(
+        sample_size,
+        chrom_length_mb,
         model=[
             msprime.DiscreteTimeWrightFisher(duration=100),
             msprime.StandardCoalescent(),
         ],
     )
-    # ts = msprime.sim_mutations(ts, rate=1e-20)
-    if not ibd:
-        return ts
-    else:
-        samples = list(itertools.combinations(range(sample_size), 2))
-        ibd = ts.tables.find_ibd(
-            min_length=min_length, samples=samples, max_time=max_time
-        )
-        # print("Number of simulated trees:", ts.num_trees)
-        return ibd
 
 
-def main():
+def get_process_resources():
+    utime = 0
+    stime = 0
+    mem = 0
+    for who in [resource.RUSAGE_CHILDREN, resource.RUSAGE_SELF]:
+        info = resource.getrusage(who)
+        utime += info.ru_utime
+        stime += info.ru_stime
+        mem += info.ru_maxrss
+    # Memory is returned in KiB on Linux, scale to bytes
+    return {"user_time": utime, "sys_time": stime, "memory": mem * 1024}
 
-    # Define constants
-    num_replicates = 20
-    sample_size = 400
-    # chrom_lengths = [500000, 5000000, 50000000, 500000000]
-    chrom_lengths = [10000, 100000, 1000000, 10000000, 100000000]
-    cutoff = 0
 
-    # Initialise lists to turn into outputted dataframe.
-    df_samples = []
-    df_length = []
-    df_cutoff = []
-    df_program = []
-    df_runtime = []
+def run_benchmark_process(tool, L, queue):
+    sample_size = 500
+    func = tool_map[tool]
+    func(sample_size=sample_size, chrom_length_mb=L)
+    queue.put(get_process_resources())
 
-    # Loop over sample sizes
-    for c in chrom_lengths:
 
-        # Loop over replicates
-        for r in range(num_replicates):
+def run_benchmark(work):
 
-            ### msprime DTWF
+    tool, L = work
+    queue = multiprocessing.Queue()
+    p = multiprocessing.Process(target=run_benchmark_process, args=(tool, L, queue))
+    p.start()
+    perf_metrics = queue.get()
+    p.join()
+    if p.exitcode < 0:
+        raise ValueError("Error occured", p.exitcode)
+    return {"L": L, "tool": tool, **perf_metrics}
 
-            time_start = time.time()
-            sim_msprime(sample_size, c, min_length=0, ibd=False)
-            time_end = time.time()
 
-            # Append to lists.
-            df_length.append(c)
-            df_program.append("msprime-DTWF")
-            df_runtime.append(time_end - time_start)
+tool_map = {
+    "msprime": sim_msprime,
+    "hybrid": sim_msprime_hybrid,
+    "ARGON": sim_argon,
+}
 
-            ### msprime hybrid: 100 gens DTWF, rest Hudson
 
-            time_start = time.time()
-            sim_msprime_hybrid(sample_size, c, min_length=0, ibd=False)
-            time_end = time.time()
+@click.command()
+@click.option("--replicates", type=int, default=5)
+@click.option("--processes", type=int, default=None)
+def benchmark(replicates, processes):
+    """
+    Runs the benchmark between msprime and ARGON.
+    """
 
-            # Append to lists.
-            df_length.append(c)
-            df_program.append("msprime-hybrid")
-            df_runtime.append(time_end - time_start)
+    cpu = cpuinfo.get_cpu_info()
+    with open("data/dtwf_perf_cpu.txt", "w") as f:
+        for k, v in cpu.items():
+            print(k, "\t", v, file=f)
 
-            #### ARGON
+    chrom_lengths = np.linspace(1, 100, 20).astype(int)
+    work = []
+    for L in chrom_lengths:
+        for name in tool_map.keys():
+            work.extend([(name, L)] * replicates)
 
-            time_start = time.time()
-            stdo, stde = sim_argon(
-                sample_size, c, min_length=0, ibd=False, trees=False
-            )
-            time_end = time.time()
+    data = []
+    with concurrent.futures.ProcessPoolExecutor(max_workers=processes) as executor:
+        futures = [executor.submit(run_benchmark, item) for item in work]
+        for future in concurrent.futures.as_completed(futures):
+            data.append(future.result())
+            print(data[-1])
+            df = pd.DataFrame(data)
+            df.to_csv("data/dtwf-perf.csv")
 
-            # Append to lists.
-            df_length.append(c)
-            df_program.append("argon")
-            df_runtime.append(time_end - time_start)
 
-    # Make pandas dataframe and save it.
-    out = pd.DataFrame({"length": df_length, "program": df_program, "runtime": df_runtime})
-    print(out)
+@click.command()
+@click.option("--replicates", type=int, default=100)
+def validate(replicates):
+    """
+    Validate that we are simulating the same things in the simulators
+    by running some replicates and plotting the distributions of the
+    number of output trees.
+    """
+    # NOTE: we seem to consistently get more trees from ARGON. Looking
+    # at the qqplots, the distributions looks about the same, but there's
+    # consistently more from ARGON. We've check the parameters as closely
+    # as we can here, so I'm not sure there's much we can do.
+    # However, see the discussion here:
+    # https://github.com/tskit-dev/msprime-1.0-paper/pull/109
+    # When we export to a tree sequence and squash the trees down properly,
+    # we get the same distributions. So, this is fine.
+    L = 1  # Megabases
+    sample_size = 10
 
-    out.to_csv("data/dtwf-perf.csv", sep="\t")
+    nt_argon = np.zeros(replicates)
+    nt_hybrid = np.zeros(replicates)
+    nt_msprime = np.zeros(replicates)
+
+    with click.progressbar(range(replicates)) as bar:
+        for j in bar:
+            nt_argon[j] = sim_argon(sample_size, L, count_trees=True)
+            nt_hybrid[j] = sim_msprime_hybrid(sample_size, L)
+            nt_msprime[j] = sim_msprime(sample_size, L)
+
+    print(
+        "mean number of trees:",
+        "argon=",
+        np.mean(nt_argon),
+        "msprime breakpoints=",
+        np.mean(nt_msprime),
+        "hybrid breakpoints=",
+        np.mean(nt_hybrid),
+    )
+
+    sm.graphics.qqplot(nt_argon)
+    sm.qqplot_2samples(nt_argon, nt_msprime, line="45")
+    plt.xlabel("argon")
+    plt.ylabel("msprime")
+    plt.savefig("figures/verify_argon_v_msprime.png")
+
+    plt.close("all")
+
+
+@click.group()
+def cli():
+    pass
+
+
+cli.add_command(validate)
+cli.add_command(benchmark)
 
 if __name__ == "__main__":
-    main()
+    cli()

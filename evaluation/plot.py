@@ -54,25 +54,33 @@ def gc_perf():
     Plot the gene-conversion benchmark.
     """
     df = pd.read_csv("data/gc-perf.csv")
-    # Get the mean among replicates
-    df.time /= 3600
-    dfg = df.groupby(["sample_size", "tool"]).mean().reset_index()
+    df = df.groupby(["sample_size", "tool"]).mean().reset_index()
+    print(df)
 
-    fig, ax1 = plt.subplots(1, 1)
+    df.memory /= 1024 ** 3
+    df.user_time /= 3600
+
     lines = {}
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
     for tool in ["SimBac", "fastSimBac", "msprime"]:
-        dft = dfg[dfg["tool"] == tool]
-        (line,) = ax1.plot(dft.sample_size, dft.time, label=tool)
+        dft = df[df.tool == tool]
+        (line,) = ax1.plot(dft.sample_size, dft.user_time, label=tool)
+        ax2.plot(dft.sample_size, dft.memory, label=tool, color=line.get_color())
         lines[tool] = line
 
+    ax1.set_title("(A)")
+    ax2.set_title("(B)")
     ax1.set_xlabel("Sample size")
     ax1.set_ylabel("Time (hours)")
-    # We could set a log-scale on the y-axis here but it really
-    # doesn't make much difference
+    ax1.set_ylim(0, None)
+    ax2.set_ylim(0, None)
+    ax2.set_xlabel("Sample size")
+    ax2.set_ylabel("Memory (GiB)")
+    ax1.legend()
 
-    dfmsp = dfg[dfg["tool"] == "msprime"]
+    dfmsp = df[df["tool"] == "msprime"]
     largest_n = np.array(dfmsp.sample_size)[-1]
-    largest_value = np.array(dfmsp.time)[-1]
+    largest_value = np.array(dfmsp.user_time)[-1]
     ax1.plot([largest_n], [largest_value], "o", color=lines["msprime"].get_color())
     ax1.annotate(
         f"{round(largest_value * 60)} mins",
@@ -81,8 +89,8 @@ def gc_perf():
         xy=(largest_n, largest_value),
         xycoords="data",
     )
-    ax1.legend()
     plt.tight_layout()
+
     save("gc-perf")
 
 
@@ -92,16 +100,52 @@ def sweeps_perf():
     Plot the sweeps benchmark.
     """
     df = pd.read_csv("data/sweeps_perf.csv")
+    df = df.groupby(["L", "tool"]).mean().reset_index()
+    print(df)
 
-    fig, ax1 = plt.subplots(1, 1)
-    for tool in set(df.tool):
+    df.memory /= 1024 ** 3
+    df.L /= 1000
+    # discoal has very high systime usage, so we need to
+    # include it here as well.
+    df["time"] = (df.user_time + df.sys_time) / 60
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+    lines = {}
+    for tool in ["msprime", "discoal"]:
         dft = df[df.tool == tool]
-        ax1.plot(dft.L, dft.time, label=tool)
+        (line,) = ax1.plot(dft.L, dft.time, label=tool)
+        lines[tool] = line
+        ax2.plot(dft.L, dft.memory, label=tool)
 
-    ax1.set_xlabel("Sequence length")
-    ax1.set_ylabel("Time (seconds)")
-
+    ax1.set_title("(A)")
+    ax2.set_title("(B)")
+    ax1.set_xlabel("Sequence length (Kilobases)")
+    ax1.set_ylabel("Time (minutes)")
+    ax2.set_xlabel("Sequence length (Kilobases)")
+    ax2.set_ylabel("Memory (GiB)")
     ax1.legend()
+
+    dfmsp = df[df["tool"] == "msprime"]
+    largest_L = np.array(dfmsp.L)[-1]
+    largest_value = np.array(dfmsp.time)[-1]
+    ax1.plot([largest_L], [largest_value], "o", color=lines["msprime"].get_color())
+    ax1.annotate(
+        f"{round(largest_value * 60)} seconds",
+        textcoords="offset points",
+        xytext=(-30, 15),
+        xy=(largest_L, largest_value),
+        xycoords="data",
+    )
+    largest_value = np.array(dfmsp.memory)[-1]
+    ax2.plot([largest_L], [largest_value], "o", color=lines["msprime"].get_color())
+    ax2.annotate(
+        f"{round(largest_value * 1024)} MiB",
+        textcoords="offset points",
+        xytext=(-30, 15),
+        xy=(largest_L, largest_value),
+        xycoords="data",
+    )
+    plt.tight_layout()
     save("sweeps-perf")
 
 
@@ -111,56 +155,24 @@ def dtwf_perf():
     Plot the DTWF benchark.
     """
 
-    df = pd.read_csv(
-        "data/dtwf-perf.csv", sep="\t", usecols=["length", "program", "runtime"]
-    )
+    df = pd.read_csv("data/dtwf-perf.csv")
+    df = df.groupby(["L", "tool"]).mean().reset_index()
+    # print(df)
 
-    # Make a new dataframe with just the runtime means.
-    means = df.groupby(["length", "program"]).mean().reset_index()
-    sample_sizes = [0, 1, 2, 3, 4]
-    sample_size_labs = [
-        r"$10^{-2}$",
-        r"$10^{-1}$",
-        r"$10^{0}$",
-        r"$10^{1}$",
-        r"$10^{2}$",
-    ]
+    df.memory /= 1024 ** 3
+    label_map = {"ARGON": "ARGON", "msprime": "DTWF", "hybrid": "DTWF + Hudson"}
 
-    # print(means)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+    for tool in ["ARGON", "msprime", "hybrid"]:
+        dft = df[df.tool == tool]
+        ax1.plot(dft.L, dft.user_time, label=label_map[tool])
+        ax2.plot(dft.L, dft.memory, label=label_map[tool])
 
-    # # Plot the means
-    plt.plot(
-        sample_sizes,
-        np.log10(means[means["program"] == "msprime-DTWF"]["runtime"]),
-        label="msprime-DTWF",
-        marker="o",
-        color="C1",
-    )
-    plt.plot(
-        sample_sizes,
-        np.log10(means[means["program"] == "msprime-hybrid"]["runtime"]),
-        label="msprime-hybrid",
-        marker="o",
-        color="C1",
-        linestyle="dashed",
-    )
-    plt.plot(
-        sample_sizes,
-        np.log10(means[means["program"] == "argon"]["runtime"]),
-        label="argon",
-        marker="o",
-        color="C0",
-    )
-    plt.legend(loc="upper left")
-    plt.xlabel("Chromosome lengths (Mb)")
-    plt.ylabel("Runtimes (secs)")
-    plt.title("Simulation runtimes for different genome lengths")
-    plt.xticks(sample_sizes, labels=sample_size_labs)
-    plt.yticks(
-        [-2, -1, 0, 1, 2],
-        labels=[r"$10^{-2}$", r"$10^{1}$", r"$10^{0}$", r"$10^{1}$", r"$10^{2}$"],
-    )
-    plt.grid(b=True, linewidth=0.5, linestyle="dotted")
+    ax1.set_xlabel("Sequence length (Megabases)")
+    ax1.set_ylabel("Time (seconds)")
+    ax2.set_xlabel("Sequence length (Megabases)")
+    ax2.set_ylabel("Memory (GiB)")
+    ax1.legend()
     save("dtwf-perf")
 
 
@@ -183,6 +195,7 @@ def ancestry_perf():
 
     canfam_chr1 = 4 * 13000 * 122678785 * 7.636001498077e-09
     dromel_chr2l = 4 * 1720600 * 23513712 * 2.40462600791e-08
+    print(f"Dromel rho {dromel_chr2l:.2g}")
 
     # This is the figsize used in other two-panel plots
     fig, axes = plt.subplots(1, 2, figsize=(12, 6))
@@ -201,22 +214,13 @@ def ancestry_perf():
     for ax, tl in zip(axes, time_lims):
         legend_adds = [
             matplotlib.lines.Line2D(
-                [],
-                [],
-                color="black",
-                linestyle="-",
-                label=f"quadratic",
+                [], [], color="black", linestyle="-", label=f"quadratic",
             )
         ]
         for ns, m in zip((1000, 100000), ("o", "v")):
             legend_adds.append(
                 matplotlib.lines.Line2D(
-                    [],
-                    [],
-                    color="grey",
-                    marker=m,
-                    linestyle="none",
-                    label=f"n={ns}",
+                    [], [], color="grey", marker=m, linestyle="none", label=f"n={ns}",
                 )
             )
             ut = np.logical_and(df["time"] <= tl, df["num_samples"] == ns)
@@ -229,7 +233,7 @@ def ancestry_perf():
             X[:, 2] = 1
             b, _, _, _ = np.linalg.lstsq(X, df["time"][ut], rcond=None)
 
-            ax.set_xlabel("Scaled recombination rate $\\rho/4 = N_e L$")
+            ax.set_xlabel("$N_e L$ (= scaled recombination rate $\\rho/4$)")
 
             def fitted_quadratic(x):
                 return b[2] + b[0] * x + b[1] * (x ** 2)
@@ -260,7 +264,8 @@ def ancestry_perf():
                 "Predicted time for DroMel chr2L with n =",
                 ns,
                 "=",
-                fitted_quadratic(dromel_chr2l / 4) / 3600,
+                # The quadratic is still fit to rho, so don't divide by 4 here
+                fitted_quadratic(dromel_chr2l) / 3600,
                 "hours",
             )
 

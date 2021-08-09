@@ -8,6 +8,7 @@
 \usepackage{geometry}%
 \usepackage{color}
 \usepackage{graphicx}
+\usepackage{authblk}
 \usepackage{dsfont}
 \usepackage{verbatim}%
 \usepackage{environ}%
@@ -20,6 +21,9 @@
 \newcommand{\msprime}[0]{\texttt{msprime}}
 \newcommand{\tskit}[0]{\texttt{tskit}}
 \newcommand{\ms}[0]{\texttt{ms}}
+\newcommand{\msms}[0]{\texttt{msms}}
+\newcommand{\cosiTwo}[0]{\texttt{cosi2}}
+\newcommand{\msHOT}[0]{\texttt{msHOT}}
 \newcommand{\scrm}[0]{\texttt{scrm}}
 \newcommand{\SLiM}[0]{\texttt{SLiM}}
 \newcommand{\fwdpy}[0]{\texttt{fwdpy11}}
@@ -28,25 +32,117 @@
 \newcommand{\Pyvolve}[0]{\texttt{Pyvolve}}
 \newcommand{\phastsim}[0]{\texttt{phastsim}}
 \newcommand{\discoal}[0]{\texttt{discoal}}
+\newcommand{\ARGON}[0]{\texttt{ARGON}}
+\newcommand{\SimBac}[0]{\texttt{SimBac}}
+\newcommand{\FastSimBac}[0]{\texttt{fastSimBac}}
 
 \newcommand{\jkcomment}[1]{\textcolor{red}{#1}}
 \newcommand{\plrcomment}[1]{\textcolor{cyan}{#1}}
+\newcommand{\grgcomment}[1]{\textcolor{yellow!60!red}{#1}}
 
 \begin{document}
 
-\title{Msprime 1.0: an efficient and extensible coalescent simulation framework}
-\author{Author list to be filled in
-}
-% \address{
+\title{Efficient ancestry and mutation simulation with msprime 1.0}
+% First authors
+%% FIXME affiliations are all broken
+\author[1,$\star$]{Franz Baumdicker}
+\author[2,$\star$]{Gertjan Bisschop}
+\author[3,$\star$]{Daniel Goldstein}
+\author[4,$\star$]{Graham Gower}
+\author[5,$\star$]{Aaron P. Ragsdale}
+\author[6,$\star$]{Georgia Tsambos}
+\author[7,$\star$]{Sha Zhu}
 
-%%Affiliations:
-% Franz Baumdicker:
-% Cluster of Excellence "Controlling Microbes to Fight Infections", Mathematical and Computational Population Genetics, University of Tübingen, Germany
+% Middle Authors
+\author[8]{Bjarki Eldon}
+\author[9]{Castedo E. Ellerman}
+\author[10]{Jared G. Galloway}
+\author[11]{Ariella L. Gladstein}
+\author[12]{Gregor Gorjanc}
+\author[13]{Guo, Bing}
+\author[7]{Ben Jeffery}
+\author[14]{Warren W. Kretzschmar}
+\author[15]{Ivan Krukov}
+\author[2]{Konrad Lohse}
+\author[16]{Michael Matschiner}
+\author[15]{Dominic Nelson}
+\author[17]{Nathaniel Pope}
+\author[18]{Consuelo D. Quinto-Cort\'es}
+\author[10]{Murillo F. Rodrigues}
+\author[19]{Kumar Suanack}
+\author[20]{Thibaut Sellinger}
+\author[21]{Kevin Thornton}
+\author[22]{Hugo van Kemenade}
+\author[7]{Anthony W. Wohns}
+\author[7]{H. Yan Wong}
 
+% Senior Authors
+\author[15,$\dagger$]{Simon Gravel}
+\author[10,$\dagger$]{Andrew Kern}
+\author[23,$\dagger$]{Jere Koskela}
+\author[10,24,$\dagger$]{Peter L. Ralph}
 
-% Consuelo D. Quinto-Cortés 
-%National Laboratory of Genomics for Biodiversity (LANGEBIO), Unit of Advanced Genomics, CINVESTAV, Irapuato, Mexico
+% Corresponding
+\author[7,$\ddagger$]{Jerome Kelleher}
 
+% Franz
+\affil[1]{Mathematical and Computational Population Genetics, University of T\"ubingen}
+% Gertjan, Konrad
+\affil[2]{Institute of Evolutionary Biology, The University of Edinburgh}
+% Daniel
+\affil[3]{FIXME: DANIEL'S AFFILIATION}
+% Graham
+\affil[4]{Lundbeck GeoGenetics Centre, Globe Institute, University of Copenhagen}
+% Simon, Dom, Ivan
+\affil[5]{FIXME AARON's AFFILIATION}
+% Georgia
+\affil[6]{Melbourne Integrative Genomics, School of Mathematics and Statistics,
+    University of Melbourne}
+% Jerome, Yan, Wilder, Joe
+\affil[7]{Big Data Institute, Li Ka Shing Centre for Health Information and Discovery,
+    University of Oxford}
+
+% Bjarki
+\affil[8]{FIXME: BJARKI's AFFILIATION}
+% Castedo
+\affil[9]{FIXME: CASTEDO's AFFILIATION}
+% Jared, Murillo, Peter, Andy
+\affil[10]{Department of Biology and Institute of Ecology and Evolution,
+    University of Oregon}
+% Ariella
+\affil[11]{Department of Genetics, University of North Carolina at Chapel Hill}
+% Gregor
+\affil[12]{The Roslin Institute and Royal (Dick) School of Veterinary Studies,
+    University of Edinburgh}
+% Bing
+\affil[13]{FIXME: BING's AFFILIATION}
+% Winni
+\affil[14]{FIXME: WINNI's AFFILIATION}
+% Simon, Dom, Ivan
+\affil[15]{Department of Human Genetics, McGill University}
+% Michael
+\affil[16]{FIXME: MICHAEL's AFFILIATION}
+% Nathaniel
+\affil[17]{FIXME: NATHANIEL's AFFILIATION}
+% Consuelo
+\affil[18]{National Laboratory of Genomics for Biodiversity (LANGEBIO),
+    Unit of Advanced Genomics, CINVESTAV, Irapuato, Mexico}
+% Saunack
+\affil[19]{FIXME: SAUNACK's AFFILIATION}
+% Thibaut
+\affil[20]{FIXME: THIBAUT's AFFILIATION}
+% Kevin
+\affil[21]{Ecology and Evolutionary Biology, University of California at Irvine}
+% Hugo
+\affil[22]{FIXME HUGO's AFFILIATION}
+% Jere
+\affil[23]{FIXME: JERE'S AFFILIATION}
+% Peter (second affil)
+\affil[24]{Department of Mathematics, University of Oregon}
+
+\affil[$\star$]{Denotes shared first authorship, listed alphabetically}
+\affil[$\dagger$]{Denotes shared senior authorship, listed alphabetically}
+\affil[$\ddagger$]{Denotes corresponding author}
 
 % \section*{Contact:} \href{jerome.kelleher@bdi.ox.ac.uk}{jerome.kelleher@bdi.ox.ac.uk}
 
@@ -64,9 +160,10 @@ coalescent simulation, making it possible to simulate millions
 of whole genomes for the first time. We summarise the many features
 of \msprime\ 1.0, which is built around a core model of efficiently
 implementing recombination via the succinct tree sequence data
-structure. Moreover, \msprime\ is a community oriented open-source development
-project, aimed as a way to reduce duplication of effort and increase
-the quality of key simulation software.
+structure. Moreover, development of \msprime\ is collaborative
+and open source, which reduces duplication of effort and promotes
+software quality via community engagement.
+% "Bazaar" development model: https://en.wikipedia.org/wiki/The_Cathedral_and_the_Bazaar
 \end{abstract}
 
 
@@ -140,8 +237,8 @@ genetic simulation.
 This paper marks the release of \msprime\ 1.0, a state-of-the-art
 coalescent simulator both with respect to efficiency as well as feature-richness.
 Here we provide an overview of the extensive abilities of \msprime\ 1.0,
-demonstrate through numerous performance comparisons its advantages over
-current, alternative software packages, and finally lay out future plans for
+demonstrate its performance advantages over alternative software,
+and finally lay out future plans for
 further open-source development of what we hope will become an industry
 standard piece of computational infrastructure for the genetics community.
 
@@ -202,7 +299,7 @@ from \msprime\ into
 a standalone Python and C library, called \tskit~\citep{tskit2021tskit}.
 While a full discussion of tree sequences and the capabilities
 of \tskit\ is beyond the scope of this article, we summarise
-some aspects that are important for simulation here.
+some aspects that are important for simulation.
 
 % Encoding ancestry
 Given a set of sample chromosomes, the topology
@@ -233,7 +330,7 @@ and is the key to the efficiency of tree
 sequences~\citep{
 kelleher2018efficient,kelleher2019inferring,ralph2020efficiently}.
 
-The tree sequence encoding of ancestry as set of nodes and edges
+The tree sequence encoding of ancestry as a set of nodes and edges
 as just described, is equivalent to a graph in which edges
 are annotated with a set of disjoint genomic intervals.
 This is closely related to the Ancestral Recombination Graph (ARG),
@@ -358,7 +455,7 @@ to generate the required command lines or input parameter files,
 invoke the simulation engine, and process the results in some way.
 This process is cumbersome and labour intensive, and
 a number of packages have been developed
-to allow simulations be run directly in a high-level
+to allow simulations to be run directly in a high-level
 scripting language~\citep{staab2016coala,parobek2017skelesim,gladstein2018simprily}.
 
 The more recent trend has been to move away from this file and command-line
@@ -400,7 +497,7 @@ command line interface to support existing workflows. The
 for simulating ancestry and mutations separately. A particularly useful
 feature is the ability to specify demographic models in
 Demes format~\citep{gower2021demes} from the command line,
-making simulating complex demography models straightforward.
+making simulation of complex demographies straightforward.
 
 % The output - what do we get out?
 \subsection*{Data analysis}
@@ -461,7 +558,7 @@ output information about migrating segments~\citep{rosenzweig2016powerful},
 information about ancestral lineages~\citep{chen2013asymptotic},
 an array of population genetic statistics~\citep{ramos2007mlcoalsim}
 % Any more?
-and \ms's fork \texttt{msHOT}~\citep{hellenthal2007mshot},
+and \ms's fork \msHOT~\citep{hellenthal2007mshot},
 has in turn been forked to output information on local
 ancestry~\citep{racimo2017archaic}.
 All of this information
@@ -514,7 +611,7 @@ the two have been conflated in practice.
     \includegraphics{illustrations/mutated_tree}
     \caption{
         \label{fig-mutated-trees}
-        Visualization of the separation between ancestry and mutation simulation:
+        Visualisation of the separation between ancestry and mutation simulation:
         \texttt{sim\_ancestry} produces ancestry
         (\textbf{left;} shown are two trees along a 1Kb chunk of genome
         relating 200 samples),
@@ -523,6 +620,7 @@ the two have been conflated in practice.
         Graphics produced with \tskit's \texttt{draw\_svg} method.
         \plrcomment{TODO: fix up the axis labels, if we like this figure?}
         \jkcomment{Why 200 samples? Seems like far too many to me, how about 5?}
+        \grgcomment{Add \texttt{sim\_ancestry} and \texttt{sim\_mutations} as subfigure titles?}
     }
 \end{figure}
 
@@ -531,11 +629,11 @@ lack of standardised file formats, and in particular, the absence of common
 library infrastructure to abstract the details of interchanging simulation
 data. Although \msprime\ also supports simulating both ancestry and mutations,
 the two aspects are functionally independent within the software.
-Both ancestry and mutation simulators are present in \msprime
+Both ancestry and mutation simulators are present in \msprime\
 for reasons of convenience and history,
 and could be split into separate packages.
 The mature and efficient C and Python interfaces for
-\tskit\ makes it straightforward to add further information to
+\tskit\ make it straightforward to add further information to
 an existing file, and because of its efficient data interchange mechanisms,
 there is no performance penalty for performing additional operations
 in a different Python package.
@@ -548,29 +646,30 @@ It is a modular
 component intended to fit into a larger software ecosystem, and
 is in no way dependent on \msprime's ancestry simulator.
 
-As well as providing a new API (see the \nameref{sec-sim-interface} section)
-which emphasises the logical split between ancestry and mutation simulation,
+As well as providing a new API
+that emphasises the logical split between ancestry and mutation simulation
+(see the \nameref{sec-sim-interface} section),
 we have greatly extended the sophistication of
 \msprime's mutation generation engine for version 1.0,
 achieving near feature-parity with \SeqGen.
-We  support a large number of mutation models, including the
+We support a large number of mutation models, including the
 JC69~\citep{jukes1969evolution},
 F84~\citep{felsenstein1996hidden},
 and GTR~\citep{tavare1986some} nucleotide models
 and the BLOSUM62~\citep{henikoff1992amino}
 and PAM~\citep{dayhoff1978} amino acid models.
-A general model accepts an arbitrary transition matrix between
-any number of alleles (which can be arbitrary unicode strings),
-so that other models, such as the Kimura two and three
+Other models, such as the Kimura two and three
 parameter models~\citep{kimura1980simple,kimura1981estimation},
-can be easily and efficiently defined in user code.
+can be defined easily and efficiently in
+user code by specifying an arbitrary transition matrix between
+any number of alleles (which can be arbitrary unicode strings).
 Mutation rates can vary along the genome, and multiple mutation
 models can be imposed on a tree sequence by overlaying mutations
 in multiple passes.
 We have extensively validated the results of mutation simulations
 against both theoretical expectations and output from
 \SeqGen~\citep{rambaut1997seq} and
-Pyvolve~\citep{spielman2015pyvolve}.
+\Pyvolve~\citep{spielman2015pyvolve}.
 
 \begin{figure}
     \includegraphics[width=\textwidth]{figures/mutations-perf}
@@ -578,7 +677,7 @@ Pyvolve~\citep{spielman2015pyvolve}.
 \texttt{sim\_mutations} on tree sequences generated
 by \texttt{sim\_ancestry} (with a population size of $10^4$
 and recombination rate of $10^{-8}$) for varying (haploid) sample
-size and sequence length. We run 10 replicate mutation simulations
+size and sequence length. We ran 10 replicate mutation simulations
 each for three different mutation rates, and report the average
 CPU time required (Intel Core i7-9700).
 (A) Holding sequence length fixed at 10 megabases and varying the
@@ -607,7 +706,7 @@ rather than tree-by-tree and branch-by-branch as would otherwise be required.
 In the above example from Fig.~\ref{fig-mutations-perf}B,
 if we generated mutations tree-by-tree, we would have to iterate over 273,887,838 branches
 (since there are 137,081 trees and 1,998 branches in each
-tree) rather than 508,125 edges, resulting in $\sim500$ times more work.
+tree) rather than 508,125 edges, resulting in $\sim$500 times more work.
 % python3 evaluation/generate_mutations_perf_data.py benchmark-single-tree
 Even if we have a tree sequence consisting of a single tree
 (negating the advantage of working edge-by-edge),
@@ -629,18 +728,21 @@ in \msprime\ could be extended. For example, we intend to add support for
 microsatellites~\citep{mailund2005coasim},
 codon models~\citep{arenas2007recodon}
 and indels~\citep{cartwright2005dna,fletcher2009indelible},
-although some may also require upstream additions to \tskit's data model
+although changes may be required to \tskit's data model
 which is currently based on the assumption of independent sites.
 
 \subsection*{Recombination}
 
 Crossover recombination is implemented in \msprime\ using Hudson's algorithm, which
-works backwards in time, tracking the
-effects of common ancestor and recombination
-events~\citep{hudson1983properties,hudson1990gene,kelleher2016efficient}.
-Common ancestor events combine the ancestral material of two lineages, and may
-result in coalescences in the marginal trees. Recombination events
-split the ancestral material for some lineage, creating two independent
+works backwards in time, generating common ancestor and recombination
+events and tracking their effects on segments of ancestral
+material inherited from the
+sample~\citep{hudson1983properties,hudson1990gene,kelleher2016efficient}.
+Common ancestor events merge the ancestral material of two lineages,
+and result in coalescences in the marginal trees when ancestral
+segments overlap.
+Recombination events split the ancestral material for some lineage
+at a given breakpoint, creating two independent
 lineages. Using the appropriate data structures~\citep{kelleher2016efficient},
 this process is much more efficient to simulate than either
 methods based on the Ancestral Recombination Graph
@@ -651,7 +753,7 @@ us to simulate recombination hotspots and patterns
 of recombination from empirical maps.
 The implementation of recombination in \msprime\ is extensively validated
 against analytical results~\citep{hudson1983properties,kaplan1985use}
-and simulations by \ms.
+and simulations by \ms, \msHOT\ and \SLiM.
 
 The Sequentially Markovian Coalescent (SMC) is an approximation of the
 coalescent with recombination~\citep{mcvean2005approximating,marjoram2006fast},
@@ -679,22 +781,21 @@ implement them more efficiently in future versions.
 \caption{\label{fig-ancestry-perf}
     Running time for \msprime\
     for (A) small and (B) larger simulations on an Intel i7-6600U CPU.
-    Each point is the runtime of one simulation,
+    Each point is the run time of one simulation,
     for various values of effective population size ($N_e$),
     genome length in Morgans ($L$), and number of samples ($n$).
-    Runtime scales quadratically with the product of $N_e$ and $L$,
-    shown on the horizontal axis---for instance, figure A shows that
+    Run time scales quadratically with the product of $N_e$ and $L$,
+    shown on the horizontal axis. For example, (A) shows that
     1,000 samples of 1 Morgan-length chromosomes
     from a population of $N_e=2,000$ diploids
-    would take about 2 seconds, and that the same number of
-    0.01 Morgan segments in a population of size 200,000
-    would take about the same time.
+    would take about 2 seconds, and (equivalently) that the same number of
+    0.01 Morgan segments with $N_e= 200,000$ would take the same time.
     Since recombination rate in these simulations was $10^{-8}$,
     $L$ is the number of base pairs divided by $10^8$.
     The black lines are quadratic fits separately in each panel
-    and sample size. Also shown are the approximate values of
-    $\rho$ for chromosome 1 in three species, using values from
-    the \stdpopsim\ catalog~\citep{adrion2020community}.
+    and sample size. Vertical grey lines show the approximate values of
+    $N_e L$ for chromosome 1 in three species, using values from
+    the \stdpopsim\ catalogue~\citep{adrion2020community}.
 }
 \end{figure}
 
@@ -710,63 +811,89 @@ exact coalescent with recombination comprehensively outperforms
 all other simulators, including those based on SMC
 approximations~\citep{kelleher2016efficient}. However, it is important
 to note that although the implementation of Hudson's algorithm is
-very efficient, it is still quadratic in the scaled recombination rate
+very efficient, it is still quadratic in the population scaled recombination rate
 $\rho = 4 N_e L$, where $L$ is the length of the genome in units of recombination distance.
-This is because Hudson's algorithms tracks recombinations not only
+This is because Hudson's algorithm tracks recombinations not only
 in segments ancestral to the sample, but also between ancestral segments.
-In other words, lineages may ``coalesce'' even if the pieces of ancestral material they carry
-do not overlap---representing an ancestral chromosome
-that is a genetic ancestor to each of two linages,
-but not the most recent common genetic ancestor at any location along the genome.
-When this happens, the resulting merged lineage carries ``trapped'' genetic material
-that is not ancestral to any samples;
-recombinations in the trapped material will cause the two segments of ancestry
-to split apart into separate lineages again.
-For large $\rho$, recombination events
-in this trapped material will dominate.
+As mentioned above, common ancestor events in which the ancestral material
+of two lineages is merged only result in coalescences in the marginal trees
+if their ancestral segments overlap. If there is no overlap, the merged
+segments represent an ancestral chromosome that is a genetic ancestor
+of the two lineages, but not the most recent common genetic ancestor
+at any location along the genome.
+When this happens, the merged lineage carries ``trapped'' genetic material
+that is not ancestral to any samples, but where recombinations can still occur.
+The SMC approximations work by disallowing common ancestor events
+that generate trapped material, greatly simplifying the process.
+However, this also removes subtle long-range
+correlations in the trees since there are many ways in which ancestry
+segments can merge without overlapping.
+
+For large $\rho$, recombination events in trapped ancestral material will
+dominate, and so we can use this as a proxy for the overall number
+of events in Hudson's algorithm.
 \citet[Eq.~5.10]{hein2004gene} gave
-$\rho (\rho + 1) \left( \sum_{i=1}^{n-1} \frac{1}{i} \right)^2$
+\begin{equation}\label{eqn-hsw-bound}
+\rho (\rho + 1) \left( \sum_{i=1}^{n-1} \frac{1}{i} \right)^2
+\end{equation}
 as an upper bound
 on the number of recombination events within trapped ancestral material
-in Hudson's algorithm with $n$ samples.
-Since the sum is well approximated by $\log{n}$,
-a natural conjecture is that the time complexity of Hudson's
-algorithm is $O(\rho^2 \log^2 n)$.
-This turns out to have the correct dependence on $\rho$---although
-caution is needed; see below---but the dependence on $n$ is less accurate.
+in Hudson's algorithm for $n$ samples.
+% Since the sum is well approximated by $\log{n}$,
+% a natural conjecture is that the time complexity of Hudson's
+% algorithm is $O(\rho^2 \log^2 n)$.
+Fig.~\ref{fig-ancestry-perf} shows the observed run time for
+simulations with a variety of population size, chromosome
+length and sample sizes, and demonstrates that Eq.~\eqref{eqn-hsw-bound}
+correctly predicts the quadratic dependence on $\rho$,
+as previously conjectured~\citep[Fig.~2]{kelleher2016efficient}.
+We also see that the dependence on $n$ is quite weak,
+since increasing sample size 100-fold
+only increases run time by a factor of 2 or so. However, the
+$\log^2{n}$ factor implied by Eq.~\eqref{eqn-hsw-bound}
+(the sum is a harmonic number, and approximated by $\log{n}$)
+is not well supported by the data except possibly at very
+large values of $\rho$, and so it seems a different dependence
+on $n$ would be required to accurately predict simulation time for a
+given $\rho$ and $n$.
 
-Figure~\ref{fig-ancestry-perf} gives a rough idea of the runtime of
-a given simulation of a constant size population,
-and verifies that runtime scales quadratically with $\rho$,
-and depends much less strongly on the number of samples.
-Taking a typical chromosome to be 1 Morgan in length,
+Fig.~\ref{fig-ancestry-perf} is a useful yardstick, allowing us
+to predict how long simulations should take for a wide range of
+species. Taking a typical chromosome to be 1 Morgan in length,
 these plots show, roughly, that simulating chromosome-length
 samples from a population of thousands of individuals takes seconds,
 while samples from a population of tens of thousands takes minutes.
-However, it is important to note that the quadratic curves in the two
-panels are different---predicting the runtimes of days-long simulations
+Simulating whole chromosomes for many species is very fast,
+with 1000 samples of chromosome 1 for
+\emph{Arabidopsis thaliana} taking less than a second, and a few
+minutes for dogs and humans. However, the dependence on $\rho$
+\emph{is} quadratic, and if $\rho$ is sufficiently large simulations
+may not be feasible. For example,
+the \emph{Drosophila melanogaster} chromosome 2L
+is about 23.5Mb long and an average recombination rate of around $2.4 \times 10^{-8}$,
+so $L \approx 0.57$,
+and with $N_e = 1.7 \times 10^6$ \citep{li2006inferring},
+$N_e L \approx 10^6$, so extrapolating the curve in Fig.~\ref{fig-ancestry-perf}B
+predicts that simulation would require around 177 hours.
+For such large values of $\rho$  we recommend
+users consider approximate simulations. Since \msprime\ does not currently
+have efficient implementations of approximate coalescent with recombination
+models, we recommend using SMC based methods such as \scrm\,
+particularly for moderate sample sizes.
+In practice, to predict the running time of a given
+simulation in \msprime, we recommend that users
+measure run time in a series of simulations with short genome lengths and
+the desired sample size,
+and then predict run time by fitting a quadratic curve to genome length
+as in Fig.~\ref{fig-ancestry-perf}.
+It is important to note that the quadratic curves in the two
+panels of Fig.~\ref{fig-ancestry-perf} are different, and
+predicting the run times of days-long simulations
 using the timing of minutes-long runs is unlikely to be very accurate.
-Further experiments show that adding a $\log^2 n$ factor
-to predict runtimes across different sample sizes does not do well
-except possibly at very large values of $\rho$.
-
-% Although \citet{hein2004gene} refer to the bound in \eqref{eqn-hsw-bound}
-% as ``crude'', it predicts the scaling of run time quite well for large genomes
-% Figure~\ref{fig-expected-perf} shows the observed runtime
-% (from the same simulations as Figure~\ref{fig-ancestry-perf})
-% plotted against equation~\eqref{eqn-hsw-bound},
-% showing that for values of $\rho$ above $4 \times 10^4$ or so
-% (i.e., chromosome-length simulations in populations above $10^4$),
-% the ratio of observed time to the value from \eqref{eqn-hsw-bound} is constant.
-% This implies the runtime for a large sample
-% can be predicted from the runtime for a small sample.
-% For smaller values of $\rho$, however, the prediction
-% severely underestimates runtime.
-
 
 What about simulations with changing population size?
-To understand how runtime depends on demography
-it helps to consider why runtime is quadratic in $\rho$.
+To understand how run time depends on demography
+it helps to consider why run time is quadratic in $\rho$.
 At any point in time, \msprime\ must keep track of some number of lineages,
 each of which contains some number of chunks of genetic material.
 Common ancestor events reduce the number of lineages,
@@ -777,147 +904,121 @@ will involve overlapping segments of ancestry,
 and lead to coalescence in the marginal trees.
 Such disjoint segments are often far apart (on average, about distance $L/2$),
 and so recombine apart again immediately;
-it is these large numbers of rapid yet inconsequential events that
-lead to the quadratic runtime.
-\plrcomment{(this is discussed also in the ARG section; check for overlap)}
+it is these large numbers of rapid and inconsequential events that
+lead to the quadratic run time.
 The maximum number of lineages occurs when
 the increase and decrease in numbers of lineages due to
 common ancestor and recombination events balance out;
-to get an idea of runtime we can estimate when this occurs.
-Suppose that the maximal number of lineages is $M$;
+to get an idea of run time we can estimate when this occurs.
+Suppose that the maximum number of lineages is $M$;
 at this time the rate of common ancestor events is $M (M-1) / (4 N_e)$
 and the total rate of recombination is $M \ell$,
 where $\ell$ is the mean length of genome carried by each lineage
 (including ``trapped'' non-ancestral material).
-It is known that the maximum number of lineages is reached
+At the maximum, coalescence and recombination rates are equal,
+so a typical segment of ancestry will spend roughly half its time
+in a lineage with at least one other such segment---and,
+since such lineages carry at least two segments,
+at most one-third of the lineages carry long trapped segments of ancestry.
+Since the maximum number of lineages is reached
 very quickly~\citep{nelson2020accounting},
-and at this maximum, recombination and coalescence rates are equal.
-Therefore, many (roughly half) of these lineages have at
-least two distant segments of ancestral material
-separated by a long segment of genome, implying that $\ell \approx L / 4$.
-This implies that $M$ is roughly $L N_e$.
-The number of linages decreases gradually,
-on the coalescent time scale---so, over roughly $2 N_e$ generations.
-Since the total rate of events when there are the maximum number of lineages
-happens is roughly $L^2 N_e / 4$,
+this implies that $\ell \approx L / 6$.
+Setting the rates of recombination and common ancestor events
+to be equal and solving for $M$,
+we find that $M$ is roughly equal to $L N_e$.
+The number of lineages then decreases gradually from this maximum
+on the coalescent time scale, and therefore over roughly $2 N_e$ generations.
+Since the total rate of events when the maximum number of lineages is
+present is roughly $L^2 N_e / 6$,
 then the total number of events is proportional to $(L N_e)^2$---i.e.,
 proportional to $\rho^2$.
 
 What does this tell us about time-varying population sizes?
 The argument above implies that the work is spread out relatively
-evenly on the coalescent time scale: in other words,
-more events happen in the time period from 0 to $N_e/2$ generations
-than from $N_e/2$ to $N_e$ generations,
-but the runtime is not dominated by the more recent time period.
+evenly on the coalescent time scale.
 Suppose that population size today is $N_1$,
 while longer ago than $T$ generations ago it was $N_2$:
-does the runtime depend more on $4 N_1 L$ or $4 N_2 L$?
+does the run time depend more on $4 N_1 L$ or $4 N_2 L$?
 The answer depends on how $T$ compares to $N_1$: if $T/N_1$ is large,
-then runtime will be similar to a population of size $N_1$;
+then run time will be similar to a population of size $N_1$;
 while if $T/N_1$ is small, it will be similar to a population of size $N_2$.
 For instance, in many agricultural species $N_1 \propto 100$, while $N_2 \propto 10^5$,
-and the runtime will depend critically on $T$---in other words,
+and the run time will depend critically on $T$---in other words,
 simulation will be quick in a species with a strong domestication bottleneck,
 and slow otherwise.
 
-In practice, we recommend that users estimate runtime by
-measuring runtime in a series of simulations with short genome lengths,
-possibly varying other parameters to check for interactions,
-and then predict runtime by fitting a quadratic curve to genome length.
-In these experiments, sample sizes should be roughly
-those desired---which is not a problem in practice because of
-the weak dependency on sample size
----notice that in Figure~\ref{fig-ancestry-perf} increasing sample size 100-fold
-only increases runtime by a factor of 2 or so.
-
-
 \subsection*{Gene conversion}
-
-%introduction
-Gene conversion is a form of recombination that results in unidirectional transfer
+Gene conversion is a form of recombination that results in the transfer
 of a short segment of genetic material,
 for example between homologous chromosomes~\citep{chen2007gene}.
-%description of ancestral process
-Just as in crossover recombination, gene conversion events split how genetic material
-is inherited along some lineage, creating two independent lineages.
-In contrast to the previously described recombination process, where the ancestral
-material to the left and right of a recombination breakpoint follows two
-different ancestral lineages, gene conversion events distribute the genetic material
-of a short segment to one ancestral lineage and the part to the left and right of this
-segment to another lineage.
-%Franz Baumdicker: Not sure if this next sentence is necessary,
-% but it might be of interest for some people?
-The resulting distribution of ancestral material after a gene conversion event
-equals the distribution after two recombination events at the left and right position
-of the gene conversion tract, followed by a common ancestor event.
-%Impact on LD
-However, gene conversions impact much shorter segments than crossover recombinations,
-typically below 1kb, and thus affect linkage patterns differently to
-recombinations~\citep{korunes2017gene}.
-
-% other simulators
-Hudson's \ms\ optionally includes gene conversion and so does
-MaCS~\citep{chen2009fast}, while scrm~\citep{staab2015scrm} does not
-support gene conversions.
-As bacterial recombination can be modeled analogously to eukaryotic allelic
-gene conversion, simulators for microbial evolution often include gene conversion
-instead of recombination.
-This includes the backward simulator SimBac~\citep{brown2016simbac},
-the SMC based approach used in FastSimBac~\citep{demaio2017the},
-and forward-in-time tools within the SLiM framework~\citep{cury2020simulation}.
-
-In \msprime\ 1.0 we implemented the coalescent with gene conversion as defined by
-\cite{wiuf2000coalescent}, where gene conversion events are initiated between any
-two sites in the sequence at a constant rate $\gamma$ and
-the length of the transferred segment is given by a geometric distributed
-random variable with mean length $L$.
-% Above I used the discrete case, but we could easily switch to a description for the
-% continuous case.
+Since gene conversion impacts much shorter segments than
+crossover recombination (typically below 1kb) it
+affects patterns of linkage disequilibrium differently~\citep{korunes2017gene}.
+\cite{wiuf2000coalescent} modelled gene conversion in the coalescent
+via a rate at which gene conversion events are initiated
+along the genome and a geometrically distributed tract length.
+In terms of the ancestral process, gene conversion differs from
+crossover recombination (as described in the previous section)
+in that it extracts a short tract of ancestry into
+an independent lineage, rather than splitting ancestry
+to the left and right of a given breakpoint.
 We have implemented this model of gene
 conversion in \msprime\ 1.0, and validated the output against
 \ms\ and analytical results~\citep{wiuf2000coalescent}.
 
-% In terms of file size, as expected from the discussion above, we observe that gene
-% conversion is equivalent to double the rate of
-% crossover recombination, so that a tree sequence produced with a `recombination_rate` of $r$
-% and a `gene_conversion_rate` of $g$ is roughly the same size as a tree sequence with no gene
-% conversion and a `recombination_rate` of $r+2g$. However, because gene conversion tends to
-% affect only short regions of the genome, each gene conversion event usually creates
-% less trapped material, hence simulations using mammalian-like gene conversion parameters
-% run faster than simulations in which an equivalent amount of crossover recombination is
-% imposed.
-
 \begin{figure}
 \begin{center}
-\includegraphics[width=7cm]{figures/gc-perf}
+\includegraphics[width=\textwidth]{figures/gc-perf}
 \end{center}
-\caption{\label{fig-gc-perf}Comparison of the running time
-for E-coli simulations using \msprime\ and SimBac for varying
-sample sizes. The parameters used are chosen to mimic the simulation
-of \textit{E. coli} genomes. The genome length was set to 4.5 Mb, the scaled per site
-gene conversion rate was set to $N_e g = \gamma = 0.015$ and
-the mean gene conversion tract length was set to $L = 500$, which is close to
-estimated parameters for \textit{E.\ coli}, i.e.\ an effective populations size
-$N_e = 1.8e^8$ and a per site per generation conversion rate $g = 8.9e^{-11}$
-with mean tract length $L = 542$~\citep{lapierre2016the}.}
+\caption{\label{fig-gc-perf}Comparison of simulation performance
+using \msprime, \SimBac, and \FastSimBac\ for varying sample sizes,
+with parameters roughly equivalent to the current estimate
+for \textit{E.~coli}~\citep{lapierre2016the}:
+a 4.5Mb genome with scaled gene conversion rate of 0.015 and
+a mean tract length of 500.
+We report (A) the total CPU time and (B) maximum memory usage
+averaged over 5 replicates (Intel Xeon E5-2680 CPU).
+We did not simulate \SimBac\ after the first two sample sizes because
+of the very long running times.}
+% The genome length was set to 4.5 Mb, the scaled per site
+% gene conversion rate was set to $N_e g = \gamma = 0.015$ and
+% the mean gene conversion tract length was set to $L = 500$, which is close to
+% estimated parameters for \textit{E.~coli}, i.e.\ an effective populations size
+% $N_e = 1.8e^8$ and a per site per generation conversion rate $g = 8.9e^{-11}$
+% with mean tract length $L = 542$~\citep{lapierre2016the}.}
 \end{figure}
 
 Gene conversion is particularly useful to model homologous recombination in
 bacterial evolution,
-so we compare the performance of \msprime\ with gene conversion to
-SimBac~\citep{brown2016simbac}, a simulator developed specifically to
-simulate bacterial evolution. Although \msprime\ is missing some features
-relevant to this case, e.g.\ the simulation of circular genomes, it is far
-more efficient at simulating the basic processes.
-Furthermore, gene conversion can be considered in combination
-with other current and future features of \msprime\ 1.0,
-including varying recombination rates and complex demographies.
+and so we compare the performance of \msprime\ with gene conversion to
+two specialised bacterial simulators,
+\SimBac~\citep{brown2016simbac} and \FastSimBac~\citep{demaio2017the}.
+Figure~\ref{fig-gc-perf}A shows that \msprime\ is far more efficient than
+both \SimBac\ and the SMC-based approximation \FastSimBac.
+Figure~\ref{fig-gc-perf}B shows that \msprime\ requires somewhat more memory
+than \FastSimBac, (as expected since \FastSimBac\ uses a left-to-right
+SMC approximation) but is still reasonably modest at around 1GiB for a simulation
+of 500 whole \emph{E.~coli} genomes.
+However, \msprime\ is currently lacking many of the specialised features
+required to model bacteria, and so an important avenue for future work
+is to add features such as circular genomes
+and bacterial gene transfer~\citep{baumdicker2014AGTG}.
 
-An important avenue for future work
-will be to add further features to model bacterial
-evolution. In particular, we aim to include bacterial gene transfer and utilize
-the succinct tree sequence structure to represent the resulting ancestral gene
-transfer graph~\citep{baumdicker2014AGTG}.
+In terms of predicting the run time for a simulation including gene conversion,
+we recommend following the same approach as discussed in the previous section:
+run a number of simulations for short genome lengths, fit a quadratic to the
+observed CPU times, and use this to predict run time for larger simulations.
+Depending on the relative contributions of gene conversion and crossover
+recombination, this may be an over-estimate since gene conversion events
+tend to generate less trapped ancestral material than crossovers.
+Thus, simulations using mammalian-like gene conversion parameters
+may run faster than simulations in which an equivalent amount of
+crossover recombination is imposed.
+% TODO check this again!
+Since each gene conversion creates two breakpoints and a crossover
+creates only one, we expect the output tree sequence for a given rate
+of gene conversion to be roughly twice the size of the output from a simulation
+with the same rate of crossovers.
 
 \subsection*{Demography}
 % TODO should we put in some citations here for the models? Hardly seems
@@ -1014,7 +1115,7 @@ site frequency spectrum~\citep{bunnefeld2015inferring}.
 \subsection*{Multiple merger coalescents}
 
 Kingman's coalescent assumes that only two ancestral lineages can merge at
-each merger event. Although this is generally a reasonable approximation there
+each merger event. Although this is generally a reasonable approximation, there
 are certain situations in which the underlying mathematical assumptions are
 violated. For example in certain highly fecund organisms
 \citep{hedgecock_94,B94,HP11,A04,irwin16}, where individuals have the ability
@@ -1110,12 +1211,12 @@ have fully coalesced (like Hudson's algorithm).
 \includegraphics[width=3.8cm]{figures/arg.pdf}
 
 \end{center}
-\caption{\label{fig-arg} (A) An simple ARG in which a recombination
+\caption{\label{fig-arg} (A) A simple ARG in which a recombination
 occurs at position 0.3; (B) the equivalent topology depicted as a tree
 sequence, including the recombination node; (C) the same tree sequence
 topology ``simplified'' down to its minimal tree sequence representation;
 (D) the fraction of nodes in a tree sequence that are concerned with
-extra ARG information in a tree sequences returned using \msprime's
+extra ARG information in a tree sequence returned using \msprime's
 \texttt{record\_full\_arg} mode}
 \end{figure}
 
@@ -1150,7 +1251,7 @@ present through the extant lineages and the ancestral material they carry
 over time. Since the ARG is a large and unwieldy object
 (Fig.~\ref{fig-arg}) we do not use it as output, but
 rather store the information required to recover the genealogical
-history as nodes and edges in a tree sequence (see section XX),
+history as nodes and edges in a tree sequence (see the \nameref{sec-ts} section),
 or ``coalescence records'' in the terminology of~\citep{kelleher2016efficient}.
 
 Although by default \msprime\ outputs tree sequences that contain full information
@@ -1189,91 +1290,109 @@ See the Appendix for details.
 \subsection*{Selection}
 \label{sec-selection}
 Another elaboration of the standard neutral coalescent with recombination
-is the addition of selective sweeps~\citep{kaplan1989hitchhiking,braverman1995hitchhiking,kim2002detecting}.
-In the context of the coalescent this amounts to creating a structured population
+is the addition of selective
+sweeps~\citep{kaplan1989hitchhiking,braverman1995hitchhiking,kim2002detecting}.
+Sweeps are modelled by creating a structured population
 during the sojourn of the beneficial mutation through the population (i.e., the sweep phase)
 in which lineages may transit between favoured and unfavoured backgrounds through
-recombination. This allows for many selective sweep scenarios, including recurrent, partial,
-and soft selective sweeps to be simulated efficiently, however in general this
+recombination. This allows for many selective sweep scenarios to be simulated
+efficiently, including recurrent, partial, and soft selective sweeps.
+However in general this
 efficiency comes at the cost of flexibility in comparison to forwards in
 time simulation.
-
-Currently a small number of other simulators generate
-coalescent samples with sweeps, including SelSim~\citep{spencer2004selsim},
-mbs~\citep{teshima2009mbs}, msms~\citep{ewing2010msms},
-Cosi2~\citep{shlyakhter2014cosi2}, and \discoal~\citep{kern2016discoal}.
-Each of these packages has their own benefits and possible drawbacks,
-however none of them at present will output tree sequence formatted data.
+Several specialised simulators have been developed to simulate
+sweeps in the coalescent,
+including \texttt{SelSim}~\citep{spencer2004selsim},
+\texttt{mbs}~\citep{teshima2009mbs}, \msms~\citep{ewing2010msms},
+\cosiTwo~\citep{shlyakhter2014cosi2}
+and \discoal~\citep{kern2016discoal}.
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=6cm]{figures/sweeps-perf}
+\includegraphics[width=\textwidth]{figures/sweeps-perf}
 \end{center}
-\caption{\label{fig-selection-perf}Comparison of the runtime for
-\msprime\ and \discoal\ for simulating selective sweeps.
-}
+\caption{\label{fig-selection-perf}Comparison of selective sweep simulation
+performance in \msprime\ and \discoal\ (Intel Xeon E5-2680 CPU).
+We report the total CPU time and maximum memory usage when simulating 100
+replicates for 10 samples in a model
+with \jkcomment{[ADK: fill in the details here please]} and a
+per-base recombination rate of $10^{-9}$.}
 \end{figure}
 
-We have implemented selective sweeps in \msprime\ similarly to
-the \discoal\ implementation-- sweep trajectories are
-generated from a jump process approximation to the conditional diffusion
-of an allele bound for fixation~\citep{coop2004ancestral}.
-Details of our implementation are available in the Appendix.
-This implementation allows us to further generalize sweep models to
+Following the approach taken in \discoal, we
+have implemented selective sweeps in \msprime\ by generating
+sweep trajectories from a jump process approximation to the conditional diffusion
+of an allele bound for
+fixation~\citep{coop2004ancestral}---see the appendix for more details.
+This implementation facilitates future changes to generalise sweep models to
 changing population sizes as well as selection from standing variation,
 both of which are features that are planned for the near future.
 Moreover because this implements the basic infrastructure for the structured
 coalescent, adding support for similar situations,
-such as inversions, is straightforward~\citep{peischl2013sequential}.
+such as inversions~\citep{peischl2013sequential}, is straightforward.
+Fig.~\ref{fig-selection-perf} shows that \msprime\ has far better
+CPU time and memory performance than \discoal. We have previously shown
+that \msprime\ is much more efficient than \msms\ and \cosiTwo\
+when simulating without selection~\citep{kelleher2016efficient}.
+% JK: do we need an extra proviso like this?
+% and this is unlikely to change unless sweeps dominate the ancestral process.
 
 \subsection*{Discrete time Wright-Fisher}
-
-The assumptions of the classical coalescent model are that both sample size and
-the simulated sequence length are small. As modern datasets often include
-whole-genome sequences for tens or hundreds of thousands of samples, simulating
-such data requires breaking these assumptions. While the coalescent remains a
-good approximation to the Wright-Fisher model in the distant past, it can
-exhibit large biases in the recent history. Identity-by-descent (IBD),
-long-range linkage disequilibrium (LD), and ancestry patterns deviate from
-Wright-Fisher expectations, and this bias grows considerably when simulating
-larger sample
+The coalescent is an idealised model and makes many simplifying assumptions,
+but it is often surprisingly robust to violations of these
+assumptions~\citep{wakeley2012gene}. One situation in which the
+model does break down is the combination of large sample size
+and with long recombining genomes, where the large
+number of recombination events in the recent past results in
+more than the biologically possible $2^t$ ancestors in
+$t$ diploid generations~\citep{nelson2020accounting}.
+This pathological behaviour results in
+Identity-by-descent,
+long-range linkage disequilibrium (LD), and ancestry patterns deviating from
+Wright-Fisher expectations, and the bias grows with larger sample
 sizes~\citep{wakeley2012gene,bhaskar2014distortion,nelson2020accounting}.
-
-A backwards-in-time Wright-Fisher model is supported in \msprime, which is
-shown to properly capture the expected distributions of IBD and long-range LD,
-as well as ancestry patterns in admixed
-populations~\citep{nelson2020accounting}. In short, the classical coalescent
-draws recombination events from exponential waiting times, which are continuous
-in time, and each recombination then splits a segment into two distinct
-ancestors. For large sequence lengths, this can dramatically overestimate the
-number of genealogical ancestors of a given sample. Instead, the Wright-Fisher
-model iterates through discrete generations so that each gamete has a unique
+Precisely this problem occurs when simulating modern human datasets,
+and we have implemented a Discrete Time Wright-Fisher (DTWF) model
+in \msprime\ to address the issue. The DTWF simulates backwards in
+time generation-by-generation so that each gamete has a unique
 diploid parent, and multiple recombinations within a generation results in
-crossover events between the same two parental haploid copies.  This method is
-described in more detail in~\cite{nelson2020accounting}.
+crossover events between the same two parental haploid copies.
+The method is described in more detail by~\cite{nelson2020accounting}.
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=6cm]{figures/dtwf-perf}
+\includegraphics[width=\textwidth]{figures/dtwf-perf}
 \end{center}
-\caption{\label{fig-dtwf-perf} Comparison of \msprime's DTWF
-simulations with ARGON. To ensure the comparison with ARGON is
-as fair as possible we run it with a mutation rate of 0 and with
-the minimum output options (so that it writes out only an empty VCF file)}
+\caption{\label{fig-dtwf-perf} Comparison of Discrete Time Wright-Fisher
+(DTWF) simulation performance in \msprime\ and \ARGON\ (Intel Xeon E5-2680 CPU).
+We simulated ancestry for a sample of 1000 haploids from a population of 10000,
+and report the (A) total CPU time and (B) maximum memory usage for varying
+sequence lengths, and a per-base recombination rate of $10^{-8}$. Each
+point is the average over $5$ replicate simulations.
+We show observations for \ARGON, \msprime's DTWF implementation (``DWTF'')
+and a hybrid simulation of 100 generations of the DTWF followed by
+the standard coalescent with recombination model (``DTWF + Hudson'').
+We ran \ARGON\ with a mutation rate of $0$ and with minimum output options,
+to ensure we are measuring only ancestry simulation time.}
 \end{figure}
 
-We support changing the simulation model at specified times so that we can
-easily run hybrid simulations, as proposed by~\cite{bhaskar2014distortion}. We
-can combine any number of different simulation models, allowing for the
-flexible choice of simulation scenarios without severely damaging efficiency.
+Fig.~\ref{fig-dtwf-perf} shows that \msprime\ simulates the DTWF
+more quickly and requires substantially less memory than
+\ARGON~\citep{palamara2016argon}, a specialised DTWF simulator.
+However, the generation-by-generation approach of the DTWF is less
+efficient than the coalescent with recombination when the
+number of lineages is significantly less than the population size
+(the regime where the coalescent is an accurate approximation),
+which usually happens in the quite recent
+past~\cite{bhaskar2014distortion}.
+We therefore support changing the simulation model during a simulation
+so that we can run hybrid simulations, as proposed by~\cite{bhaskar2014distortion}.
+Any number of different simulation models can be combined, allowing for the
+flexible choice of simulation scenarios.
 As the discrete time Wright-Fisher model improves accuracy of genealogical
 patterns in the recent past, we can simulate the recent history using this
 model and then switch to the standard coalescent to more efficiently simulate
-the more ancient history. Fig.~\ref{fig-dtwf-perf} compares the performance of
-this approach with ARGON~\citep{palamara2016argon}, a specialised DTWF
-simulator.  The Wright-Fisher approach in \msprime\ is more efficient at
-simulating chromosome-scale sequences (larger than $\approx10$Mb), while the
-hybrid approach provides large efficiency gains.
+the more ancient history.
 
 \subsection*{Integration with forward simulators}
 A unique feature of \msprime\ is its ability to simulate
@@ -1285,7 +1404,7 @@ is complete up until time $t$ as input
 present at this time, and then run the simulation backwards in time from there.
 This allows a simulated ancestry to be produced by any
 number of different processes across disjoint time slices.
-In practise this feature is used to ``complete''
+In practice this feature is used to ``complete''
 forwards-time ancestry simulations~\citep{kelleher2018efficient}
 that may have not fully coalesced. This process
 (``recapitation'') can be orders of magnitude faster than
@@ -1311,7 +1430,7 @@ As of the 1.0.0 release \msprime\ consists of around 13K lines of C and 11K
 lines of Python, with suites of 122 C tests (7K lines of code) and
 1350 Python tests (22K lines of code). These tests are run
 automatically on different operating systems on each pull request
-(where a contributor updates the codebase), using standard Continuous
+(where a contributor proposes a code change), using standard Continuous
 Integration (CI) methodology. Other CI services check code formatting
 and for common errors, as well as producing reports on the level of
 test coverage, e.g., pinpointing areas where additional unit tests may
@@ -1322,12 +1441,11 @@ they are usually of little value in assessing the statistical properties
 of simulations. To validate the correctness of simulation output
 we maintain a suite of statistical tests (as of 1.0.0,
 217 validation tests, in 6K lines of code). These consist of running many
-replicate simulations, and checking the properties of the output
-against either analytical results of the output of other simulators
-where such results are not available.
+replicate simulations to check the properties of the output
+against other simulators, and where possible against analytical results.
 For example, simulations of complex demography are validated against \ms,
 selective sweeps against \discoal, and Wright-Fisher simulations
-against forwards-time simulations in \SLiM.
+against forwards in time simulations in \SLiM.
 This suite of tests is run before every release, to ensure
 that statistical errors have not been introduced.
 
@@ -1380,6 +1498,7 @@ in shared infrastructure and mentorship in good software development practice.
 Scientific software is vital apparatus, and must be engineered
 to a high quality if we are to trust its results. There is a growing
 realisation across the sciences \citet[OTHER CITATIONS]{siepel2019challenges}
+% Maybe cite: https://www.biorxiv.org/content/10.1101/092205v3
 that investing in
 shared community infrastructure produces better results than a
 proliferation of individually maintained tools, allowing scientists
@@ -1391,13 +1510,13 @@ established development practices and infrastructure.
 % PLR- personally I have learned SO MUCH, and I'm passing it on to others
 Software development in a welcoming community,
 with mentorship by experienced developers,
-is a hugely useul experience for many users,
+is a hugely useful experience for many users,
 The skills that contributors learn
 can lead to greatly increased productivity in subsequent
 work (e.g., through more reliable code and better debugging skills).
 We hope that users who find that
 features they require are missing will continue to contribute to
-\msprime, leading to a community project that is both high-quality
+\msprime, leading to a community project that is both high quality
 and sustainable in the long term.
 
 
@@ -1417,18 +1536,20 @@ becomes the input for other downstream inferences, it is vitally
 important that these primary inferences are thoroughly validated,
 with the detailed properties of the inferred ancestries
 catalogued and understood.
-\texttt{Msprime} will be an important tool for these inferences and validations,
+\texttt{Msprime} will continue to be an important tool for these inferences and validations,
 and in this context the ability to interoperate
-with other methods---particularly, forwards simulators---through
+with other methods---particularly forwards simulators---through
 the succinct tree sequence data structure and \tskit\ library
-will be vital.
+will be essential.
+% this final sentence is hard to parse
 
-\section*{Acknowledgments}
+\section*{Acknowledgements}
 JK is supported by the Robertson Foundation.
 Jere Koskela is supported in part by EPSRC grant EP/R044732/1.
 ADK was supported by NIH awards R01GM117241 and R01HG010774.
 Franz Baumdicker is funded by the Deutsche Forschungsgemeinschaft
 EXC 2064/1 -- Project number 390727645, and EXC 2124 -- Project number 390838134.
+Graham Gower was supported by a Villum Fonden Young Investigator award to Fernando Racimo (project no. 00025300).
 
 \bibliographystyle{plainnat}
 \bibliography{paper}
@@ -1467,7 +1588,7 @@ and then the ancestral and derived alleles of each mutation are generated.
 All mutation models share the code to place mutations,
 but choose alleles in different ways.
 
-First, mutations are placed on the tree sequence under an inhomgeneous Poisson model
+First, mutations are placed on the tree sequence under an inhomogeneous Poisson model
 by applying them independently to each edge.
 If an edge spans a region $[a, b)$ of the genome
 and connected parent and child nodes with times $s < t$,
@@ -1526,7 +1647,7 @@ This produces the correct distribution by Poisson thinning:
 a Poisson process with rate $\alpha$ in which each point is discarded independently
 with probability $\beta / (\alpha + \beta)$ is equivalent to a Poisson
 process with rate $\beta$.
-All finite-state models (implented under the generic \texttt{MatrixMutationModel} class)
+All finite-state models (implemented under the generic \texttt{MatrixMutationModel} class)
 work in this way: mutations are placed at the maximum mutation rate,
 and then some silent mutations will result.
 
@@ -1626,13 +1747,13 @@ The rate at which  a given group of $k$ out of a total of  $b$ lineages merges  
 \lambda_{b, k} =  \int_0^1  x^{k-2}(1-x)^{b-k}\Lambda(dx) + a\one{k=2}, \quad 2 \le k \le b,
 \end{equation}
 where $a \geq 0$ is a constant and $\Lambda$ is a finite measure on the unit interval without an atom at zero \citep{DK99,P99,S99}.
-There is also a larger class of multiple merger coalescents involving simultaneous
-multiple mergers of distinct groups of ancestral lineages \citep{S00}.
+There is also a larger class of simultaneous multiple merger coalescents involving
+simultaneous mergers of distinct groups of lineages into several common ancestors \citep{S00}.
 These are commonly referred to as $\Xi$-coalescents, and
 often arise from population models incorporating diploidy or more general polyploidy
 \citep{BBE13,blath2016site}.
 To describe a general $\Xi$-coalescent, let $\Delta$ denote the
-infinite simplex 
+infinite simplex
 \begin{equation*}
  \Delta := \Bigg\{ (x_1,x_2,  \ldots ): x_1 \ge x_2 \ge \cdots \ge 0, \sum_{j = 1}^{ \infty} x_j \le 1\Bigg\}.
  \end{equation*}
@@ -1672,7 +1793,7 @@ and $\Xi$-coalescents to diploid or polyploid (e.g.\ autosomal) data \citep{blat
 In \msprime\ we have incorporated two examples of multiple-merger coalescents.
 One is a diploid extension \citep{BBE13} of the haploid Moran model adapted
 to sweepstakes reproduction considered by \cite{EW06}.
-Let $N$ denote the population size, and take $\psi \in (0,1]$ to be fixed. 
+Let $N$ denote the population size, and take $\psi \in (0,1]$ to be fixed.
 In every generation, with probability $1-\varepsilon_N$ a single individual
 (picked uniformly at random) perishes.
 With probability $\varepsilon_N$, $\lfloor \psi N \rfloor$ individuals picked uniformly
@@ -1685,8 +1806,8 @@ point mass at $\psi$.  The simplicity of this model does allow one to obtain
 some explicit mathematical results (see e.g.\
 \cite{Der2012, EF2018,Freund2020,Matuszewski2017}), and the model has also been
 used to simulate gene genealogies within phylogenies \citep{zhu2015hybrid}.
-As well as the haploid model of \cite{EW06}, \msprime\ provides the diploid version 
-of \cite{BBE13}, in which individuals perish as above, but replacements are 
+As well as the haploid model of \cite{EW06}, \msprime\ provides the diploid version
+of \cite{BBE13}, in which individuals perish as above, but replacements are
 generated by sampling a single pair of diploid individuals as parents, with
 children sampling one chromosome from each parent.
 Hence, there are four parent chromosomes involved in each reproduction event, which can lead to
@@ -1697,17 +1818,17 @@ k_r;s } &= \frac{c \psi^2 / 4}{1 + c \psi^2 / 4} \frac{4}{ \psi^2}\sum_{\ell = 0
 k_r + \ell} + \frac{\one{r=1, k_1 = 2}}{1 + c \psi^2 / 4},  \\ \end{esplit}
 The interpretation of \eqref{Cconst} is that `small' reproduction events in which
 two lineages merge occur at rate $1/(1 + c\psi^2/4)$, while large reproduction events
-giving rise to simultaneous multiple mergers occur at rate $(c\psi^2/4) / (1 + c\psi^2/4)$.
+with the potential to result in simultaneous multiple mergers occur at rate $(c\psi^2/4) / (1 + c\psi^2/4)$.
 
 
 The other multiple merger coalescent model incorporated in \msprime\ is
-the haploid population model considered by \cite{schweinsberg03}, 
+the haploid population model considered by \cite{schweinsberg03},
 as well as its diploid extension \citep{BLS15}.  In the haploid
 version, in each generation of fixed size $N$, individuals produce random numbers of
-juveniles $(X_1, \ldots, X_N)$ independently, each distributed according to a stable law satisfying 
-\be\label{jX} \lim_{k\to \infty} C k^\alpha \prb{X \ge k} = 1 \ee 
+juveniles $(X_1, \ldots, X_N)$ independently, each distributed according to a stable law satisfying
+\be\label{jX} \lim_{k\to \infty} C k^\alpha \prb{X \ge k} = 1 \ee
 with index $\alpha > 0$, and where $C > 0$ is a normalising constant.
-If the  total number of juveniles $S_N := X_1 + \ldots + X_n$ produced
+If the  total number of juveniles $S_N := X_1 + \ldots + X_N$ produced
 in this way is at least $N$, then $N$ juveniles are sampled uniformly at random
 without replacement to form the next generation.
 As long as $\EE{X_1} > 1$, one can show that $\{ S_N < N \}$ has exponentially small
@@ -1726,17 +1847,17 @@ by \cite{BLS15}, and the resulting coalescent is $\Xi$-coalescent with merger ra
 where $k := k_1 + \ldots + k_r$ \citep{blath2016site,BLS15}. The interpretation of \eqref{xibeta} is  that the
 random number of lineages participating in a potential merger is governed by the
 $\Lambda$-coalescent with rate \eqref{Fbeta}, and all participating lineages are
-randomly allocated into one of four groups corresponding to the four parental 
+randomly allocated into one of four groups corresponding to the four parental
 chromosomes, giving rise to up to four simultaneous mergers.
 
 The stable law \eqref{jX} assumes that individuals can produce arbitrarily
 large numbers of juveniles. Since juveniles are at least fertilised eggs,
-it may be desirable suppose that the number of juveniles
+it may be desirable to suppose that the number of juveniles
 surviving to reproductive maturity cannot be arbitrarily large.  Hence we also consider
 an adaptation of the \cite{schweinsberg03} model, where
-the random number of juveniles has a deterministic upper bound $\phi(N)$, 
+the random number of juveniles has a deterministic upper bound $\phi(N)$,
 and the distribution of the number of juveniles produced by a given parent
-(or pair of parents in the diploid case) is 
+(or pair of parents in the diploid case) is
 \be\label{jtr} \prb{X=k} =   \one{1 \le k \le \phi(N)}
 \frac{\phi(N+1)^\alpha }{ \phi(N+1)^\alpha - 1 }  \left( \frac{1}{k^\alpha} -
 \frac{1}{(k+1)^\alpha}  \right) . \ee
@@ -1766,7 +1887,7 @@ coalescent process (as in~\citep{braverman1995hitchhiking}). During the
 is tracked separately in lineages linked to the beneficial allele or not,
 with those rates depending on the frequency of the beneficial allele in
 the population at a given time. The allele frequency trajectory of the
-sweeping allele is modeled using a jump process that approximates
+sweeping allele is modelled using a jump process that approximates
 the conditional diffusion of the allele, conditioning on its eventual
 fixation~\citep{coop2004ancestral}.
 The jump process moves back in time following the beneficial
