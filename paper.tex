@@ -14,7 +14,9 @@
 \usepackage{environ}%
 \usepackage[right]{lineno}%
 \usepackage{nameref}
+\usepackage{caption,subcaption}
 \usepackage{tikz}
+\usetikzlibrary{calc,positioning}
 %\usepackage{showkeys}
 
 % local definitions
@@ -1191,8 +1193,8 @@ Such usage is entirely reasonable, but referring readers back to the
 original Griffiths papers does little to clarify.
 
 \begin{figure}
-
-\begin{center}
+\begin{subfigure}[t]{0.33\textwidth}
+\centering
     \begin{tikzpicture}[scale=0.45]
 
     \draw (-2,0) -- (-2,3) -- (0, 3);
@@ -1220,24 +1222,130 @@ original Griffiths papers does little to clarify.
     \node [above] at (1,5) {6};
 
     \end{tikzpicture}
-% \begin{center}
-% $\equiv$
-% \end{center}
-% \end{column}
-% \begin{column}{5cm}
-\includegraphics[width=3.8cm]{illustrations/arg-ts.pdf}
-\includegraphics[width=3.8cm]{illustrations/arg-ts-simplified.pdf}
-% \includegraphics[width=3.8cm]{figures/arg.pdf}
+\caption{}\label{fig-arg-a}
+\end{subfigure}
+\begin{subfigure}[t]{0.33\textwidth}
+\centering
+\begin{tikzpicture}[node distance=2mm and 4mm,scale=0.4]
 
-\end{center}
+\tikzset{greynode/.style={circle,fill,inner sep=0.7},
+nodelabel/.style={font=\scriptsize}}
+
+% Left sample nodes
+\node (s0) [greynode] {};
+\node (s1) [right=of s0,greynode] {};
+\node (s2) [right=of s1,greynode] {};
+\foreach \u/\lab in {s0/0, s1/1, s2/2} \node[nodelabel,anchor=north] at (\u) {\lab};
+
+% Right sample nodes
+\node (rightTree) at (4, 0) {};
+\node [greynode] (s0r) at ($(s0) + (rightTree)$) {};
+\node [greynode] (s1r) at ($(s1) + (rightTree)$) {};
+\node [greynode] (s2r) at ($(s2) + (rightTree)$) {};
+\foreach \u/\lab in {s0r/0, s1r/1, s2r/2} \node[nodelabel,anchor=north] at (\u) {\lab};
+
+% Non-sample nodes
+\node [greynode] (s3) at ($(s1) + (0,1)$) {};
+\node [greynode] (s3r) at ($(s1r) + (0,1)$) {};
+\node [greynode] (s4) at ($(s2) + (0,2)$) {};
+\node [greynode] (s4r) at ($0.5*(s1r) + 0.5*(s2r) + (0,2)$) {};
+\node [greynode] (s5) at ($0.5*(s0) + 0.5*(s1) + (0,3)$) {};
+\node [greynode] (s5r) at ($(s0r) + (0,3)$) {};
+\node [greynode] (s6) at ($0.5*(s5) + 0.5*(s4) + (0,2)$) {};
+\node [greynode] (s6r) at ($0.5*(s5r) + 0.5*(s4r) + (0,2)$) {};
+\foreach \u/\lab in {s3/3, s3r/3} \node[nodelabel,anchor=west] at (\u) {\lab};
+\foreach \u/\lab in {s4/4, s4r/4} \node[nodelabel,anchor=south west] at (\u) {\lab};
+\foreach \u/\lab in {s5/5, s5r/5} \node[nodelabel,anchor=south east] at (\u) {\lab};
+\foreach \u/\lab in {s6/6, s6r/6} \node[nodelabel,anchor=south] at (\u) {\lab};
+
+%% Edges 
+\foreach \child/\parent in {
+	s5/s0, s5/s1, s6/s5, s6/s2,
+	s4r/s1r, s4r/s2r, s6r/s0r, s6r/s4r%
+}
+	\draw (\child) -| (\parent);
+
+% Axes
+\draw[very thick] ($(s0) + (0,5.8)$) -- ($(s2r) + (0,5.8)$);
+\node (topAx) at (0,5.8) {};
+\node (topLeft) at ($(s0) + (0,5.8)$) {};
+\node (genUnit) at ($0.1*(s2r) - 0.1*(s0)$) {};
+\foreach \x in {0, 5, 10} \draw ($(topLeft) + \x*(genUnit) + (0,0.1)$) -- +(0, -0.2); % tick marks
+\node[anchor=south] at ($(topLeft)$) {\scriptsize 0.0}; 
+\node[anchor=south] at ($(topLeft) + 5*(genUnit)$) {\scriptsize 0.3};
+\node[anchor=south] at ($(topLeft) + 10*(genUnit)$) {\scriptsize 1.0};
+
+% Interval endpoints
+\draw[thin,color=black!50,dashed] ($(topLeft) + 5*(genUnit)$) -- +(0, -5.5);
+
+% Axis titles
+\node (topLabel) at ($(topLeft) + 5*(genUnit) + (0,1.3)$) {$\scriptsize\textrm{Genome position}$};
+\end{tikzpicture}
+\caption{}\label{fig-arg-b}
+\end{subfigure}
+\begin{subfigure}[t]{0.33\textwidth}
+\centering
+\begin{tikzpicture}[node distance=2mm and 4mm,scale=0.4]
+
+\tikzset{greynode/.style={circle,fill,inner sep=0.7},
+nodelabel/.style={font=\scriptsize}}
+
+% Left sample nodes
+\node (s0) [greynode] {};
+\node (s1) [right=of s0,greynode] {};
+\node (s2) [right=of s1,greynode] {};
+\foreach \u/\lab in {s0/0, s1/1, s2/2} \node[nodelabel,anchor=north] at (\u) {\lab};
+
+% Right sample nodes
+\node (rightTree) at (4, 0) {};
+\node [greynode] (s0r) at ($(s0) + (rightTree)$) {};
+\node [greynode] (s1r) at ($(s1) + (rightTree)$) {};
+\node [greynode] (s2r) at ($(s2) + (rightTree)$) {};
+\foreach \u/\lab in {s0r/0, s1r/1, s2r/2} \node[nodelabel,anchor=north] at (\u) {\lab};
+
+% Non-sample nodes
+%\node [greynode] (s3) at ($(s1) + (0,1)$) {};
+%\node [greynode] (s3r) at ($(s1r) + (0,1)$) {};
+%\node [greynode] (s4) at ($(s2) + (0,2)$) {};
+\node [greynode] (s4r) at ($0.5*(s1r) + 0.5*(s2r) + (0,2)$) {};
+\node [greynode] (s5) at ($0.5*(s0) + 0.5*(s1) + (0,3)$) {};
+%\node [greynode] (s5r) at ($(s0r) + (0,3)$) {};
+\node [greynode] (s6) at ($0.5*(s5) + 0.5*(s4) + (0,2)$) {};
+\node [greynode] (s6r) at ($0.5*(s5r) + 0.5*(s4r) + (0,2)$) {};
+%\foreach \u/\lab in {s3/3, s3r/3} \node[nodelabel,anchor=west] at (\u) {\lab};
+\foreach \u/\lab in {s4r/3} \node[nodelabel,anchor=south west] at (\u) {\lab};
+\foreach \u/\lab in {s5/4} \node[nodelabel,anchor=south east] at (\u) {\lab};
+\foreach \u/\lab in {s6/5, s6r/5} \node[nodelabel,anchor=south] at (\u) {\lab};
+
+%% Edges 
+\foreach \child/\parent in {
+	s5/s0, s5/s1, s6/s5, s6/s2,
+	s4r/s1r, s4r/s2r, s6r/s0r, s6r/s4r%
+}
+	\draw (\child) -| (\parent);
+
+% Axes
+\draw[very thick] ($(s0) + (0,5.8)$) -- ($(s2r) + (0,5.8)$);
+\node (topAx) at (0,5.8) {};
+\node (topLeft) at ($(s0) + (0,5.8)$) {};
+\node (genUnit) at ($0.1*(s2r) - 0.1*(s0)$) {};
+\foreach \x in {0, 5, 10} \draw ($(topLeft) + \x*(genUnit) + (0,0.1)$) -- +(0, -0.2); % tick marks
+\node[anchor=south] at ($(topLeft)$) {\scriptsize 0.0}; 
+\node[anchor=south] at ($(topLeft) + 5*(genUnit)$) {\scriptsize 0.3};
+\node[anchor=south] at ($(topLeft) + 10*(genUnit)$) {\scriptsize 1.0};
+
+% Interval endpoints
+\draw[thin,color=black!50,dashed] ($(topLeft) + 5*(genUnit)$) -- +(0, -5.5);
+
+% Axis titles
+\node (topLabel) at ($(topLeft) + 5*(genUnit) + (0,1.3)$) {$\scriptsize\textrm{Genome position}$};
+\end{tikzpicture}
+\caption{}\label{fig-arg-c}
+\end{subfigure}
 \caption{\label{fig-arg} (A) A simple ARG in which a recombination
 occurs at position 0.3; (B) the equivalent topology depicted as a tree
 sequence, including the recombination node; (C) the same tree sequence
-topology ``simplified'' down to its minimal tree sequence representation.
-% (D) the fraction of nodes in a tree sequence that are concerned with
-% extra ARG information in a tree sequence returned using \msprime's
-% \texttt{record\_full\_arg} mode}
-}
+topology ``simplified'' down to its minimal tree sequence representation.}
 \end{figure}
 
 For our purposes, an ARG is a realisation of the coalescent with
