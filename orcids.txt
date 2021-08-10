@@ -1,33 +1,33 @@
 @agladstein
-@andrewkern https://orcid.org/0000-0003-4381-4680
-@apragsdale
-@awohns
+@andrewkern         https://orcid.org/0000-0003-4381-4680
+@apragsdale         https://orcid.org/0000-0003-0715-3432
+@awohns             https://orcid.org/0000-0001-7353-1177
 @benjeffery
-@castedo
-@cdquinto
-@daniel-goldstein
+@castedo            https://orcid.org/0000-0002-5014-4809
+@cdquinto           https://orcid.org/0000-0002-0338-3321
+@daniel-goldstein   https://orcid.org/0000-0002-5967-5569
 @domnelson
-@eldonb
+@eldonb             https://orcid.org/0000-0001-9354-2391
 @fbaumdicker
 @gbinux
-@gertjanbisschop
+@gertjanbisschop    https://orcid.org/0000-0001-8327-0142
 @grahamgower
-@gregorgorjanc
-@gtsambos
-@hugovk
+@gregorgorjanc      https://orcid.org/0000-0001-8008-2787
+@gtsambos           https://orcid.org/0000-0001-7001-2275
+@hugovk             https://orcid.org/0000-0001-5715-8632
 @hyanwong
 @ivan-krukov
-@jerekoskela
-@jeromekelleher https://orcid.org/0000-0002-7894-5253
+@jerekoskela        https://orcid.org/0000-0002-2836-8777
+@jeromekelleher     https://orcid.org/0000-0002-7894-5253
 @jgallowa07
-@klohse
-@mmatschiner
-@molpopgen
-@mufernando
-@nspope
-@petrelharp https://orcid.org/0000-0002-9459-6866
+@klohse             https://orcid.org/0000-0001-9918-058X
+@mmatschiner        https://orcid.org/0000-0003-4741-3884
+@molpopgen          https://orcid.org/0000-0003-0743-4445
+@mufernando         https://orcid.org/0000-0001-7508-1384
+@nspope             https://orcid.org/0000-0001-8409-7812
+@petrelharp         https://orcid.org/0000-0002-9459-6866
 @saunack
-@sgravel
-@shajoezhu
-@tppsellinger
+@sgravel            https://orcid.org/0000-0002-9183-964X
+@shajoezhu          https://orcid.org/0000-0001-7566-2787
+@tppsellinger       https://orcid.org/0000-0002-8538-7800
 @winni2k
