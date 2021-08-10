@@ -292,7 +292,7 @@ for four samples at ten sites.
 One of the key reasons for \msprime's substantial performance advantage
 over other simulators~\citep{kelleher2016efficient}
 is its use of the ``succinct tree sequence''
- data structure to represent simulation results.
+data structure to represent simulation results.
 The succinct tree sequence (usually abbreviated to ``tree sequence'')
 was introduced by \cite{kelleher2016efficient}
 to concisely encode genetic ancestry and sequence variation
@@ -306,23 +306,36 @@ of \tskit\ is beyond the scope of this article, we summarise
 some aspects that are important for simulation.
 
 % Encoding ancestry
-Given a set of sample chromosomes, the topology
+Before we define tree sequences we require so additional terminology.
+Let a ``ploid'' be the
+% JK this isn't right either, but it's a start.
+% We should add a sentence clarifying what an individual is here.
+% FIXME
+complete set of genetic material that a child inherits from a parent,
+so that, e.g., each human has two ploids~\citep{jouganous2017inferring}.
+Then, given a set of sample ploids
+the structure
 of their genetic ancestry is described by a set of \emph{nodes}
 and \emph{edges} (Fig.~\ref{fig-ts-example}).
-A node in tree sequence terminology corresponds
-\adkcomment{i found using 'single chromosome strand' here
-and then later 'haplotype' confusing, so edited}
-to a single chromosome, associated with its birth time
-and other optional information. For instance, a node may be
-associated with an \emph{individual}, so that, a diploid
-individual is composed of two separate nodes (we omit
-the individual table in Fig.~\ref{fig-ts-example} as it is optional).
-While nodes define chromosomal sequences that exist at a specific time,
-edges define genetic inheritance between these nodes. 
-An \emph{edge} contains information about the
-parent node, the child node and the left and right coordinates
+A node in tree sequence terminology corresponds to a ploid,
+associated with its birth time
+and other optional information.
+% JK: Now that we have ploids, maybe it doesn't help to talk about
+% the individual table?
+% Nodes may be
+% associated with an \emph{individual}, so that, a diploid
+% individual is composed of two separate nodes (we omit
+% the individual table in Fig.~\ref{fig-ts-example} as it is optional).
+% While nodes define chromosomal sequences that exist at a specific time,
+% edges define genetic inheritance between these nodes.
+Edges then define the genetic inheritence between nodes.
+An \emph{edge} consists of a
+parent node, a child node and the left and right coordinates
 of the contiguous genomic interval over which
-the child inherited genetic material from the parent.
+the child node inherited genetic material from the parent node.
+Parent and child nodes may correspond to ancestor and descendant
+ploids separated by many generations.
+
 Critically, edges can span multiple marginal trees: for
 example, in Fig.~\ref{fig-ts-example} the branch from node
 0 to 4 is present in both marginal trees, and represented
