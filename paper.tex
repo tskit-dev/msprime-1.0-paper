@@ -59,30 +59,30 @@
 \author[8]{Bjarki Eldon}
 \author[9]{Castedo E. Ellerman}
 \author[10]{Jared G. Galloway}
-\author[11]{Ariella L. Gladstein}
-\author[12]{Gregor Gorjanc}
-\author[13]{Guo, Bing}
+\author[11,12]{Ariella L. Gladstein}
+\author[13]{Gregor Gorjanc}
+\author[14]{Guo, Bing}
 \author[7]{Ben Jeffery}
-\author[14]{Warren W. Kretzschmar}
-\author[15]{Ivan Krukov}
+\author[15]{Warren W. Kretzschmar}
+\author[16]{Ivan Krukov}
 \author[2]{Konrad Lohse}
-\author[16]{Michael Matschiner}
-\author[15]{Dominic Nelson}
-\author[17]{Nathaniel Pope}
-\author[18]{Consuelo D. Quinto-Cort\'es}
+\author[17]{Michael Matschiner}
+\author[16]{Dominic Nelson}
+\author[18]{Nathaniel S. Pope}
+\author[19]{Consuelo D. Quinto-Cort\'es}
 \author[10]{Murillo F. Rodrigues}
-\author[19]{Kumar Suanack}
-\author[20]{Thibaut Sellinger}
-\author[21]{Kevin Thornton}
-\author[22]{Hugo van Kemenade}
+\author[20]{Kumar Suanack}
+\author[21]{Thibaut Sellinger}
+\author[22]{Kevin Thornton}
+\author[23]{Hugo van Kemenade}
 \author[7]{Anthony W. Wohns}
 \author[7]{H. Yan Wong}
 
 % Senior Authors
 \author[15,$\dagger$]{Simon Gravel}
 \author[10,$\dagger$]{Andrew D. Kern}
-\author[23,$\dagger$]{Jere Koskela}
-\author[10,24,$\dagger$]{Peter L. Ralph}
+\author[24,$\dagger$]{Jere Koskela}
+\author[10,25,$\dagger$]{Peter L. Ralph}
 
 % Corresponding
 \author[7,$\ddagger$]{Jerome Kelleher}
@@ -114,34 +114,35 @@ Science, Museum f\"ur Naturkunde Berlin }
     University of Oregon}
 % Ariella
 \affil[11]{Department of Genetics, University of North Carolina at Chapel Hill}
+\affil[12]{Embark Veterinary, Inc., Boston}
 % Gregor
-\affil[12]{The Roslin Institute and Royal (Dick) School of Veterinary Studies,
+\affil[13]{The Roslin Institute and Royal (Dick) School of Veterinary Studies,
     University of Edinburgh}
 % Bing
-\affil[13]{FIXME: BING's AFFILIATION}
+\affil[14]{FIXME: BING's AFFILIATION}
 % Winni
-\affil[14]{FIXME: WINNI's AFFILIATION}
+\affil[15]{FIXME: WINNI's AFFILIATION}
 % Simon, Dom, Ivan
-\affil[15]{Department of Human Genetics, McGill University}
+\affil[16]{Department of Human Genetics, McGill University}
 % Michael
-\affil[16]{FIXME: MICHAEL's AFFILIATION}
+\affil[17]{Natural History Museum, University of Oslo}
 % Nathaniel
-\affil[17]{FIXME: NATHANIEL's AFFILIATION}
+\affil[18]{Department of Entomology, Pennsylvania State University}
 % Consuelo
-\affil[18]{National Laboratory of Genomics for Biodiversity (LANGEBIO),
+\affil[19]{National Laboratory of Genomics for Biodiversity (LANGEBIO),
     Unit of Advanced Genomics, CINVESTAV, Irapuato, Mexico}
 % Saunack
-\affil[19]{FIXME: SAUNACK's AFFILIATION}
+\affil[20]{FIXME: SAUNACK's AFFILIATION}
 % Thibaut
-\affil[20]{Professorship for Population Genetics, Department of Life Science Systems, Technical University of Munich}
+\affil[21]{Professorship for Population Genetics, Department of Life Science Systems, Technical University of Munich}
 % Kevin
-\affil[21]{Ecology and Evolutionary Biology, University of California at Irvine}
+\affil[22]{Ecology and Evolutionary Biology, University of California Irvine}
 % Hugo
-\affil[22]{FIXME HUGO's AFFILIATION}
+\affil[23]{FIXME HUGO's AFFILIATION}
 % Jere
-\affil[23]{Department of Statistics, University of Warwick}
+\affil[24]{Department of Statistics, University of Warwick}
 % Peter (second affil)
-\affil[24]{Department of Mathematics, University of Oregon}
+\affil[25]{Department of Mathematics, University of Oregon}
 
 \affil[$\star$]{Denotes shared first authorship, listed alphabetically}
 \affil[$\dagger$]{Denotes shared senior authorship, listed alphabetically}
@@ -1258,7 +1259,7 @@ nodelabel/.style={font=\scriptsize}}
 \foreach \u/\lab in {s5/5, s5r/5} \node[nodelabel,anchor=south east] at (\u) {\lab};
 \foreach \u/\lab in {s6/6, s6r/6} \node[nodelabel,anchor=south] at (\u) {\lab};
 
-%% Edges 
+%% Edges
 \foreach \child/\parent in {
 	s5/s0, s5/s1, s6/s5, s6/s2,
 	s4r/s1r, s4r/s2r, s6r/s0r, s6r/s4r%
@@ -1271,7 +1272,7 @@ nodelabel/.style={font=\scriptsize}}
 \node (topLeft) at ($(s0) + (0,5.8)$) {};
 \node (genUnit) at ($0.1*(s2r) - 0.1*(s0)$) {};
 \foreach \x in {0, 5, 10} \draw ($(topLeft) + \x*(genUnit) + (0,0.1)$) -- +(0, -0.2); % tick marks
-\node[anchor=south] at ($(topLeft)$) {\scriptsize 0.0}; 
+\node[anchor=south] at ($(topLeft)$) {\scriptsize 0.0};
 \node[anchor=south] at ($(topLeft) + 5*(genUnit)$) {\scriptsize 0.3};
 \node[anchor=south] at ($(topLeft) + 10*(genUnit)$) {\scriptsize 1.0};
 
@@ -1317,7 +1318,7 @@ nodelabel/.style={font=\scriptsize}}
 \foreach \u/\lab in {s5/4} \node[nodelabel,anchor=south east] at (\u) {\lab};
 \foreach \u/\lab in {s6/5, s6r/5} \node[nodelabel,anchor=south] at (\u) {\lab};
 
-%% Edges 
+%% Edges
 \foreach \child/\parent in {
 	s5/s0, s5/s1, s6/s5, s6/s2,
 	s4r/s1r, s4r/s2r, s6r/s0r, s6r/s4r%
@@ -1330,7 +1331,7 @@ nodelabel/.style={font=\scriptsize}}
 \node (topLeft) at ($(s0) + (0,5.8)$) {};
 \node (genUnit) at ($0.1*(s2r) - 0.1*(s0)$) {};
 \foreach \x in {0, 5, 10} \draw ($(topLeft) + \x*(genUnit) + (0,0.1)$) -- +(0, -0.2); % tick marks
-\node[anchor=south] at ($(topLeft)$) {\scriptsize 0.0}; 
+\node[anchor=south] at ($(topLeft)$) {\scriptsize 0.0};
 \node[anchor=south] at ($(topLeft) + 5*(genUnit)$) {\scriptsize 0.3};
 \node[anchor=south] at ($(topLeft) + 10*(genUnit)$) {\scriptsize 1.0};
 
@@ -1808,8 +1809,9 @@ We provide two functions to facilitate likelihood-based inference.
 Both are implemented only for the simplest case of the standard ARG with a
 constant population size, and require tree sequences compatible with the
 \texttt{record\_full\_arg} option as their arguments.
-\begin{itemize}
-\item \texttt{msprime.log\_arg\_likelihood(ts, r, N)} returns the natural logarithm of
+
+The \texttt{msprime.log\_arg\_likelihood(ts, r, N)} function
+returns the natural logarithm of
 the sampling probability of the tree sequence \texttt{ts} under the ARG with per-link,
 per-generation recombination probability \texttt{r} and population size \texttt{N}.
 Specifically, the function returns the logarithm of
@@ -1830,7 +1832,8 @@ A recombination in ancestral material will always have $g_i = 1$, while a recomb
 in trapped non-ancestral material can result in other values of $g_i$.
 For a continuous model of the genome and a recombination in ancestral material,
 we set $g_i = 1$ and interpret the result as a density.
-\item \texttt{msprime.unnormalised\_log\_mutation\_likelihood(ts, m)} returns the
+
+The \texttt{msprime.unnormalised\_log\_mutation\_likelihood(ts, m)} function returns the
 natural logarithm of the probability of the mutations recorded in the tree sequence
 \texttt{ts} given the corresponding ancestry, assuming the infinite sites model, up to
 a normalising constant which depends on the pattern of mutations,
@@ -1848,7 +1851,7 @@ of the leaves of \texttt{ts} it does, and on no others.
 Unary nodes on marginal trees arising from the \texttt{record\_full\_arg} option
 mean that, in general $h_{ \gamma }$ corresponds to the length of one or more
 edges.
-\end{itemize}
+% \end{itemize}
 
 
 \label{app-multiple-mergers}
