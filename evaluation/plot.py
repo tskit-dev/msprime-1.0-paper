@@ -2,7 +2,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-import scipy.optimize
 import click
 
 
@@ -214,13 +213,22 @@ def ancestry_perf():
     for ax, tl in zip(axes, time_lims):
         legend_adds = [
             matplotlib.lines.Line2D(
-                [], [], color="black", linestyle="-", label=f"quadratic",
+                [],
+                [],
+                color="black",
+                linestyle="-",
+                label=f"quadratic",
             )
         ]
         for ns, m in zip((1000, 100000), ("o", "v")):
             legend_adds.append(
                 matplotlib.lines.Line2D(
-                    [], [], color="grey", marker=m, linestyle="none", label=f"n={ns}",
+                    [],
+                    [],
+                    color="grey",
+                    marker=m,
+                    linestyle="none",
+                    label=f"n={ns}",
                 )
             )
             ut = np.logical_and(df["time"] <= tl, df["num_samples"] == ns)
@@ -277,27 +285,11 @@ def ancestry_perf():
     save("ancestry-perf")
 
 
-@click.command()
-def arg():
-    """
-    Plot the ARG size illustration figure.
-    """
-    df = pd.read_csv("data/arg.csv")
-
-    fig, ax1 = plt.subplots(1, 1)
-    ax1.plot(df.L, df.arg_nodes, label="Fraction of ARG nodes")
-    ax1.plot(df.L, df.size_ratio, label="size(tree sequence) / size(ARG)")
-    ax1.set_xlabel("Sequence length")
-    ax1.legend()
-    save("arg")
-
-
 cli.add_command(mutations_perf)
 cli.add_command(gc_perf)
 cli.add_command(sweeps_perf)
 cli.add_command(dtwf_perf)
 cli.add_command(ancestry_perf)
-cli.add_command(arg)
 
 if __name__ == "__main__":
     cli()
