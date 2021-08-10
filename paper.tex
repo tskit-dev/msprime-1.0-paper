@@ -788,13 +788,13 @@ implement them more efficiently in future versions.
     for (A) small and (B) larger simulations on an Intel i7-6600U CPU.
     Each point is the run time of one simulation,
     for various values of effective population size ($N_e$),
-    genome length in Morgans ($L$), and number of samples ($n$).
+    chromosome length in Morgans ($L$), and number of samples ($n$).
     Run time scales quadratically with the product of $N_e$ and $L$,
     shown on the horizontal axis. For example, (A) shows that
     1,000 samples of 1 Morgan-length chromosomes
     from a population of $N_e=2,000$ diploids
     would take about 2 seconds, and (equivalently) that the same number of
-    0.01 Morgan segments with $N_e= 200,000$ would take the same time.
+    0.01 Morgan segments with $N_e=200,000$ would take the same time.
     Since recombination rate in these simulations was $10^{-8}$,
     $L$ is the number of base pairs divided by $10^8$.
     The black lines are quadratic fits separately in each panel
@@ -856,9 +856,9 @@ We also see that the dependence on $n$ is quite weak,
 since increasing sample size 100-fold
 only increases run time by a factor of 2 or so. However, the
 $\log^2{n}$ factor implied by Eq.~\eqref{eqn-hsw-bound}
-(the sum is a harmonic number, and approximated by $\log{n}$)
-is not well supported by the data except possibly at very
-large values of $\rho$, and so it seems a different dependence
+(the sum is a harmonic number and can be approximated by $\log{n}$)
+is not well supported by observed runtimes except possibly at very
+large values of $\rho$. So it seems a different dependence
 on $n$ would be required to accurately predict simulation time for a
 given $\rho$ and $n$.
 
@@ -875,7 +875,7 @@ minutes for dogs and humans. However, the dependence on $\rho$
 \emph{is} quadratic, and if $\rho$ is sufficiently large simulations
 may not be feasible. For example,
 the \emph{Drosophila melanogaster} chromosome 2L
-is about 23.5Mb long and an average recombination rate of around $2.4 \times 10^{-8}$,
+is about 23.5Mb long with an average recombination rate of around $2.4 \times 10^{-8}$,
 so $L \approx 0.57$,
 and with $N_e = 1.7 \times 10^6$ \citep{li2006inferring},
 $N_e L \approx 10^6$, so extrapolating the curve in Fig.~\ref{fig-ancestry-perf}B
