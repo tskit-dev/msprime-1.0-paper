@@ -41,6 +41,7 @@
 \newcommand{\jkcomment}[1]{\textcolor{red}{#1}}
 \newcommand{\plrcomment}[1]{\textcolor{cyan}{#1}}
 \newcommand{\grgcomment}[1]{\textcolor{yellow!60!red}{#1}}
+\newcommand{\adkcomment}[1]{\textcolor{blue}{#1}}
 
 \begin{document}
 
@@ -290,13 +291,13 @@ for four samples at ten sites.
 
 One of the key reasons for \msprime's substantial performance advantage
 over other simulators~\citep{kelleher2016efficient}
-is its usage of the ``succinct tree sequence''
+is its use of the ``succinct tree sequence''
  data structure to represent simulation results.
 The succinct tree sequence (usually abbreviated to ``tree sequence'')
-is a data structure for concisely encoding
-genetic ancestry and sequence variation.
-The basic concepts were introduced by \cite{kelleher2016efficient}
-and originally developed as part of \msprime. We subsequently
+was introduced by \cite{kelleher2016efficient}
+to concisely encode genetic ancestry and sequence variation
+and was originally implemented as part of \msprime.
+We subsequently
 extracted the tree sequence code that was independent of simulations
 from \msprime\ into
 a standalone Python and C library, called \tskit~\citep{tskit2021tskit}.
@@ -309,15 +310,17 @@ Given a set of sample chromosomes, the topology
 of their genetic ancestry is described by a set of \emph{nodes}
 and \emph{edges} (Fig.~\ref{fig-ts-example}).
 A node in tree sequence terminology corresponds
-to a single chromosome strand, associated with its birth time
-and other optional information. A node may be
-associated with an \emph{individual}, so that, for example, a diploid
-individual is associated with two separate nodes (we omit
+\adkcomment{i found using 'single chromosome strand' here
+and then later 'haplotype' confusing, so edited}
+to a single chromosome, associated with its birth time
+and other optional information. For instance, a node may be
+associated with an \emph{individual}, so that, a diploid
+individual is composed of two separate nodes (we omit
 the individual table in Fig.~\ref{fig-ts-example} as it is optional).
-Nodes define haplotypes that exist at a specific time within
-some individual, and edges define genetic inheritance
-between these nodes. An \emph{edge} consists of a
-parent node, a child node and the left and right coordinates
+While nodes define chromosomal sequences that exist at a specific time,
+edges define genetic inheritance between these nodes. 
+An \emph{edge} contains information about the
+parent node, the child node and the left and right coordinates
 of the contiguous genomic interval over which
 the child inherited genetic material from the parent.
 Critically, edges can span multiple marginal trees: for
