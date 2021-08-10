@@ -2,14 +2,14 @@
 @andrewkern         https://orcid.org/0000-0003-4381-4680
 @apragsdale         https://orcid.org/0000-0003-0715-3432
 @awohns             https://orcid.org/0000-0001-7353-1177
-@benjeffery
+@benjeffery         https://orcid.org/0000-0002-1982-6801
 @castedo            https://orcid.org/0000-0002-5014-4809
 @cdquinto           https://orcid.org/0000-0002-0338-3321
 @daniel-goldstein   https://orcid.org/0000-0002-5967-5569
 @domnelson
 @eldonb             https://orcid.org/0000-0001-9354-2391
 @fbaumdicker
-@gbinux
+@gbinux             https://orcid.org/0000-0002-3998-5981
 @gertjanbisschop    https://orcid.org/0000-0001-8327-0142
 @grahamgower
 @gregorgorjanc      https://orcid.org/0000-0001-8008-2787
