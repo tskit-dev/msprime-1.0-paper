@@ -46,7 +46,6 @@
 
 \title{Efficient ancestry and mutation simulation with msprime 1.0}
 % First authors
-%% FIXME affiliations are all broken
 \author[1,$\star$]{Franz Baumdicker}
 \author[2,$\star$]{Gertjan Bisschop}
 \author[3,$\star$]{Daniel Goldstein}
@@ -1447,10 +1446,8 @@ Fig.~\ref{fig-selection-perf} shows that \msprime\ has far better
 CPU time and memory performance than \discoal. We have previously shown
 that \msprime\ is much more efficient than \msms\ and \cosiTwo\
 when simulating without selection~\citep{kelleher2016efficient},
-thus we believe \msprime\ to be the highest performing
-coalescent simulator that allows for sweeps currently.
-% JK: do we need an extra proviso like this?
-% and this is unlikely to change unless sweeps dominate the ancestral process.
+thus we believe \msprime\ to be the most efficient
+coalescent simulator when simulating sweeps.
 
 \subsection*{Discrete time Wright-Fisher}
 The coalescent is an idealised model and makes many simplifying assumptions,
