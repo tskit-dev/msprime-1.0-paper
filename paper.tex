@@ -928,8 +928,8 @@ it is these large numbers of rapid and inconsequential events that
 lead to the quadratic run time.
 The maximum number of lineages occurs when
 the increase and decrease in numbers of lineages due to
-common ancestor and recombination events balance out;
-to get an idea of run time we can estimate when this occurs.
+common ancestor and recombination events balance out.
+To get an idea of run time we can estimate when this balance occurs.
 Suppose that the maximum number of lineages is $M$;
 at this time the rate of common ancestor events is $M (M-1) / (4 N_e)$
 and the total rate of recombination is $M \ell$,
@@ -953,12 +953,12 @@ present is roughly $L^2 N_e / 6$,
 then the total number of events is proportional to $(L N_e)^2$---i.e.,
 proportional to $\rho^2$.
 
-What does this tell us about time-varying population sizes?
+What does this tell us about run time for simulating time-varying population sizes?
 The argument above implies that the work is spread out relatively
 evenly on the coalescent time scale.
 Suppose that population size today is $N_1$,
-while longer ago than $T$ generations ago it was $N_2$:
-does the run time depend more on $4 N_1 L$ or $4 N_2 L$?
+while $T$ generations ago it was $N_2$.
+Does the run time depend more on $4 N_1 L$ or $4 N_2 L$?
 The answer depends on how $T$ compares to $N_1$: if $T/N_1$ is large,
 then run time will be similar to a population of size $N_1$;
 while if $T/N_1$ is small, it will be similar to a population of size $N_2$.
