@@ -61,7 +61,7 @@
 \author[10]{Jared G. Galloway}
 \author[11,12]{Ariella L. Gladstein}
 \author[13]{Gregor Gorjanc}
-\author[14]{Guo, Bing}
+\author[14]{Bing Guo}
 \author[7]{Ben Jeffery}
 \author[15]{Warren W. Kretzschmar}
 \author[16]{Ivan Krukov}
@@ -119,9 +119,10 @@ Science, Museum f\"ur Naturkunde Berlin }
 \affil[13]{The Roslin Institute and Royal (Dick) School of Veterinary Studies,
     University of Edinburgh}
 % Bing
-\affil[14]{FIXME: BING's AFFILIATION}
+\affil[14]{Institute for Genome Sciences, University of Maryland School of
+Medicine, Baltimore, MD}
 % Winni
-\affil[15]{FIXME: WINNI's AFFILIATION}
+\affil[15]{Center for Hematology and Regenerative Medicine, Karolinska Institute}
 % Simon, Dom, Ivan
 \affil[16]{Department of Human Genetics, McGill University}
 % Michael
@@ -283,9 +284,21 @@ point in listing it out section by section.}
 \begin{center}
 \includegraphics[width=6cm]{illustrations/example_tree_sequence}
 \end{center}
-\caption{\label{fig-ts-example} Example tree sequence.
-An example tree sequence describing genealogies and genotypes
-for four samples at ten sites.
+\caption{\label{fig-ts-example} An example tree sequence describing
+genealogies and sequence variation for four samples at ten sites
+on a chromosome of twenty bases long.
+Information is stored in a set of tables
+(the tables shown here include only essential columns, and
+much more information can be associated with the various entities).
+The node table
+stores information about sampled and ancestral genomes. The
+edge table describes how these genomes are related along a
+chromosome, and defines the marginal trees at each position.
+The site and mutation tables together describe sequence variation
+% JK: also amongst the ancestral genomes, but only in positions where
+% they inherit from the sample. I thought it would be less confusing
+% to leave this out?
+among the samples.
 }
 \end{figure}
 
@@ -297,78 +310,54 @@ The succinct tree sequence (usually abbreviated to ``tree sequence'')
 was introduced by \cite{kelleher2016efficient}
 to concisely encode genetic ancestry and sequence variation
 and was originally implemented as part of \msprime.
-We subsequently
-extracted the tree sequence code that was independent of simulations
-from \msprime\ into
-a standalone Python and C library, called \tskit~\citep{tskit2021tskit}.
+We subsequently extracted the core tree sequence functionality
+from \msprime\ to create the \tskit\ library,
+which provides a large suite of tools for processing genetic ancestry
+and variation data via Application Programming Interfaces (APIs)
+in the Python and C languages~\citep{tskit2021tskit}.
 While a full discussion of tree sequences and the capabilities
 of \tskit\ is beyond the scope of this article, we summarise
 some aspects that are important for simulation.
 
 % Encoding ancestry
-Before we define tree sequences we require so additional terminology.
-Let a ``ploid'' be the
-% JK this isn't right either, but it's a start.
-% We should add a sentence clarifying what an individual is here.
-% FIXME
-complete set of genetic material that a child inherits from a parent,
-so that, e.g., each human has two ploids~\citep{jouganous2017inferring}.
-Then, given a set of sample ploids
-the structure
-of their genetic ancestry is described by a set of \emph{nodes}
-and \emph{edges} (Fig.~\ref{fig-ts-example}).
-A node in tree sequence terminology corresponds to a ploid,
-associated with its birth time
-and other optional information.
-% JK: Now that we have ploids, maybe it doesn't help to talk about
-% the individual table?
-% Nodes may be
-% associated with an \emph{individual}, so that, a diploid
-% individual is composed of two separate nodes (we omit
-% the individual table in Fig.~\ref{fig-ts-example} as it is optional).
-% While nodes define chromosomal sequences that exist at a specific time,
-% edges define genetic inheritance between these nodes.
-Edges then define the genetic inheritence between nodes.
+% JK: we can say this some other way, this just seemed like the
+% most concise way. People may be irritated by being told what
+% the definition of a "genome" is, but I think we need to be explicit.
+Let us define a genome as the complete set of genetic material
+that a child inherits from one parent. Thus, a diploid individual
+has two monoploid genomes, one inherited from each parent. Since
+each diploid individual lies at the end of two distinct lineages
+of descent, they will be represented by \emph{two} places (nodes)
+in any genealogical tree. In the tree sequence encoding a
+\emph{node} therefore corresponds to a single genome, which
+is associated with its creation time (and other optional information),
+and recorded in a simple tabular format (Fig.~\ref{fig-ts-example}).
+Genetic inheritance between genomes (nodes) % delete?
+is defined by edges.
 An \emph{edge} consists of a
 parent node, a child node and the left and right coordinates
-of the contiguous genomic interval over which
-the child node inherited genetic material from the parent node.
+% JK: This is potentially confusing. Changed "genomic interval"
+% to "chromosome" interval to avoid talking about "the" genome.
+of the contiguous chromosomal segment over which
+the child genome inherited genetic material from the parent genome.
 Parent and child nodes may correspond to ancestor and descendant
-ploids separated by many generations.
-
-Critically, edges can span multiple marginal trees: for
-example, in Fig.~\ref{fig-ts-example} the branch from node
+genome separated by many generations.
+Critically, edges can span multiple marginal trees along the
+genome, and identical node IDs across different trees corresponds
+to the same ancestral genome.
+For example, in Fig.~\ref{fig-ts-example} the branch from node
 0 to 4 is present in both marginal trees, and represented
 by a single edge (the first row in the edge table).
 This simple device, of explicitly associating tree nodes
-with specific ancestral chromosomes and recording the
-genomic intervals over which parent/child relationships exist,
+with specific ancestral genomes and recording the
+contiguous segments over which parent/child relationships exist,
 generalises the original
 ``coalescence records'' concept~\citep{kelleher2016efficient},
 and is the key to the efficiency of tree
 sequences~\citep{
 kelleher2018efficient,kelleher2019inferring,ralph2020efficiently}.
-
-The tree sequence encoding of ancestry as a set of nodes and edges
-as just described, is equivalent to a graph in which edges
-are annotated with a set of disjoint genomic intervals.
-This is closely related to the Ancestral Recombination Graph (ARG),
-a term that is often loosely understood
-to mean some representation of genetic
-ancestry as a graph~\citep[e.g.][]{mathieson2020ancestry}.
-In this sense a succinct tree sequence \emph{is} an ARG.
-More technically, an ARG is a particular
-representation of genetic ancestry as a graph based on the
-flow of ancestral material through recombination and common
-ancestor events~\citep{griffiths1991two,griffiths1997ancestral}.
-In this sense, tree sequences can be used to \emph{encode}
-ARGs without loss of information (although
-the default minimal tree sequence encoding is
-much more concise; see the \nameref{sec-arg} section).
-It should be noted that, despite standardisation
-efforts~\citep{cardona2008extended,mcgill2013graphml}, there is
-no shared format for interchanging ARG data, and no supporting software
-libraries.
+See the \nameref{sec-arg} section below for a discussion of this
+closely related concept.
 
 % OK, back to tree sequences: what about sequence variation?
 The final output of most population genetic simulations is some representation
@@ -1208,6 +1197,32 @@ individual's pedigree from which they have inherited ancestral material.
 Such usage is entirely reasonable, but referring readers back to the
 original Griffiths papers does little to clarify.
 
+
+\jkcomment{This paragraph has been copied from the previous
+version of the Tree Sequences section. Update and merge in here
+as appropriate.}
+The tree sequence encoding of ancestry as a set of nodes and edges
+as just described, is equivalent to a graph in which edges
+are annotated with a set of disjoint genomic intervals.
+This is closely related to the Ancestral Recombination Graph (ARG),
+a term that is often loosely understood
+to mean some representation of genetic
+ancestry as a graph~\citep[e.g.][]{mathieson2020ancestry}.
+In this sense a succinct tree sequence \emph{is} an ARG.
+More technically, an ARG is a particular
+Fepresentation of genetic ancestry as a graph based on the
+flow of ancestral material through recombination and common
+ancestor events~\citep{griffiths1991two,griffiths1997ancestral}.
+In this sense, tree sequences can be used to \emph{encode}
+ARGs without loss of information (although
+the default minimal tree sequence encoding is
+much more concise; see the \nameref{sec-arg} section).
+It should be noted that, despite standardisation
+efforts~\citep{cardona2008extended,mcgill2013graphml}, there is
+no shared format for interchanging ARG data, and no supporting software
+libraries.
+
+
 \begin{figure}
 \begin{subfigure}[t]{0.33\textwidth}
 \centering
@@ -1675,7 +1690,11 @@ will be essential.
 % this final sentence is hard to parse
 
 \section*{Acknowledgements}
-JK is supported by the Robertson Foundation.
+We would like to thank Iain Mathieson and Alywyn Scally for helpful comments
+on the manuscript.
+
+% TODO alphabetise this by author I guess
+Jerome Kelleher is supported by the Robertson Foundation.
 Jere Koskela is supported in part by EPSRC grant EP/R044732/1.
 ADK was supported by NIH awards R01GM117241 and R01HG010774.
 Franz Baumdicker is funded by the Deutsche Forschungsgemeinschaft
@@ -1686,6 +1705,9 @@ Programme SPP 1819: Rapid Evolutionary Adaptation (grant STE 325/17-2) to Wolfga
 Centre (Rann{\'i}s) through an Icelandic Research Fund Grant of  Excellence nr.\ 185151-051 to Einar \'Arnason,  Katr\'in Halld\'orsd\'ottir,  Alison Etheridge,  Wolfgang Stephan, and BE.
 Gregor Gorjanc is supported by the Chancellor's Fellowship of the University of
 Edinburgh and the BBSRC grant to The Roslin Institute BBS/E/D/30002275.
+SG acknowledges funding from the Canada Research Chairs Program, from the
+Canadian Institutes of Health Research PJT 173300, and from the Canadian
+Foundation for Innovation.
 
 \bibliographystyle{plainnat}
 \bibliography{paper}
