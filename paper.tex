@@ -284,9 +284,21 @@ point in listing it out section by section.}
 \begin{center}
 \includegraphics[width=6cm]{illustrations/example_tree_sequence}
 \end{center}
-\caption{\label{fig-ts-example} Example tree sequence.
-An example tree sequence describing genealogies and genotypes
-for four samples at ten sites.
+\caption{\label{fig-ts-example} An example tree sequence describing
+genealogies and sequence variation for four samples at ten sites
+on a chromosome of twenty bases long.
+Information is stored in a set of tables
+(the tables shown here include only essential columns, and
+much more information can be associated with the various entities).
+The node table
+stores information about sampled and ancestral genomes. The
+edge table describes how these genomes are related along a
+chromosome, and defines the marginal trees at each position.
+The site and mutation tables together describe sequence variation
+% JK: also amongst the ancestral genomes, but only in positions where
+% they inherit from the sample. I thought it would be less confusing
+% to leave this out?
+among the samples.
 }
 \end{figure}
 
@@ -344,7 +356,7 @@ generalises the original
 and is the key to the efficiency of tree
 sequences~\citep{
 kelleher2018efficient,kelleher2019inferring,ralph2020efficiently}.
-See the \nameref{sec-arg} section for a discussion of this
+See the \nameref{sec-arg} section below for a discussion of this
 closely related concept.
 
 % OK, back to tree sequences: what about sequence variation?
