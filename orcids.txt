@@ -1,4 +1,4 @@
-@agladstein
+@agladstein         https://orcid.org/0000-0001-7735-2336
 @andrewkern         https://orcid.org/0000-0003-4381-4680
 @apragsdale         https://orcid.org/0000-0003-0715-3432
 @awohns             https://orcid.org/0000-0001-7353-1177
@@ -11,11 +11,11 @@
 @fbaumdicker
 @gbinux             https://orcid.org/0000-0002-3998-5981
 @gertjanbisschop    https://orcid.org/0000-0001-8327-0142
-@grahamgower
+@grahamgower        https://orcid.org/0000-0002-6197-3872
 @gregorgorjanc      https://orcid.org/0000-0001-8008-2787
 @gtsambos           https://orcid.org/0000-0001-7001-2275
 @hugovk             https://orcid.org/0000-0001-5715-8632
-@hyanwong
+@hyanwong           https://orcid.org/0000-0002-3536-6411
 @ivan-krukov
 @jerekoskela        https://orcid.org/0000-0002-2836-8777
 @jeromekelleher     https://orcid.org/0000-0002-7894-5253
