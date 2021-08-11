@@ -654,7 +654,7 @@ and could be split into separate packages.
 The mature and efficient C and Python interfaces for
 \tskit\ make it straightforward to add further information to
 an existing file, and because of its efficient data interchange mechanisms,
-there is no performance penalty for performing additional operations
+there is no performance penalty for additional operations
 in a different Python package.
 Thanks to this interoperability, \msprime's
 mutation generator can work with \emph{any} \tskit\ tree sequence,
@@ -1543,6 +1543,9 @@ simulation produced by \SLiM~\citep{haller2019slim}
 or \fwdpy~\citep{thornton2014cpp} can be picked up and completed
 by another simulator, with complete information
 retained---at scale---is unprecedented.
+This interoperability is indicating an opportunity for
+other forward genetic simulators ~\citep[e.g.][]{Gaynor2021AlphaSimR}
+to leverage tree sequence data format and associated tools. 
 
 \subsection*{Development model}
 \texttt{Msprime} has a large number of features, encompassing
