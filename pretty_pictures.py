@@ -9,39 +9,71 @@ def mutated_tree():
     Make a figure with (a) a tree and (b) some mutations added to it.
     """
     ts = msprime.sim_ancestry(
-        50,
+        2,
         population_size=1e4,
         recombination_rate=0.5e-8,
         sequence_length=1000,
-        random_seed=14,
+        random_seed=46,
     )
 
     model = msprime.F84(kappa=2)
     mts = msprime.sim_mutations(ts, rate=5e-8, model=model, random_seed=5)
 
+    height = 280
+    width = 700
+    top = 50
 
     def do_svg(ts, **kwargs):
 
         # Sizes are probably all wrong here
         style = """\
             @media print {
-              @page { margin: 0; size: 3in 2in}
+              @page { margin: 0; size: 6in 2.5in}
               body { margin: 1.6cm; }
             }
         """
-        ts.draw_svg(
-            size=(300, 200),
+        return ts.draw_svg(
+            size=(width / 2, height - top),
             node_labels={},
             mutation_labels={m.id: m.derived_state for m in ts.mutations()},
             symbol_size=5,
-            force_root_branch=True,
+            # Not sure why this was in here: makes it look like there's a root
+            # branch for mutation to hit?
+            # force_root_branch=True,
             style=style,
-            **kwargs
+            **kwargs,
         )
 
+    font_size = 15
 
-    do_svg(ts, path="illustrations/unmutated_tree.svg")
-    do_svg(mts, path="illustrations/mutated_tree.svg")
+    # I think serif is the default, and matches what we're using for labels?
+    def make_text(text, y, font_family="serif"):
+        return (
+            f'<text x="{width / 4}" y="{y}" font-size="{font_size}" '
+            f'font-family="{font_family}" text-anchor="middle">'
+            f"{text}</text>"
+        )
+
+    svg1 = do_svg(ts)
+    svg2 = do_svg(mts)
+    fig = (
+        f'<svg baseProfile="full" height="{height+top}" version="1.1" width="{width}" '
+        'xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" '
+        'xmlns:xlink="http://www.w3.org/1999/xlink">'
+        f'<g transform="translate(0 {top})">'
+        + make_text("(A)", y=-20)
+        + make_text("sim_ancestry", y=-5, font_family="monospace")
+        + svg1
+        + "</g>"
+        f'<g transform="translate({width/2} {top})">'
+        + make_text("(B)", y=-20)
+        + make_text("sim_mutations", y=-5, font_family="monospace")
+        + svg2
+        + "</g>"
+        "</svg>"
+    )
+    with open("illustrations/mutated_tree.svg", "w") as f:
+        f.write(fig)
 
 
 @click.command()

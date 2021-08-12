@@ -8,7 +8,6 @@ FIGURES=figures/mutations-perf.pdf\
 
 ILLUSTRATIONS=\
 	illustrations/mutated_tree.pdf\
-	illustrations/unmutated_tree.pdf\
 	illustrations/arg-ts.pdf\
 	illustrations/arg-ts-simplified.pdf\
 	illustrations/example_tree_sequence.pdf
@@ -22,13 +21,14 @@ paper.pdf: paper.tex paper.bib ${DATA} ${FIGURES} ${ILLUSTRATIONS}
 figures/%.pdf:
 	python3 evaluation/plot.py $*
 
-illustrations/mutated_tree.svg illustrations/unmutated_tree.svg : pretty_pictures.py
+illustrations/mutated_tree.svg: pretty_pictures.py
 	python3 $< mutated-tree
 
 illustrations/arg-ts.svg: pretty_pictures.py
 	python3 $< arg-ts
 
 %.pdf : %.svg
+	# Have to use Chromium here to get rid of PDF pages
 	chromium --headless --no-margins --print-to-pdf=$@ $<
 	# inkscape $< --export-pdf=$@
 
