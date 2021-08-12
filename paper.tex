@@ -325,7 +325,7 @@ some aspects that are important for simulation.
 % the definition of a "genome" is, but I think we need to be explicit.
 Let us define a genome as the complete set of genetic material
 that a child inherits from one parent. Thus, a diploid individual
-has two monoploid genomes, one inherited from each parent. Since
+has two (monoploid) genomes, one inherited from each parent. Since
 each diploid individual lies at the end of two distinct lineages
 of descent, they will be represented by \emph{two} places (nodes)
 in any genealogical tree. In the tree sequence encoding a
@@ -341,7 +341,7 @@ parent node, a child node and the left and right coordinates
 of the contiguous chromosomal segment over which
 the child genome inherited genetic material from the parent genome.
 Parent and child nodes may correspond to ancestor and descendant
-genome separated by many generations.
+genomes separated by many generations.
 Critically, edges can span multiple marginal trees along the
 genome, and identical node IDs across different trees corresponds
 to the same ancestral genome.
@@ -350,7 +350,7 @@ For example, in Fig.~\ref{fig-ts-example} the branch from node
 by a single edge (the first row in the edge table).
 This simple device, of explicitly associating tree nodes
 with specific ancestral genomes and recording the
-contiguous segments over which parent/child relationships exist,
+contiguous segments over which parent-child relationships exist,
 generalises the original
 ``coalescence records'' concept~\citep{kelleher2016efficient},
 and is the key to the efficiency of tree
@@ -378,7 +378,7 @@ fully integrated part of \tskit's tree sequence data model, and genetic
 variation is encoded by recording sites at which mutations
 have occurred, and where each mutation at those sites
 has occurred on the marginal tree.
-Crucially, the genetic sequences themselves are never stored, or indeed directly
+Crucially, the genome sequences themselves are never stored, or indeed directly
 represented in memory (unless explicitly decoded using \tskit\ APIs).
 It may at first seem inconvenient to have only this indirect representation
 of the genome sequences, but it is extremely powerful.
