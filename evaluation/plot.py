@@ -4,7 +4,8 @@ import pandas as pd
 import numpy as np
 import click
 
-plt.rcParams.update({'font.size': 8})
+plt.rcParams.update({"font.size": 8})
+
 
 @click.group()
 def cli():
@@ -16,8 +17,9 @@ def save(name):
     plt.savefig(f"figures/{name}.png")
     plt.savefig(f"figures/{name}.pdf")
 
+
 def two_panel_fig(**kwargs):
-    fig, (ax1, ax2)  = plt.subplots(1, 2, figsize=(6, 3), **kwargs)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(6, 3), **kwargs)
     ax1.set_title("(A)")
     ax2.set_title("(B)")
     return fig, (ax1, ax2)
@@ -90,7 +92,6 @@ def gc_perf():
         xycoords="data",
     )
     ax2.set_ylim(bottom=0)
-    plt.tight_layout()
 
     save("gc-perf")
 
@@ -144,7 +145,6 @@ def sweeps_perf():
         xy=(largest_L, largest_value),
         xycoords="data",
     )
-    plt.tight_layout()
     save("sweeps-perf")
 
 
@@ -166,7 +166,7 @@ def dtwf_perf():
     for tool in ["msprime", "hybrid", "ARGON"]:
         dft = df[df.tool == tool]
         ax1.plot(dft.L, dft.user_time, label=label_map[tool])
-        line, = ax2.plot(dft.L, dft.memory, label=label_map[tool])
+        (line,) = ax2.plot(dft.L, dft.memory, label=label_map[tool])
         lines[tool] = line
 
     ax1.set_xlabel("Sequence length (Megabases)")
@@ -212,13 +212,13 @@ def ancestry_perf():
 
     fig, axes = two_panel_fig()
 
-    def annotate_rho(ax, rho, x_offset, text):
+    def annotate_rho(ax, rho, x_offset, y_offset, text):
         ax.axvline(rho / 4, color="0.8", linestyle="-.")
-        ax.text(rho / 4 + x_offset, 0, text, fontstyle="italic")
+        ax.text(rho / 4 + x_offset, y_offset, text, fontstyle="italic")
 
-    annotate_rho(axes[0], aratha_chr1, 200, "Arabidopsis thaliana")
-    annotate_rho(axes[1], human_chr1, 1000, "Homo sapiens")
-    annotate_rho(axes[1], canfam_chr1, 1000, "Canis familiaris")
+    annotate_rho(axes[0], aratha_chr1, 100, 1.5, "Arabidopsis\nthaliana")
+    annotate_rho(axes[1], human_chr1, -5000, 100, "Homo sapiens")
+    annotate_rho(axes[1], canfam_chr1, 1000, 0, "Canis familiaris")
     # axes[1].axvline(dromel_chr2l)
 
     rgb = matplotlib.cm.get_cmap("Set1")(np.linspace(0.0, 1.0, len(set(df["N"]))))
