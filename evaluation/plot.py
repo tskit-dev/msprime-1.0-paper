@@ -289,6 +289,16 @@ def ancestry_perf():
                 fitted_quadratic(dromel_chr2l) / 3600,
                 "hours",
             )
+        max_x = np.max(rho[df["time"] <= tl] / 4)
+        ticks = np.arange(
+                0,
+                1.1 * max_x,
+                10 ** np.floor(np.log10(max_x)),
+        )
+        ax.set_xticks(ticks)
+        ax.set_xticklabels(
+                [f"{x:.0f}"for x in ticks]
+        )
 
     prop = {"size": 7}
     axes[0].legend(handles=legend_adds, prop=prop)
