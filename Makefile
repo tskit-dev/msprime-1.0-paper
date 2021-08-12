@@ -8,8 +8,6 @@ FIGURES=figures/mutations-perf.pdf\
 
 ILLUSTRATIONS=\
 	illustrations/mutated_tree.pdf\
-	illustrations/arg-ts.pdf\
-	illustrations/arg-ts-simplified.pdf\
 	illustrations/example_tree_sequence.pdf
 
 paper.pdf: paper.tex paper.bib ${DATA} ${FIGURES} ${ILLUSTRATIONS}
