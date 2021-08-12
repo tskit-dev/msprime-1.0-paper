@@ -21,7 +21,7 @@ paper.pdf: paper.tex paper.bib ${DATA} ${FIGURES} ${ILLUSTRATIONS}
 figures/%.pdf:
 	python3 evaluation/plot.py $*
 
-illustrations/mutated_tree.svg illustrations/unmutated_tree.svg : pretty_pictures.py
+illustrations/mutated_tree.svg: pretty_pictures.py
 	python3 $< mutated-tree
 
 illustrations/arg-ts.svg: pretty_pictures.py

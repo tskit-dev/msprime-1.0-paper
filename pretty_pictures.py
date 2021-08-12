@@ -19,6 +19,10 @@ def mutated_tree():
     model = msprime.F84(kappa=2)
     mts = msprime.sim_mutations(ts, rate=5e-8, model=model, random_seed=5)
 
+    height = 280
+    width = 700
+    top = 50
+    hpad = 0
 
     def do_svg(ts, **kwargs):
 
@@ -30,7 +34,7 @@ def mutated_tree():
             }
         """
         return ts.draw_svg(
-            size=(300, 200),
+            size=(width / 2 - hpad, height - top),
             node_labels={},
             mutation_labels={m.id: m.derived_state for m in ts.mutations()},
             symbol_size=5,
@@ -40,21 +44,31 @@ def mutated_tree():
             style=style,
             **kwargs
         )
+
+    font_size = 15
+
+    # I think serif is the default, and matches what we're using for labels?
+    def make_text(text, y, font_family="serif"):
+        return (
+            f'<text x="{width / 4}" y="{y}" font-size="{font_size}" '
+            f'font-family="{font_family}" text-anchor="middle">'
+            f'{text}</text>'
+        )
+
     svg1 = do_svg(ts)
     svg2 = do_svg(mts)
-    height = 280
-    width = 700
-    top = 40
     fig = (
         f'<svg baseProfile="full" height="{height+top}" version="1.1" width="{width}" '
          'xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" '
          'xmlns:xlink="http://www.w3.org/1999/xlink">'
         f'<g transform="translate(0 {top})">'
-        '<text x="2" y="-10" font-size="20">a</text>'
+        + make_text("(A)", y=-20)
+        + make_text("sim_ancestry", y=-5, font_family="monospace")
         + svg1 +
         '</g>'
         f'<g transform="translate({width/2} {top})">'
-        '<text x="2" y="-10" font-size="20">b</text>'
+        + make_text("(B)", y=-20)
+        + make_text("sim_mutations", y=-5, font_family="monospace")
         + svg2 +
         '</g>'
         '</svg>'
