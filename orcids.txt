@@ -8,7 +8,7 @@
 @daniel-goldstein   https://orcid.org/0000-0002-5967-5569
 @domnelson
 @eldonb             https://orcid.org/0000-0001-9354-2391
-@fbaumdicker
+@fbaumdicker        https://orcid.org/0000-0001-9106-7259
 @gbinux             https://orcid.org/0000-0002-3998-5981
 @gertjanbisschop    https://orcid.org/0000-0001-8327-0142
 @grahamgower        https://orcid.org/0000-0002-6197-3872
