@@ -25,23 +25,42 @@ def mutated_tree():
         # Sizes are probably all wrong here
         style = """\
             @media print {
-              @page { margin: 0; size: 3in 2in}
+              @page { margin: 0; size: 6in 2.5in}
               body { margin: 1.6cm; }
             }
         """
-        ts.draw_svg(
+        return ts.draw_svg(
             size=(300, 200),
             node_labels={},
             mutation_labels={m.id: m.derived_state for m in ts.mutations()},
             symbol_size=5,
-            force_root_branch=True,
+            # Not sure why this was in here: makes it look like there's a root
+            # branch for mutation to hit?
+            # force_root_branch=True,
             style=style,
             **kwargs
         )
-
-
-    do_svg(ts, path="illustrations/unmutated_tree.svg")
-    do_svg(mts, path="illustrations/mutated_tree.svg")
+    svg1 = do_svg(ts)
+    svg2 = do_svg(mts)
+    height = 280
+    width = 700
+    top = 40
+    fig = (
+        f'<svg baseProfile="full" height="{height+top}" version="1.1" width="{width}" '
+         'xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" '
+         'xmlns:xlink="http://www.w3.org/1999/xlink">'
+        f'<g transform="translate(0 {top})">'
+        '<text x="2" y="-10" font-size="20">a</text>'
+        + svg1 +
+        '</g>'
+        f'<g transform="translate({width/2} {top})">'
+        '<text x="2" y="-10" font-size="20">b</text>'
+        + svg2 +
+        '</g>'
+        '</svg>'
+    )
+    with open("illustrations/mutated_tree.svg", "w") as f:
+        f.write(fig)
 
 
 @click.command()
