@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import click
 
+plt.rcParams.update({'font.size': 8})
 
 @click.group()
 def cli():
@@ -15,6 +16,12 @@ def save(name):
     plt.savefig(f"figures/{name}.png")
     plt.savefig(f"figures/{name}.pdf")
 
+def two_panel_fig(**kwargs):
+    fig, (ax1, ax2)  = plt.subplots(1, 2, figsize=(6, 3), **kwargs)
+    ax1.set_title("(A)")
+    ax2.set_title("(B)")
+    return fig, (ax1, ax2)
+
 
 @click.command()
 def mutations_perf():
@@ -25,15 +32,13 @@ def mutations_perf():
     df.L /= 1e6
     rates = np.unique(df.rate)
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6), sharey=True)
-    ax1.set_title("(A)")
+    fig, (ax1, ax2) = two_panel_fig(sharey=True)
     ax1.set_xlabel("Sample size")
     dfL = df[df.L == 10]
     for rate in rates:
         dfr = dfL[dfL.rate == rate].sort_values("n")
         ax1.plot(dfr.n, dfr.time, label=f"rate={rate}")
 
-    ax2.set_title("(B)")
     ax2.set_xlabel("Sequence length (Megabases)")
     ax1.set_ylabel("Time (seconds)")
 
@@ -60,19 +65,15 @@ def gc_perf():
     df.user_time /= 3600
 
     lines = {}
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
-    for tool in ["SimBac", "fastSimBac", "msprime"]:
+    fig, (ax1, ax2) = two_panel_fig()
+    for tool in ["msprime", "SimBac", "fastSimBac"]:
         dft = df[df.tool == tool]
         (line,) = ax1.plot(dft.sample_size, dft.user_time, label=tool)
         ax2.plot(dft.sample_size, dft.memory, label=tool, color=line.get_color())
         lines[tool] = line
 
-    ax1.set_title("(A)")
-    ax2.set_title("(B)")
     ax1.set_xlabel("Sample size")
     ax1.set_ylabel("Time (hours)")
-    ax1.set_ylim(0, None)
-    ax2.set_ylim(0, None)
     ax2.set_xlabel("Sample size")
     ax2.set_ylabel("Memory (GiB)")
     ax1.legend()
@@ -84,10 +85,11 @@ def gc_perf():
     ax1.annotate(
         f"{round(largest_value * 60)} mins",
         textcoords="offset points",
-        xytext=(-30, 15),
+        xytext=(-30, 5),
         xy=(largest_n, largest_value),
         xycoords="data",
     )
+    ax2.set_ylim(bottom=0)
     plt.tight_layout()
 
     save("gc-perf")
@@ -108,7 +110,7 @@ def sweeps_perf():
     # include it here as well.
     df["time"] = (df.user_time + df.sys_time) / 60
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+    fig, (ax1, ax2) = two_panel_fig()
     lines = {}
     for tool in ["msprime", "discoal"]:
         dft = df[df.tool == tool]
@@ -116,8 +118,6 @@ def sweeps_perf():
         lines[tool] = line
         ax2.plot(dft.L, dft.memory, label=tool)
 
-    ax1.set_title("(A)")
-    ax2.set_title("(B)")
     ax1.set_xlabel("Sequence length (Kilobases)")
     ax1.set_ylabel("Time (minutes)")
     ax2.set_xlabel("Sequence length (Kilobases)")
@@ -131,7 +131,7 @@ def sweeps_perf():
     ax1.annotate(
         f"{round(largest_value * 60)} seconds",
         textcoords="offset points",
-        xytext=(-30, 15),
+        xytext=(-30, 5),
         xy=(largest_L, largest_value),
         xycoords="data",
     )
@@ -140,7 +140,7 @@ def sweeps_perf():
     ax2.annotate(
         f"{round(largest_value * 1024)} MiB",
         textcoords="offset points",
-        xytext=(-30, 15),
+        xytext=(-30, 5),
         xy=(largest_L, largest_value),
         xycoords="data",
     )
@@ -161,16 +161,30 @@ def dtwf_perf():
     df.memory /= 1024 ** 3
     label_map = {"ARGON": "ARGON", "msprime": "DTWF", "hybrid": "DTWF + Hudson"}
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
-    for tool in ["ARGON", "msprime", "hybrid"]:
+    fig, (ax1, ax2) = two_panel_fig()
+    lines = {}
+    for tool in ["msprime", "hybrid", "ARGON"]:
         dft = df[df.tool == tool]
         ax1.plot(dft.L, dft.user_time, label=label_map[tool])
-        ax2.plot(dft.L, dft.memory, label=label_map[tool])
+        line, = ax2.plot(dft.L, dft.memory, label=label_map[tool])
+        lines[tool] = line
 
     ax1.set_xlabel("Sequence length (Megabases)")
     ax1.set_ylabel("Time (seconds)")
     ax2.set_xlabel("Sequence length (Megabases)")
     ax2.set_ylabel("Memory (GiB)")
+
+    dfmsp = df[df["tool"] == "hybrid"]
+    largest_L = np.array(dfmsp.L)[-1]
+    largest_value = np.array(dfmsp.memory)[-1]
+    ax2.plot([largest_L], [largest_value], "o", color=lines["hybrid"].get_color())
+    ax2.annotate(
+        f"{round(largest_value * 1024)} MiB",
+        textcoords="offset points",
+        xytext=(-30, 5),
+        xy=(largest_L, largest_value),
+        xycoords="data",
+    )
     ax1.legend()
     save("dtwf-perf")
 
@@ -196,8 +210,7 @@ def ancestry_perf():
     dromel_chr2l = 4 * 1720600 * 23513712 * 2.40462600791e-08
     print(f"Dromel rho {dromel_chr2l:.2g}")
 
-    # This is the figsize used in other two-panel plots
-    fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+    fig, axes = two_panel_fig()
 
     def annotate_rho(ax, rho, x_offset, text):
         ax.axvline(rho / 4, color="0.8", linestyle="-.")
@@ -277,10 +290,9 @@ def ancestry_perf():
                 "hours",
             )
 
-    axes[0].legend(handles=legend_adds)
-    axes[1].legend()
-    axes[0].set_title("A")
-    axes[1].set_title("B")
+    prop = {"size": 7}
+    axes[0].legend(handles=legend_adds, prop=prop)
+    axes[1].legend(prop=prop)
 
     save("ancestry-perf")
 

@@ -620,7 +620,7 @@ the two have been conflated in practice.
         \label{fig-mutated-trees}
         Visualisation of the separation between ancestry and mutation
         simulation. (A) The result of an invocation of \texttt{sim\_ancestry}
-        is two trees along a 1Kb chunk of genome relating two diploid samples.
+        is two trees along a 1kb chunk of genome relating two diploid samples.
         (B) This ancestry is provided as the input to \texttt{sim\_mutations},
         which adds mutations.
         Graphics produced using \tskit's \texttt{draw\_svg} method.
@@ -675,7 +675,7 @@ against both theoretical expectations and output from
 \Pyvolve~\citep{spielman2015pyvolve}.
 
 \begin{figure}
-    \includegraphics[width=\textwidth]{figures/mutations-perf}
+    \includegraphics{figures/mutations-perf}
 \caption{\label{fig-mutations-perf} Time required to run
 \texttt{sim\_mutations} on tree sequences generated
 by \texttt{sim\_ancestry} (with a population size of $10^4$
@@ -780,7 +780,7 @@ implement them more efficiently in future versions.
 
 \begin{figure}
 \begin{center}
-    \includegraphics[width=\textwidth]{figures/ancestry-perf}
+    \includegraphics{figures/ancestry-perf}
 \end{center}
 \caption{\label{fig-ancestry-perf}
     Running time for \msprime\
@@ -972,7 +972,7 @@ conversion in \msprime\ 1.0, and validated the output against
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=\textwidth]{figures/gc-perf}
+\includegraphics{figures/gc-perf}
 \end{center}
 \caption{\label{fig-gc-perf}Comparison of simulation performance
 using \msprime, \SimBac, and \FastSimBac\ for varying sample sizes,
@@ -1416,7 +1416,7 @@ and \discoal~\citep{kern2016discoal}.
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=\textwidth]{figures/sweeps-perf}
+\includegraphics{figures/sweeps-perf}
 \end{center}
 \caption{\label{fig-selection-perf}Comparison of selective sweep simulation
 performance in \msprime\ and \discoal\ (Intel Xeon E5-2680 CPU).
@@ -1424,8 +1424,8 @@ We report the total CPU time and maximum memory usage when simulating 100
 replicates for 10 samples in a model
 with a single selective sweep in its history where the benefical
 allele had a scaled selection coefficient of $2Ns=1000$,
-the per-base recombination rate of $10^{-9}$, and we allowed
-the sequence length to vary between 1kb-200kb.}
+a per-base recombination rate of $10^{-9}$ and sequence
+length varying from 1kb--200kb.}
 \end{figure}
 
 Following the approach taken in \discoal, we
@@ -1470,7 +1470,7 @@ The method is described in more detail by~\cite{nelson2020accounting}.
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=\textwidth]{figures/dtwf-perf}
+\includegraphics{figures/dtwf-perf}
 \end{center}
 \caption{\label{fig-dtwf-perf} Comparison of Discrete Time Wright-Fisher
 (DTWF) simulation performance in \msprime\ and \ARGON\ (Intel Xeon E5-2680 CPU).
@@ -1481,6 +1481,7 @@ point is the average over $5$ replicate simulations.
 We show observations for \ARGON, \msprime's DTWF implementation (``DWTF'')
 and a hybrid simulation of 100 generations of the DTWF followed by
 the standard coalescent with recombination model (``DTWF + Hudson'').
+Memory usage for \msprime's DTWF and hybrid simulations are very similar.
 We ran \ARGON\ with a mutation rate of $0$ and with minimum output options,
 to ensure we are measuring only ancestry simulation time.}
 \end{figure}
