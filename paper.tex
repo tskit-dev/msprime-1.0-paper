@@ -1182,46 +1182,18 @@ material~\citep{ethier1990two},
 and the ``little'' ARG in which we only track genetic ancestors.
 Over time, the interpretation of the term
 has shifted away from the original definition as a stochastic
-process, to a representation of a \emph{particular} genetic ancestry
+process, to a representation of a particular genetic ancestry
 using common ancestor and recombination
-events~\citep[e.g.][]{minichiello2006mapping}.
-More recently, ARGs have essentially come to mean any graph-like representation
-of genetic ancestry; for example,
-\cite{mathieson2020ancestry} informally define an ARG as the subset of an
-individual's pedigree from which they have inherited ancestral material.
-% Do we include this sentence? It's true, I'm sure: someone new to the field reads
-% Iain and Aylwyn's paper, and goes, hmm, this ARG thing sounds interesting,
-% let's follow up on that Griffiths reference... Maybe this is part of the
-% reason why ARGs have such a fearsome reputation for being difficult:
-% there's a basic confusion about what they actually *are*.
-Such usage is entirely reasonable, but referring readers back to the
-original Griffiths papers does little to clarify.
-
-
-\jkcomment{This paragraph has been copied from the previous
-version of the Tree Sequences section. Update and merge in here
-as appropriate.}
-The tree sequence encoding of ancestry as a set of nodes and edges
-as just described, is equivalent to a graph in which edges
-are annotated with a set of disjoint genomic intervals.
-This is closely related to the Ancestral Recombination Graph (ARG),
-a term that is often loosely understood
-to mean some representation of genetic
-ancestry as a graph~\citep[e.g.][]{mathieson2020ancestry}.
-In this sense a succinct tree sequence \emph{is} an ARG.
-More technically, an ARG is a particular
-Fepresentation of genetic ancestry as a graph based on the
-flow of ancestral material through recombination and common
-ancestor events~\citep{griffiths1991two,griffiths1997ancestral}.
-In this sense, tree sequences can be used to \emph{encode}
-ARGs without loss of information (although
-the default minimal tree sequence encoding is
-much more concise; see the \nameref{sec-arg} section).
-It should be noted that, despite standardisation
-efforts~\citep{cardona2008extended,mcgill2013graphml}, there is
-no shared format for interchanging ARG data, and no supporting software
-libraries.
-
+events~\citep[e.g.][]{minichiello2006mapping},
+to being synonymous with the genetic
+ancestry of a sample, without any specific details of how genetic
+material disperses~\citep{mathieson2020ancestry}.
+Under the latter interpretation,
+the tree sequence encoding of genetic ancestry (described above)
+clearly \emph{is} an ARG: the nodes and edges
+define a graph in which edges are annotated with the
+set of disjoint genomic intervals
+through which ancestry flows.
 
 \begin{figure}
 \begin{subfigure}[t]{0.33\textwidth}
@@ -1387,8 +1359,7 @@ The graph is not explicitly represented in memory, but is partially
 present through the extant lineages and the ancestral material they carry
 over time. We do not output the graph directly, but
 rather store the information required to recover the genealogical
-history as nodes and edges in a tree sequence (see the \nameref{sec-ts} section),
-or ``coalescence records'' in the original terminology~\citep{kelleher2016efficient}.
+history as nodes and edges in a tree sequence.
 This is far more efficient than outputting the simulated ARG in its entirety.
 For a given scaled recombination rate $\rho$
 (setting aside the dependency on the sample size $n$)
@@ -1401,13 +1372,13 @@ quadratic and a linear dependency on $\rho$ is profound, and shows why
 large simulations cannot output an ARG in practice.
 
 Although by default \msprime\ outputs tree sequences that contain full information
-about the genealogical trees, their correlation structure along the genome,
-and the ancestral haplotypes on which coalescences occurred, some information
+about the genealogical trees, their correlation structure along the chromosome,
+and the ancestral genomes on which coalescences occurred, some information
 is lost in this mapping down from ARG space to the minimal tree sequence
 form. In particular, we lose
-information about ancestral haplotypes that were common ancestors but
+information about ancestral genomes that were common ancestors but
 in which no coalescences occurred, and also information about the precise time
-and genomic location of recombination events. In most cases, such
+and chromosomal location of recombination events. In most cases, such
 information is of little relevance as it is in principle unknowable,
 but there are occasions such as visualisation or computing likelihoods (see
 below) in which is useful. We therefore provide
@@ -1560,7 +1531,7 @@ by another simulator, with complete information
 retained---at scale---is unprecedented.
 This interoperability is indicating an opportunity for
 other forward genetic simulators ~\citep[e.g.][]{Gaynor2021AlphaSimR}
-to leverage tree sequence data format and associated tools. 
+to leverage tree sequence data format and associated tools.
 
 \subsection*{Development model}
 \texttt{Msprime} has a large number of features, encompassing
