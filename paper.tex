@@ -618,16 +618,12 @@ the two have been conflated in practice.
     \includegraphics{illustrations/mutated_tree}
     \caption{
         \label{fig-mutated-trees}
-        Visualisation of the separation between ancestry and mutation simulation:
-        \texttt{sim\_ancestry} produces ancestry
-        (\textbf{left;} shown are two trees along a 1Kb chunk of genome
-        relating 200 samples),
-        and \texttt{sim\_mutations} adds mutations
-        (\textbf{right;} fourteen nucleotide mutations have been added).
-        Graphics produced with \tskit's \texttt{draw\_svg} method.
-        \plrcomment{TODO: fix up the axis labels, if we like this figure?}
-        \jkcomment{Why 200 samples? Seems like far too many to me, how about 5?}
-        \grgcomment{Add \texttt{sim\_ancestry} and \texttt{sim\_mutations} as subfigure titles?}
+        Visualisation of the separation between ancestry and mutation
+        simulation. (A) The result of an invocation of \texttt{sim\_ancestry}
+        is two trees along a 1Kb chunk of genome relating two diploid samples.
+        (B) This ancestry is provided as the input to \texttt{sim\_mutations},
+        which adds mutations.
+        Graphics produced using \tskit's \texttt{draw\_svg} method.
     }
 \end{figure}
 
