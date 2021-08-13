@@ -1040,6 +1040,7 @@ of gene conversion to be roughly twice the size of the output from a simulation
 with the same rate of crossovers.
 
 \subsection*{Demography}
+\label{sec-demography}
 % TODO should we put in some citations here for the models? Hardly seems
 % necessary.
 One of the key applications of population genetic simulations is to generate
@@ -1130,7 +1131,8 @@ bottleneck histories.
 We have implemented instantaneous bottlenecks in \msprime~1.0
 using a variant of Hudson's linear time single-locus coalescent
 algorithm~\citep{hudson1990gene}. Instantaneous bottlenecks are specified
-by adding events to the Demography object (see the Demography section)
+by adding events to the \texttt{Demography} class
+(see the \nameref{sec-demography} section)
 and can be used in combination with any other demographic modelling
 features. We have validated the results of these simulations by comparing
 against analytical expectations for coalescence times and the
@@ -1150,7 +1152,8 @@ assumptions of the Kingman coalescent, and are better modelled by
 `multiple-merger' coalescents \citep{DK99,P99,S99,S00,MS01}, in which more than
 two lineages can merge in a given event. Multiple-merger coalescent processes
 have also been shown to be relevant for modelling the effects of selection on
-gene genealogies \citep{Gillespie909,DS04}.
+gene genealogies
+\citep{Gillespie909,DS04,desai2013genetic,neher2013genealogies,schweinsberg2017rigorous}.
 
 Although multiple merger coalescents have been of significant theoretical
 interest for around two decades, there has been little practical software
@@ -1163,7 +1166,7 @@ based on a multiple-merger model, and
 multiple merger processes
 as part of the Quetzal framework~\citep{becheler2019quetzal}.
 The \texttt{Beta-Xi-Sim} simulator~\citep{koskela2018multi,koskela2019robust}
-includes a number of extensions to the Beta-coalescent.
+also includes a number of extensions to the Beta-coalescent.
 None of these methods work with large genomes, and very little work
 has been performed on simulating multiple merger processes with recombination.
 
@@ -1174,7 +1177,7 @@ These simulation models have been extensively validated against
 analytical results from the site frequency
 spectrum~\citep{birkner2013statistical,blath2016site,hobolth2019phase}
  as well as more general properties of coalescent processes.
-Please see the Appendix for more details and model derivations.
+See the Appendix for more details and model derivations.
 
 \subsection*{Ancestral Recombination Graphs}
 \label{sec-arg}
@@ -1360,13 +1363,16 @@ nodelabel/.style={font=\scriptsize}}
 \caption{\label{fig-arg} (A) A simple ARG in which a recombination
 occurs at position 0.3; (B) the equivalent topology depicted as a tree
 sequence, including the recombination node; (C) the same tree sequence
-topology ``simplified'' down to its minimal tree sequence representation.}
+topology ``simplified'' down to its minimal tree sequence representation.
+Note that the internal nodes have been renumbered in the simplified
+representation, so that, e.g., node 5 in (C) corresponds to node 6 in
+(A) and (B).}
 \end{figure}
 
 For our purposes, an ARG is a realisation of the coalescent with
 recombination, in the Griffiths (little ARG) sense.
 As described in detail by~\cite{kelleher2016efficient}, Hudson's algorithm
-works by dynamically generating and traversing a little ARG.
+works by dynamically traversing a little ARG.
 The graph is not explicitly represented in memory, but is partially
 present through the extant lineages and the ancestral material they carry
 over time. We do not output the graph directly, but
@@ -1449,19 +1455,19 @@ Following the approach taken in \discoal, we
 have implemented selective sweeps in \msprime\ by generating
 sweep trajectories from a jump process approximation to the conditional diffusion
 of an allele bound for
-fixation~\citep{coop2004ancestral}---see the appendix for more details.
+fixation~\citep{coop2004ancestral}---see the Appendix for more details.
 This implementation facilitates future changes to generalise sweep models to
-changing population sizes as well as selection from standing variation,
-both of which are features that are planned for the near future.
+changing population sizes as well as selection from standing variation.
 Moreover because this implements the basic infrastructure for the structured
 coalescent, adding support for similar situations,
 such as inversions~\citep{peischl2013sequential}, is straightforward.
 Fig.~\ref{fig-selection-perf} shows that \msprime\ has far better
 CPU time and memory performance than \discoal. We have previously shown
 that \msprime\ is much more efficient than \msms\ and \cosiTwo\
-when simulating without selection~\citep{kelleher2016efficient},
-thus we believe \msprime\ to be the most efficient
-coalescent simulator when simulating sweeps.
+when simulating without selection~\citep{kelleher2016efficient}.
+% jk - this just seems clumsy to me: surely the conclusion is clear?
+% and we therefore believe \msprime\ to be the most efficient
+% coalescent simulator when simulating sweeps.
 
 \subsection*{Discrete time Wright-Fisher}
 The coalescent is an idealised model and makes many simplifying assumptions,
@@ -1473,8 +1479,8 @@ number of recombination events in the recent past results in
 more than the biologically possible $2^t$ ancestors in
 $t$ diploid generations~\citep{nelson2020accounting}.
 This pathological behaviour results in
-Identity-by-descent,
-long-range linkage disequilibrium (LD), and ancestry patterns deviating from
+identity-by-descent,
+long-range linkage disequilibrium and ancestry patterns deviating from
 Wright-Fisher expectations, and the bias grows with larger sample
 sizes~\citep{wakeley2012gene,bhaskar2014distortion,nelson2020accounting}.
 Precisely this problem occurs when simulating modern human datasets,
@@ -1525,7 +1531,7 @@ the more ancient history.
 A unique feature of \msprime\ is its ability to simulate
 genetic ancestries by extending an existing partial
 genetic ancestry. Given a tree sequence that
-is complete up until time $t$ as input
+is complete up until time $t$ ago as input
 (where marginal trees may or may not have fully coalesced),
 \msprime\ can efficiently obtain the segments of ancestral material
 present at this time, and then run the simulation backwards in time from there.
@@ -1542,9 +1548,9 @@ simulation produced by \SLiM~\citep{haller2019slim}
 or \fwdpy~\citep{thornton2014cpp} can be picked up and completed
 by another simulator, with complete information
 retained---at scale---is unprecedented.
-This interoperability is indicating an opportunity for
+This interoperability indicates an opportunity for
 other forward genetic simulators ~\citep[e.g.][]{Gaynor2021AlphaSimR}
-to leverage tree sequence data format and associated tools.
+to leverage the tree sequence data format and associated tools.
 
 \subsection*{Development model}
 \texttt{Msprime} has a large number of features, encompassing
@@ -1561,10 +1567,9 @@ lines of Python, with suites of 122 C tests (7K lines of code) and
 1350 Python tests (22K lines of code). These tests are run
 automatically on different operating systems on each pull request
 (where a contributor proposes a code change), using standard Continuous
-Integration (CI) methodology. Other CI services check code formatting
-and for common errors, as well as producing reports on the level of
-test coverage, e.g., pinpointing areas where additional unit tests may
-be required.
+Integration (CI) methodology. Other CI services
+check for common errors, code formatting issues, and produce reports on
+the level of test coverage for the proposed change.
 
 Unit tests are vital for ensuring software quality and correctness, but
 they are usually of little value in assessing the statistical properties
@@ -1593,7 +1598,6 @@ to write reliable, stable software if no-one used it?
 \section*{Discussion}
 
 % We can simulate so much more now
-
 This release makes \msprime\ able to produce simulations
 with a great deal more biological realism, without a loss in speed and efficiency.
 This ability will allow researchers to perform more robust
@@ -1627,8 +1631,9 @@ in shared infrastructure and mentorship in good software development practice.
 % THERE IS A BETTER WAY!!!
 Scientific software is vital apparatus, and must be engineered
 to a high quality if we are to trust its results. There is a growing
-realisation across the sciences \citet[OTHER CITATIONS]{siepel2019challenges}
-% Maybe cite: https://www.biorxiv.org/content/10.1101/092205v3
+realisation across the sciences
+% More citations?
+\citep{siepel2019challenges,harris2020array,gardner2021sustained}
 that investing in
 shared community infrastructure produces better results than a
 proliferation of individually maintained tools, allowing scientists
@@ -1636,11 +1641,11 @@ to focus on their specific questions rather than software engineering.
 \texttt{Msprime} 1.0 is the result of such a community process,
 with features added by motivated users, taking advantage of the
 established development practices and infrastructure.
-% I'm going out on a limb here - do folks agree?
+% JK: I'm going out on a limb here - do folks agree?
 % PLR- personally I have learned SO MUCH, and I'm passing it on to others
 Software development in a welcoming community,
 with mentorship by experienced developers,
-is a hugely useful experience for many users.
+is a useful experience for many users.
 The skills that contributors learn
 can lead to greatly increased productivity in subsequent
 work (e.g., through more reliable code and better debugging skills).
