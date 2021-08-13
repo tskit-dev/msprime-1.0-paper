@@ -153,24 +153,34 @@ Medicine, Baltimore, MD}
 \maketitle
 
 \begin{abstract}
-Coalescent simulation is a key tool in population genetics and
-has been integral to theoretical developments since its beginnings.
-Because of the ease with which the basic coalescent model can be simulated,
-a large number of different simulators have been developed. However,
-the coalescent with recombination is far more challenging to simulate,
-and, until recently, it was not possible to simulate efficiently.
-The \msprime\ software has revolutionised
-coalescent simulation, making it possible to simulate millions
-of whole genomes for the first time. We summarise the many features
-of \msprime\ 1.0, which is built around a core model of efficiently
-implementing recombination via the succinct tree sequence data
-structure. Moreover, development of \msprime\ is collaborative
-and open source, which reduces duplication of effort and promotes
+Stochastic simulation is a key tool in population genetics,
+since the models involved are often analytically intractable
+and simulation is usually the only way of obtaining ground-truth data to
+evaluate inferences.
+Because of this necessity, a large number
+of specialised simulation programs have been developed, each
+filling a particular niche, but with largely overlapping functionality
+and a substantial duplication of effort.
+Since its introduction, the \msprime\ simulator has substantially
+expanded the scope of coalescent simulation, enabling the
+simulation and efficient analysis of datasets on a far
+larger scale than previously possible.
+Here, we introduce \msprime\ version 1.0,
+which is built around a core model of efficiently
+implementing ancestry and mutation simulations using
+the succinct tree sequence data structure and \tskit\ library.
+We summarise \msprime's many features, and show that
+its performance is excellent, often many times faster
+and more memory efficient than specialised alternatives.
+These high-performance features have been built using a collaborative,
+open source development model,
+which reduces duplication of effort and promotes
 software quality via community engagement.
 % "Bazaar" development model: https://en.wikipedia.org/wiki/The_Cathedral_and_the_Bazaar
 \end{abstract}
 
-\textbf{Keywords:} Coalescent simulation, Python, Ancestral Recombination Graphs
+\textbf{Keywords:} Simulation, Coalescent, Mutations, Ancestral Recombination
+Graphs
 
 \section*{Introduction}
 
