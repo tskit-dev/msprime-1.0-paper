@@ -2,6 +2,8 @@ import click
 import tskit
 import msprime
 
+import matplotlib.pyplot as plt
+
 
 @click.command()
 def mutated_tree():
@@ -9,21 +11,22 @@ def mutated_tree():
     Make a figure with (a) a tree and (b) some mutations added to it.
     """
     ts = msprime.sim_ancestry(
-        2,
+        3,
         population_size=1e4,
-        recombination_rate=0.5e-8,
+        recombination_rate=1e-8,
         sequence_length=1000,
-        random_seed=46,
+        random_seed=96,
     )
 
     model = msprime.F84(kappa=2)
-    mts = msprime.sim_mutations(ts, rate=5e-8, model=model, random_seed=5)
+    mts = msprime.sim_mutations(ts, rate=1e-7, model=model, random_seed=4)
 
     height = 280
     width = 700
     top = 50
 
     def do_svg(ts, **kwargs):
+        colours = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
         # Sizes are probably all wrong here
         style = """\
@@ -31,15 +34,21 @@ def mutated_tree():
               @page { margin: 0; size: 6in 2.5in}
               body { margin: 1.6cm; }
             }
-        """
+            """
+        for j in range(ts.num_individuals):
+            style += f"\n.node.i{j} > .sym {{fill: {colours[j]}}}"
+
+        mut_colour = colours[ts.num_individuals]
+        style += (
+            f".mut text {{fill: {mut_colour}; font-style: italic}}"
+            f".mut .sym {{fill: none; stroke: {mut_colour}}}"
+        )
+
         return ts.draw_svg(
             size=(width / 2, height - top),
             node_labels={},
             mutation_labels={m.id: m.derived_state for m in ts.mutations()},
             symbol_size=5,
-            # Not sure why this was in here: makes it look like there's a root
-            # branch for mutation to hit?
-            # force_root_branch=True,
             style=style,
             **kwargs,
         )
