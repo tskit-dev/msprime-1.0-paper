@@ -286,13 +286,13 @@ a command line interface~\citep[e.g.][]{hudson2002generating,kern2016discoal},
 a text-based input file
 format~\citep[e.g.][]{guillaume2006nemo,excoffier2011fastsimcoal,shlyakhter2014cosi2},
 or a mixture of both.
-Command line interfaces make it very easy to run simple
-simulations, but as model complexity and the number of parameters specified increase,
+Command line interfaces make it easy to run simple
+simulations, but as model complexity and the number of parameters increase,
 they become difficult to understand and
 error-prone~\citep{ragsdale2020lessons,gower2021demes}.
 Specifying parameters through a text file alleviates this problem to a degree,
 but lacks flexibility, for example, when running simulations with parameters
-drawn from some distribution. In practice, for any reproducible simulation
+drawn from a distribution. In practice, for any reproducible simulation
 project users will write a script
 to generate the required command lines or input parameter files,
 invoke the simulation engine, and process the results in some way.
@@ -324,11 +324,25 @@ in the influential simulation analysis of
 \cite{martin2017human} were only detected because the pipeline
 could be easily run and reanalysed~\citep{ragsdale2020lessons,martin2020erratum}.
 
+\begin{figure}
+    \includegraphics{illustrations/mutated_tree}
+    \caption{
+        \label{fig-mutated-trees}
+        Visualisation of the separation between ancestry and mutation
+        simulation. (A) The result of an invocation of \texttt{sim\_ancestry}
+        is two trees along a 1kb chunk of genome relating two diploid samples.
+        (B) This ancestry is provided as the input to \texttt{sim\_mutations},
+        which adds mutations.
+        Graphics produced using \tskit's \texttt{draw\_svg} method.
+    }
+\end{figure}
+
 A major change for the \msprime\ 1.0 release is the introduction of a new set of APIs,
 designed in part to avoid sources of error (see the Demography section) but
 also to provide more appropriate defaults while keeping compatibility with
 existing code. In the new APIs, ancestry and mutation simulation are fully
-separated, with the \texttt{sim\_ancestry} and \texttt{sim\_mutations}
+separated (see Fig.~\ref{fig-mutated-trees}),
+with the \texttt{sim\_ancestry} and \texttt{sim\_mutations}
 functions replacing the legacy \texttt{simulate} function. Among other changes,
 the new APIs default to discrete genome coordinates and finite sites mutations,
 making the default settings more realistic and resolving a major source of confusion and error.
@@ -614,19 +628,6 @@ evolution~\citep[e.g.][]{mailund2005coasim,excoffier2011fastsimcoal,
 virgoulay2021gspace}. Thus, despite the logical separation between
 the tasks of simulating ancestry and neutral sequence evolution,
 the two have been conflated in practice.
-
-\begin{figure}
-    \includegraphics{illustrations/mutated_tree}
-    \caption{
-        \label{fig-mutated-trees}
-        Visualisation of the separation between ancestry and mutation
-        simulation. (A) The result of an invocation of \texttt{sim\_ancestry}
-        is two trees along a 1kb chunk of genome relating two diploid samples.
-        (B) This ancestry is provided as the input to \texttt{sim\_mutations},
-        which adds mutations.
-        Graphics produced using \tskit's \texttt{draw\_svg} method.
-    }
-\end{figure}
 
 Part of the reason for this poor record of software reuse and modularity is the
 lack of standardised file formats, and in particular, the absence of common
@@ -1176,14 +1177,11 @@ material~\citep{ethier1990two},
 % consequently wait an exponentially large time until all sampled lineages
 % coalesce into a single ancestor~\citep{ethier1990two},
 and the ``little'' ARG in which we only track genetic ancestors.
-Over time, the interpretation of the term
-has shifted away from the original definition as a stochastic
-process, to a representation of a particular genetic ancestry
-using common ancestor and recombination
-events~\citep[e.g.][]{minichiello2006mapping},
-to being synonymous with the genetic
-ancestry of a sample, without any specific details of how genetic
-material disperses~\citep{mathieson2020ancestry}.
+Over time, usage of the term
+has shifted away from its original definition as a stochastic process,
+to being interpreted as a representation of a particular genetic ancestry
+as a graph, without necessarily following the specific details of the Griffiths
+formulation~\citep[e.g.][]{minichiello2006mapping,mathieson2020ancestry}.
 Under the latter interpretation,
 the tree sequence encoding of genetic ancestry (described above)
 clearly \emph{is} an ARG: the nodes and edges
