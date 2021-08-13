@@ -761,12 +761,11 @@ Common ancestor events merge the ancestral material of two lineages,
 and result in coalescences in the marginal trees when ancestral
 segments overlap.
 Recombination events split the ancestral material for some lineage
-at a given breakpoint, creating two independent
+at a breakpoint, creating two independent
 lineages. Using the appropriate data structures~\citep{kelleher2016efficient},
-this process is much more efficient to simulate than either
-methods based on the Ancestral Recombination Graph
-formulation~\citep{griffiths1991two,griffiths1997ancestral}
-or the left-to-right approach~\citep{wiuf1999recombination,wiuf1999ancestry}.
+this process is much more efficient to simulate
+than the equivalent left-to-right
+approach~\citep{wiuf1999recombination,wiuf1999ancestry}.
 In \msprime\ 1.0 recombination rates can vary along a chromosome, allowing
 us to simulate recombination hotspots and patterns
 of recombination from empirical maps.
@@ -785,7 +784,7 @@ effects of the approximation are less well understood for larger
 sample sizes, and several approaches have been proposed
 that allow simulations to more closely approximate the coalescent
 with recombination~\citep{chen2009fast,wang2014new,staab2015scrm}.
-The SMC and SMC' models are available
+The SMC and SMC' models are supported
 in \msprime\ 1.0. However, they are currently implemented using a
 naive rejection sampling approach, and are somewhat slower
 to simulate than the exact coalescent with recombination. These
@@ -871,9 +870,10 @@ since increasing sample size 100-fold
 only increases run time by a factor of 2 or so. However, the
 $\log^2{n}$ factor implied by Eq.~\eqref{eqn-hsw-bound}
 (the sum is a harmonic number and can be approximated by $\log{n}$)
-is not well supported by observed runtimes except possibly at very
-large values of $\rho$. So it seems a different dependence
-on $n$ would be required to accurately predict simulation time for a
+is not well supported by observed run times (or numbers of events)
+except possibly at very
+large values of $\rho$. It therefore appears that a different dependence
+on $n$ is required to accurately predict simulation time for a
 given $\rho$ and $n$.
 
 Fig.~\ref{fig-ancestry-perf} is a useful yardstick, allowing us
@@ -893,12 +893,12 @@ is about 23.5Mb long with an average recombination rate of around $2.4 \times 10
 so $L \approx 0.57$,
 and with $N_e = 1.7 \times 10^6$ \citep{li2006inferring},
 $N_e L \approx 10^6$, so extrapolating the curve in Fig.~\ref{fig-ancestry-perf}B
-predicts that simulation would require around 177 hours.
+predicts that simulation would require around 177 hours for 1000 samples.
 For such large values of $\rho$  we recommend
 users consider approximate simulations. Since \msprime\ does not currently
 have efficient implementations of approximate coalescent with recombination
-models, we recommend using SMC based methods such as \scrm\,
-particularly for moderate sample sizes.
+models, we recommend using SMC based methods such as \scrm,
+particularly for small sample sizes.
 In practice, to predict the running time of a given
 simulation in \msprime, we recommend that users
 measure run time in a series of simulations with short genome lengths and
@@ -908,7 +908,7 @@ as in Fig.~\ref{fig-ancestry-perf}.
 It is important to note that the quadratic curves in the two
 panels of Fig.~\ref{fig-ancestry-perf} are different, and
 predicting the run times of days-long simulations
-using the timing of minutes-long runs is unlikely to be very accurate.
+using the timing of seconds-long runs is unlikely to be very accurate.
 
 What about simulations with changing population size?
 To understand how run time depends on demography
@@ -1057,6 +1057,11 @@ can be tracked through time in as much detail as required: each tree node is
 automatically associated with the population in which it arose, the location of
 lineages can be recorded at any given time via census events, or every lineage
 migration can be recorded.
+Large demographic models can be simulated efficiently in version \msprime\ 1.0,
+since we only consider populations that contain lineages and
+have non-zero migration rates when generating migration event
+waiting times. This is a considerable improvement
+over version 0.x, which scaled quadratically with the number of populations.
 
 A major change for \msprime\ 1.0 is the introduction of the new Demography API,
 designed to address a design flaw in the \msprime\ 0.x interface which lead to
@@ -1070,30 +1075,30 @@ the definition from other simulation details. An instance of this class is then
 provided as a parameter to the new \texttt{sim\_ancestry} function,
 substantially reducing the potential for error.
 Another improvement over the
-0.X APIs is the introduction of explicit population split and admixture events,
+0.x APIs is the introduction of explicit population split and admixture events,
 and a population state machine that ensures that lineages cannot migrate into
 (or be sampled from) inactive populations. This demography model is compatible
 with the Demes standard~\citep{gower2021demes}, and the \texttt{Demography}
 class supports importing and exporting Demes models.
 Models previously constructed using the 0.x API can be seamlessly imported into
 the \texttt{Demography} class, and we also support importing demographic
-models in the form of Newick species tree descriptions, as well as those
-produced by programs such as *BEAST~\citep{heled2009bayesian}.
+models from Newick species trees and the output of programs
+like *BEAST~\citep{heled2009bayesian}.
 
-The \texttt{DemographyDebugger} can output detailed information for debugging
-demographic models, but also provides
-methods to compute a suite of numerical predictions about the location of
-lineages over time, for example the coalescence rates for two or more lineages
+The \texttt{DemographyDebugger} provides detailed information about
+demographic models as well as numerical methods to make predictions
+about these models. For example, we can compute
+the coalescence rates for two or more lineages
 drawn from populations at specified times in the past,
-which can be inverted to obtain the ``inverse instantaneous coalescence rate'',
-or IICR of \citet{chikhi2018iicr}.
+which can inverted to obtain the
+``inverse instantaneous coalescence rate'' of \citet{chikhi2018iicr}.
 Many popular approaches in population genetics use the distribution of
 coalescence rates between pairs of lineages in one or more populations to infer
 effective population sizes over
 time~\citep{li2011inference,sheehan2013estimating,schiffels2014inferring} or
 split times and subsequent migration rates between
 populations~\citep{wang2020tracking}.
-The \texttt{DemographyDebugger} provides a valuable
+These numerical methods provide a valuable
 ground-truth when evaluating such inference methods, as illustrated by
 \cite{adrion2020community}.
 
