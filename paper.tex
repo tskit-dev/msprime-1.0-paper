@@ -393,7 +393,7 @@ and was originally implemented as part of \msprime.
 We subsequently extracted the core tree sequence functionality
 from \msprime\ to create the \tskit\ library,
 which provides a large suite of tools for processing genetic ancestry
-and variation data via Application Programming Interfaces (APIs)
+and variation data via APIs
 in the Python and C languages~\citep{tskit2021tskit}.
 While a full discussion of tree sequences and the capabilities
 of \tskit\ is beyond the scope of this article, we summarise
@@ -446,7 +446,7 @@ simulations, we usually have three steps: (1) simulate
 the genetic ancestry, and optionally output the resulting marginal trees;
 (2) simulate sequence evolution conditioned on this ancestry by generating
 mutations (see the \nameref{sec-mutations} section); and (3) output the
-resulting sequences by percolating the effects of the mutations through
+resulting nucleotide sequences by percolating the effects of the mutations through
 the trees. Information about the mutations
 themselves---e.g., where they have occurred on the
 trees---is usually not retained or made available for subsequent analysis.
@@ -459,7 +459,8 @@ variation is encoded by recording sites at which mutations
 have occurred, and where each mutation at those sites
 has occurred on the marginal tree.
 Crucially, the genome sequences themselves are never stored, or indeed directly
-represented in memory (unless explicitly decoded using \tskit\ APIs).
+represented in memory (although \tskit\ can output the variant matrix
+in various formats, if required).
 It may at first seem inconvenient to have only this indirect representation
 of the genome sequences, but it is extremely powerful.
 Firstly, the storage space required for simulations is dramatically
@@ -525,20 +526,21 @@ stringent checks for the internal consistency of the data model.
 % The output - what do we get out?
 \subsection*{Data analysis}
 \label{sec-data-analysis}
-The point of running simulations is to generate data, and there
-are two important ways in which the \tskit\ tree sequences output by
-\msprime\ are more useful than classical methods:
-they are more efficient and they contain more information.
-We will consider these points in turn.
+% We could drop this first sentence?
+% The point of running simulations is to generate data, and there
+% are two important ways in which the \tskit\ tree sequences output by
+% \msprime\ are more useful than classical methods:
+% they are more efficient and they contain more information.
+% We will consider these points in turn.
 
 The standard way of representing simulation data is
-to render the results in a text format. For example,
-\ms~\citep{hudson2002generating} outputs a set of sequences
+to render the results in a text format, which must subsequently
+be parsed and processed as part of some analysis pipeline. For example,
+\ms\ outputs a set of sequences
 and can also optionally output the marginal trees along
 the genome in Newick format,
 and variants of this approach are used by many simulators.
-Text files have many advantages, but are slow to process
-at scale.
+Text files have many advantages, but are slow to process at scale.
 The ability to efficiently process simulation results is
 particularly important in simulation-based inference methods
 such as Approximate Bayesian Computation
@@ -566,20 +568,32 @@ ABC-NN~\citep{csillery2012abc,blum2010abc} use large
 numbers of weakly informative statistics,
 making the need to efficiently compute statistics from simulation
 results all the more acute.
+By using the stable APIs and efficient data interchange mechanisms
+provided by \tskit,
+the results of an \msprime\ simulation can be immediately processed,
+without format conversion overhead.
+The \tskit\ library has a rich suite of population
+genetic statistics and other utilities, and is in many cases
+orders of magnitude faster than matrix-based methods for
+large sample sizes~\citep{ralph2020efficiently}. Thus, the combination
+of \msprime\ and \tskit\ substantially increases the overall
+efficiency of many simulation analysis pipelines.
 
 Classical text based output formats like \ms\ are inefficient to process,
-but also lack a great deal of important information.
+but also lack a great deal of important information about the simulated
+process.
 The tree-by-tree topology information output by simulators in Newick
 format lacks any concept of node identity,
 and means that we cannot reliably infer information about ancestors
 from the output. Because Newick stores branch lengths rather
-than node times, numerical precision issues also arise when summing
-over many short branches~\citep{mcgill2013graphml}.
+than node times, numerical precision issues also arise for
+large trees~\citep{mcgill2013graphml}.
 Numerous forks  of simulators have been created to access information not provided
 in the output. For example, \ms\  has been forked to
 output information about migrating segments~\citep{rosenzweig2016powerful},
-information about ancestral lineages~\citep{chen2013asymptotic},
-an array of population genetic statistics~\citep{ramos2007mlcoalsim}
+ancestral lineages~\citep{chen2013asymptotic},
+% leaving this out because it's not about hidden information
+% an array of population genetic statistics~\citep{ramos2007mlcoalsim}
 % Any more?
 and \ms's fork \msHOT~\citep{hellenthal2007mshot},
 has in turn been forked to output information on local
@@ -590,15 +604,15 @@ stored via options such as \texttt{record\_migrations} or
 \texttt{record\_full\_arg} (see the \nameref{sec-arg} section) and
 can be efficiently and conveniently processed via \tskit\ APIs.
 
-These problems of inefficient and limited access to the simulated
-data are comprehensively solved by \msprime\ and \tskit. Complete
-information about ancestry and mutation in simulations is immediately
-available to the user in a single integrated data structure
-(rather than multiple independent files), with no intermediate
-processing required.
-Users can subsequently compute precisely the information that they
-require using the powerful suite of population genetic statistics
-and other methods available in \tskit.
+% These problems of inefficient and limited access to the simulated
+% data are comprehensively solved by \msprime\ and \tskit. Complete
+% information about ancestry and mutation in simulations is immediately
+% available to the user in a single integrated data structure
+% (rather than multiple independent files), with no intermediate
+% processing required.
+% Users can subsequently compute precisely the information that they
+% require using the powerful suite of population genetic statistics
+% and other methods available in \tskit.
 
 % Stuff we simulate: mutations
 \subsection*{Simulating mutations}
