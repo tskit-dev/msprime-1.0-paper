@@ -186,18 +186,22 @@ Graphs
 
 The coalescent
 process~\citep{kingman1982coalescent,hudson1983testing,tajima1983evolutionary}
-models the ancestry of a set of sampled genomes. Specifically,
-the coalescent provides a mathematical description of the
+models the ancestry of a set of sampled genomes,
+providing a mathematical description of the
 genealogical tree that relates sampled genomes to one another.
-The coalescent has proved to be a powerful model,
-and it is now central to
+It has proved to be a powerful model,
+and is now central to
 population genetics~\citep{hudson1990gene,hein2004gene,wakely2008coalescent}.
-Among the most impactful contributions of the coalescent since its origins
-~\citep{hudson1983testing} is that it provides a path towards more efficient
-simulation of population genetic samples than is possible using traditional,
-forwards in time simulation.
-As a result of this great utility, dozens of different simulation tools have been
-developed over the decades~\citep{carvajal2008simulation,liu2008survey,
+The coalescent is a very efficient framework for population genetic
+simulation, because it allows us to simulate the genetic ancestry for
+a sample from a Wright-Fisher population, without explicitly representing
+the population in memory or stepping through the generations.
+Indeed, \cite{hudson1983testing} independently derived the
+% Anyone disagree here? That's the impression I get from the paper.
+coalescent \emph{in order to} efficiently simulate data.
+This efficiency, and the adaptability of the model to different
+applications has lead to dozens of different simulation tools
+being developed over the decades~\citep{carvajal2008simulation,liu2008survey,
 arenas2012simulation,yuan2012overview,hoban2012computer,yang2014critical,
 peng2015genetic}.
 Two technological developments of recent years, however,
@@ -210,16 +214,10 @@ a previously reasonable assumption, is no longer defensible and
 we must fully account for recombination.
 While a genealogical tree relating $n$ samples in the single-locus coalescent
 can be simulated in $O(n)$ time~\citep{hudson1990gene},
-the coalescent with recombination, which generates multiple correlated trees, is
-far more challenging.
-% JK will need to revise this sentence, in light of what we'll be saying
-% down further about needing the SMC for very large rho.
-Programs such as Hudson's classical \ms~\citep{hudson2002generating}
-can only simulate short segments under the influence of recombination,
-and, until recently, approximate models of
-recombination~\citep{mcvean2005approximating,staab2015scrm}
-were necessary to simulate whole chromosomes.
-
+the coalescent with recombination is far more challenging,
+and methods such as
+Hudson's classical \ms~\citep{hudson2002generating}
+can only simulate short segments under the influence of recombination.
 The second major challenge to existing coalescent simulators is the
 exponential increase in sample size of genetic studies. Human datasets like the
 UK Biobank~\citep{bycroft2018genome} and
@@ -227,7 +225,8 @@ gnomAD~\citep{karczewski2020mutational} now consist of hundreds of
 thousands of genomes and many other datasets on a similar scale
 are becoming available~\citep{tanjo2021practical}.
 Classical simulators such as \ms\ and even fast approximate methods
-such as \scrm\ simply cannot cope with such a large number of samples.
+such as \scrm~\citep{staab2015scrm} simply cannot
+cope with such a large number of samples.
 
 The \msprime\ simulator~\citep{kelleher2016efficient,kelleher2020coalescent}
 has greatly increased the scope of coalescent simulations,
@@ -247,13 +246,15 @@ Through a rigorous open-source community development process,
 \msprime\ has gained a large number of features since its introduction,
 making it a highly efficient and flexible platform for population
 genetic simulation.
-This paper marks the release of \msprime\ 1.0, a state-of-the-art
-coalescent simulator both with respect to efficiency as well as feature-richness.
-Here we provide an overview of the extensive abilities of \msprime\ 1.0,
+This paper marks the release of \msprime\ 1.0.
+We provide an overview of its extensive features,
 demonstrate its performance advantages over alternative software,
-and finally lay out future plans for
-further open-source development of what we hope will become an industry
-standard piece of computational infrastructure for the genetics community.
+and discuss opportunites for ongoing
+open-source community-based development.
+
+% and finally lay out future plans for
+% further open-source development of what we hope will become an industry
+% standard piece of computational infrastructure for the genetics community.
 
 \section*{Results}
 
