@@ -188,7 +188,7 @@ The coalescent
 process~\citep{kingman1982coalescent,hudson1983testing,tajima1983evolutionary}
 models the ancestry of a set of sampled genomes,
 providing a mathematical description of the
-genealogical tree that relates sampled genomes to one another.
+genealogical tree that relates the samples to one another.
 It has proved to be a powerful model,
 and is now central to
 population genetics~\citep{hudson1990gene,hein2004gene,wakely2008coalescent}.
@@ -200,7 +200,7 @@ Indeed, \cite{hudson1983testing} independently derived the
 % Anyone disagree here? That's the impression I get from the paper.
 coalescent \emph{in order to} efficiently simulate data.
 This efficiency, and the adaptability of the model to different
-applications has lead to dozens of different simulation tools
+applications has led to dozens of different simulation tools
 being developed over the decades~\citep{carvajal2008simulation,liu2008survey,
 arenas2012simulation,yuan2012overview,hoban2012computer,yang2014critical,
 peng2015genetic}.
@@ -237,7 +237,7 @@ wohns2021unified},
 introduced as part of \msprime\, makes it possible to store
 such huge simulations in a few gigabytes, several orders
 of magnitude smaller than commonly used formats.
-The succinct tree sequence has also lead to major advances in forwards-time
+The succinct tree sequence has also led to major advances in forwards-time
 simulation~\citep{kelleher2018efficient,haller2018tree},
 ancestry inference~\citep{kelleher2019inferring,wohns2021unified}
 and calculation of population genetic
@@ -1076,7 +1076,7 @@ waiting times. This is a considerable improvement
 over version 0.x, which scaled quadratically with the number of populations.
 
 A major change for \msprime\ 1.0 is the introduction of the new Demography API,
-designed to address a design flaw in the \msprime\ 0.x interface which lead to
+designed to address a design flaw in the \msprime\ 0.x interface which led to
 a number of avoidable errors in downstream
 simulations~\citep{ragsdale2020lessons}. Briefly, the 0.x API required three
 separate parameters be provided to the \texttt{simulate} function to describe a
