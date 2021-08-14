@@ -25,14 +25,20 @@ def mutated_tree():
     width = 700
     top = 50
 
-    def do_svg(ts, **kwargs):
-        colours = plt.rcParams['axes.prop_cycle'].by_key()['color']
+    colours = plt.rcParams['axes.prop_cycle'].by_key()['color']
+    print(colours)
 
-        # Sizes are probably all wrong here
+    def do_svg(ts, **kwargs):
+
+        # The page style here is just for Chromium. We shouldn't
+        # need it for other vonersion options.
         style = """\
             @media print {
               @page { margin: 0; size: 6in 2.5in}
               body { margin: 1.6cm; }
+            }
+            text {
+                font-family:DejaVuSans;
             }
             """
         for j in range(ts.num_individuals):
@@ -56,7 +62,7 @@ def mutated_tree():
     font_size = 15
 
     # I think serif is the default, and matches what we're using for labels?
-    def make_text(text, y, font_family="serif"):
+    def make_text(text, y, font_family="sans"):
         return (
             f'<text x="{width / 4}" y="{y}" font-size="{font_size}" '
             f'font-family="{font_family}" text-anchor="middle">'
@@ -83,6 +89,10 @@ def mutated_tree():
     )
     with open("illustrations/mutated_tree.svg", "w") as f:
         f.write(fig)
+
+    # When we use SVG 1.1 in the tskit output we can convert directly
+    # import cairosvg
+    # cairosvg.svg2pdf(url='illustrations/mutated_tree.svg', write_to='image.pdf')
 
 
 @click.command()

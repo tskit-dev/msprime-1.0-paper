@@ -26,7 +26,10 @@ illustrations/arg-ts.svg: pretty_pictures.py
 	python3 $< arg-ts
 
 %.pdf : %.svg
-	# Have to use Chromium here to get rid of PDF pages
+	# Have to use Chromium here because we use svg2. Hopefully
+	# we'll fix this soon and we'll be able to use simpler
+	# conversion tools, or convert directly within the
+	# generating script.
 	chromium --headless --no-margins --print-to-pdf=$@ $<
 	# inkscape $< --export-pdf=$@
 
