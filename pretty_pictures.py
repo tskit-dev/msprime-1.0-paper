@@ -77,12 +77,12 @@ def mutated_tree():
         'xmlns:xlink="http://www.w3.org/1999/xlink">'
         f'<g transform="translate(0 {top})">'
         + make_text("(A)", y=-20)
-        + make_text("sim_ancestry", y=-5, font_family="monospace")
+        + make_text("ts = sim_ancestry(3, ...)", y=-5, font_family="monospace")
         + svg1
         + "</g>"
         f'<g transform="translate({width/2} {top})">'
         + make_text("(B)", y=-20)
-        + make_text("sim_mutations", y=-5, font_family="monospace")
+        + make_text("mts = sim_mutations(ts, ...)", y=-5, font_family="monospace")
         + svg2
         + "</g>"
         "</svg>"
