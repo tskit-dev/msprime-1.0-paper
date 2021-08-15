@@ -261,34 +261,19 @@ open-source community-based development.
 % standard piece of computational infrastructure for the genetics community.
 
 \section*{Results}
+In the following sections we describe the main features of \msprime\ 1.0,
+focusing on the aspects that are either new for this version, or in which
+our approach differs significantly from classical methods. Where appropriate,
+we benchmark \msprime\ against other simulators, but the comparisons are
+illustrative and not intended to be systematic or exhaustive. Please
+see~\cite{kelleher2016efficient} for a performance comparison of
+\msprime\ against simulators such as \ms, \msms, and \scrm.
 
-\jkcomment{Give a quick roadmap,
-like, we discuss the underlying tree sequence object,
-then mutations (because it's quite separate from the rest)
-and then a bunch of new features for ancestry simulation. There's no
-point in listing it out section by section.}
-
-% JK: commented out this text as it's misleading and would confuse
-% people. We should adapt it when writing the roadmap when the structure
-% has settled down.
-
-% In this section we describe the main features of \msprime\ 1.0. Methodologically,
-% there exists a logical separation between simulating coalescent genealogies and
-% adding neutral mutations onto these genealogies. Simulating genetic ancestry
-% requires methods that model the underlying reproductive process (e.g. Moran,
-% Wright-Fisher, etc.) as well as accounting for recombination of various sorts
-% (including gene conversion), demography, and selection. These methods are
-% discussed in the first N subsections below. One of the strengths of the
-% approach taken in msprime is that neutral mutations can be retrospectively
-% added to simulated genealogies. Methods to generate mutations, and thereby
-% generate genetic variation, are therefore discussed in a separate and subsequent
-% subsection. Finally, we describe the \msprime\ API, which is designed to enforce
-% the distinction between simulating genealogies and mutations; discuss the
-% interoperability provided by the use of \tskit\, the tree sequence toolkit;
-% and highlight the open source development process which allows for \msprime\
-% to be extended by addition of new features while ensuring robustness and
-% maintainability of the core codebase.
-
+% jk: I started writing a roadmap here, but it's quite hard to do concisely
+% and you either end up leaving sections out, or just summarising them
+% one-by-one which makes it long and tedious. I think readers can either read
+% through fully if they're interested, or just skim the section titles which
+% should give them a good idea of whether they want to read it or not.
 
 % The input - how do we run simulations?
 \subsection*{User interface}
