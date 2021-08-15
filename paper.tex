@@ -198,20 +198,23 @@ a sample from a Wright-Fisher population, without explicitly representing
 the population in memory or stepping through the generations.
 Indeed, \cite{hudson1983testing} independently derived the
 % Anyone disagree here? That's the impression I get from the paper.
-coalescent \emph{in order to} efficiently simulate data under a neutral model.
-This efficiency, and the adaptability of the model to different
-applications has led to dozens of different simulation tools
+coalescent \emph{in order to} efficiently simulate data,
+and he used these simulations to characterise an analytically
+intractable distribution.
+This efficiency and the great utility of simulations for a wide
+range of purposes has led to dozens of different tools
 being developed over the decades~\citep{carvajal2008simulation,liu2008survey,
 arenas2012simulation,yuan2012overview,hoban2012computer,yang2014critical,
 peng2015genetic}.
 
-Two technological developments of recent years
+Two technological developments of recent years, however,
 pose major challenges to the majority of existing simulation methods.
 Firstly, fourth-generation sequencing technologies have made
 complete chromosome-level assemblies possible~\citep{miga2020telomere},
 % Some citations here? Darwin tree of life maybe?
 and high quality assemblies are now available for many species.
-Thus, modelling genetic variation data as a series of unlinked loci
+Thus, modelling genetic variation data as a series of unlinked
+non-recombining loci
 is no longer a reasonable approximation, and
 we must fully account for recombination.
 While a genealogical tree relating $n$ samples in the single-locus coalescent
@@ -234,7 +237,8 @@ cope with such a large number of samples.
 
 The \msprime\ simulator~\citep{kelleher2016efficient,kelleher2020coalescent}
 has greatly increased the scope of coalescent simulations,
-and it is now straightforward to simulate millions of whole chromosomes.
+and it is now straightforward to simulate millions of whole chromosomes
+for a wide range of organisms.
 The ``succinct tree sequence'' data
 structure~\citep{kelleher2016efficient,kelleher2018efficient,kelleher2019inferring,
 wohns2021unified},
@@ -1462,12 +1466,7 @@ Moreover because this implements the basic infrastructure for the structured
 coalescent, adding support for similar situations,
 such as inversions~\citep{peischl2013sequential}, is straightforward.
 Fig.~\ref{fig-selection-perf} shows that \msprime\ has far better
-CPU time and memory performance than \discoal. We have previously shown
-that \msprime\ is much more efficient than \msms\ and \cosiTwo\
-when simulating without selection~\citep{kelleher2016efficient}.
-% jk - this just seems clumsy to me: surely the conclusion is clear?
-% and we therefore believe \msprime\ to be the most efficient
-% coalescent simulator when simulating sweeps.
+CPU time and memory performance than \discoal.
 
 \subsection*{Discrete time Wright-Fisher}
 The coalescent is an idealised model and makes many simplifying assumptions,
@@ -1598,17 +1597,17 @@ to write reliable, stable software if no-one used it?
 \section*{Discussion}
 
 % We can simulate so much more now
-This release makes \msprime\ able to produce simulations
-with a great deal more biological realism, without a loss in speed and efficiency.
-This ability will allow researchers to perform more robust
-power analyses, more reliably test new methods,
-and carry out more reliable inferences,
-without worrying that gene conversion or back mutation might be sabotaging
-their applications to real data.
+The 1.0 release of \msprime\ marks a major increase in the
+biological realism of simulations
+and the breadth of available features, without a loss of efficiency.
+These abilities will allow researchers to perform more robust power analyses,
+more reliably test new methods,
+carry out more reliable inferences,
+and explore the properties of more theoretical models.
 These advances have only been possible thanks to a distributed,
 collaborative model of software development,
 and the work of many people.
-We hope the tool continues to be useful to many.
+% We hope the tool continues to be useful to many.
 
 % Simulation software is historically a beautiful shitshow
 
@@ -1633,7 +1632,7 @@ Scientific software is vital apparatus, and must be engineered
 to a high quality if we are to trust its results. There is a growing
 realisation across the sciences
 % More citations?
-\citep{siepel2019challenges,harris2020array,gardner2021sustained}
+\citep[e.g.][]{siepel2019challenges,harris2020array,gardner2021sustained}
 that investing in
 shared community infrastructure produces better results than a
 proliferation of individually maintained tools, allowing scientists
@@ -1654,8 +1653,8 @@ features they require are missing will continue to contribute to
 \msprime, leading to a community project that is both high quality
 and sustainable in the long term.
 
-
-The tree sequence developed for \msprime\ allows users a view of not only
+The succinct tree sequence data structure developed
+for \msprime\ allows users a view of not only
 genetic variation but also the genetic ancestry that produced that variation.
 Recent breakthroughs in methods to infer genetic ancestry in recombining
 organisms~\citep{kelleher2019inferring,
