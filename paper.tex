@@ -186,59 +186,66 @@ Graphs
 
 The coalescent
 process~\citep{kingman1982coalescent,hudson1983testing,tajima1983evolutionary}
-models the ancestry of a set of sampled genomes. Specifically,
-the coalescent provides a mathematical description of the
-genealogical tree that relates sampled genomes to one another.
-The coalescent has proved to be a powerful model,
-and it is now central to
+models the ancestry of a set of sampled genomes,
+providing a mathematical description of the
+genealogical tree that relates the samples to one another.
+It has proved to be a powerful model,
+and is now central to
 population genetics~\citep{hudson1990gene,hein2004gene,wakely2008coalescent}.
-Among the most impactful contributions of the coalescent since its origins
-~\citep{hudson1983testing} is that it provides a path towards more efficient
-simulation of population genetic samples than is possible using traditional,
-forwards in time simulation.
-As a result of this great utility, dozens of different simulation tools have been
-developed over the decades~\citep{carvajal2008simulation,liu2008survey,
+The coalescent is a very efficient framework for population genetic
+simulation, because it allows us to simulate the genetic ancestry for
+a sample from a Wright-Fisher population, without explicitly representing
+the population in memory or stepping through the generations.
+Indeed, \cite{hudson1983testing} independently derived the
+% Anyone disagree here? That's the impression I get from the paper.
+coalescent \emph{in order to} efficiently simulate data,
+and he used these simulations to characterise an analytically
+intractable distribution.
+This efficiency and the great utility of simulations for a wide
+range of purposes has led to dozens of different tools
+being developed over the decades~\citep{carvajal2008simulation,liu2008survey,
 arenas2012simulation,yuan2012overview,hoban2012computer,yang2014critical,
 peng2015genetic}.
+
 Two technological developments of recent years, however,
-pose major challenges to the majority of these methods.
+pose major challenges to the majority of existing simulation methods.
+Firstly, fourth-generation sequencing technologies have made
+complete chromosome-level assemblies possible~\citep{miga2020telomere},
 % Some citations here? Darwin tree of life maybe?
-Firstly, whole genome sequencing---and in particular fourth-generation
-sequencing technologies---have made chromosome-level assemblies
-commonplace. Thus, modelling genetic variation data as a series of unlinked loci,
-a previously reasonable assumption, is no longer defensible and
+and high quality assemblies are now available for many species.
+Thus, modelling genetic variation data as a series of unlinked
+non-recombining loci
+is no longer a reasonable approximation, and
 we must fully account for recombination.
 While a genealogical tree relating $n$ samples in the single-locus coalescent
 can be simulated in $O(n)$ time~\citep{hudson1990gene},
-the coalescent with recombination, which generates multiple correlated trees, is
-far more challenging.
-% JK will need to revise this sentence, in light of what we'll be saying
-% down further about needing the SMC for very large rho.
-Programs such as Hudson's classical \ms~\citep{hudson2002generating}
-can only simulate short segments under the influence of recombination,
-and, until recently, approximate models of
-recombination~\citep{mcvean2005approximating,staab2015scrm}
-were necessary to simulate whole chromosomes.
-
-The second major challenge to existing coalescent simulators is the
-exponential increase in sample size of genetic studies. Human datasets like the
+the coalescent with recombination is far more complex,
+and programs such as
+Hudson's classical \ms~\citep{hudson2002generating}
+can only simulate short segments under the influence of recombination.
+The second challenge facing simulation methods is that
+sample sizes in genetic studies have grown very quickly
+in recent years, enabled by the precipitous fall in genome sequencing costs.
+Human datasets like the
 UK Biobank~\citep{bycroft2018genome} and
 gnomAD~\citep{karczewski2020mutational} now consist of hundreds of
 thousands of genomes and many other datasets on a similar scale
 are becoming available~\citep{tanjo2021practical}.
 Classical simulators such as \ms\ and even fast approximate methods
-such as \scrm\ simply cannot cope with such a large number of samples.
+such as \scrm~\citep{staab2015scrm} simply cannot
+cope with such a large number of samples.
 
 The \msprime\ simulator~\citep{kelleher2016efficient,kelleher2020coalescent}
 has greatly increased the scope of coalescent simulations,
-and it is now straightforward to simulate millions of whole chromosomes.
+and it is now straightforward to simulate millions of whole chromosomes
+for a wide range of organisms.
 The ``succinct tree sequence'' data
 structure~\citep{kelleher2016efficient,kelleher2018efficient,kelleher2019inferring,
 wohns2021unified},
-introduced as part of \msprime\, makes it possible to store
-such huge simulations in a few gigabytes, several orders
+originally introduced as part of \msprime, makes it possible to store
+such large simulations in a few gigabytes, several orders
 of magnitude smaller than commonly used formats.
-The succinct tree sequence has also lead to major advances in forwards-time
+The succinct tree sequence has also led to major advances in forwards-time
 simulation~\citep{kelleher2018efficient,haller2018tree},
 ancestry inference~\citep{kelleher2019inferring,wohns2021unified}
 and calculation of population genetic
@@ -247,43 +254,30 @@ Through a rigorous open-source community development process,
 \msprime\ has gained a large number of features since its introduction,
 making it a highly efficient and flexible platform for population
 genetic simulation.
-This paper marks the release of \msprime\ 1.0, a state-of-the-art
-coalescent simulator both with respect to efficiency as well as feature-richness.
-Here we provide an overview of the extensive abilities of \msprime\ 1.0,
+This paper marks the release of \msprime\ 1.0.
+We provide an overview of its extensive features,
 demonstrate its performance advantages over alternative software,
-and finally lay out future plans for
-further open-source development of what we hope will become an industry
-standard piece of computational infrastructure for the genetics community.
+and discuss opportunities for ongoing
+open-source community-based development.
+
+% and finally lay out future plans for
+% further open-source development of what we hope will become an industry
+% standard piece of computational infrastructure for the genetics community.
 
 \section*{Results}
+In the following sections we describe the main features of \msprime\ 1.0,
+focusing on the aspects that are either new for this version, or in which
+our approach differs significantly from classical methods. Where appropriate,
+we benchmark \msprime\ against other simulators, but the comparisons are
+illustrative and not intended to be systematic or exhaustive. Please
+see~\cite{kelleher2016efficient} for a performance comparison of
+\msprime\ against simulators such as \ms, \msms, and \scrm.
 
-\jkcomment{Give a quick roadmap,
-like, we discuss the underlying tree sequence object,
-then mutations (because it's quite separate from the rest)
-and then a bunch of new features for ancestry simulation. There's no
-point in listing it out section by section.}
-
-% JK: commented out this text as it's misleading and would confuse
-% people. We should adapt it when writing the roadmap when the structure
-% has settled down.
-
-% In this section we describe the main features of \msprime\ 1.0. Methodologically,
-% there exists a logical separation between simulating coalescent genealogies and
-% adding neutral mutations onto these genealogies. Simulating genetic ancestry
-% requires methods that model the underlying reproductive process (e.g. Moran,
-% Wright-Fisher, etc.) as well as accounting for recombination of various sorts
-% (including gene conversion), demography, and selection. These methods are
-% discussed in the first N subsections below. One of the strengths of the
-% approach taken in msprime is that neutral mutations can be retrospectively
-% added to simulated genealogies. Methods to generate mutations, and thereby
-% generate genetic variation, are therefore discussed in a separate and subsequent
-% subsection. Finally, we describe the \msprime\ API, which is designed to enforce
-% the distinction between simulating genealogies and mutations; discuss the
-% interoperability provided by the use of \tskit\, the tree sequence toolkit;
-% and highlight the open source development process which allows for \msprime\
-% to be extended by addition of new features while ensuring robustness and
-% maintainability of the core codebase.
-
+% jk: I started writing a roadmap here, but it's quite hard to do concisely
+% and you either end up leaving sections out, or just summarising them
+% one-by-one which makes it long and tedious. I think readers can either read
+% through fully if they're interested, or just skim the section titles which
+% should give them a good idea of whether they want to read it or not.
 
 % The input - how do we run simulations?
 \subsection*{User interface}
@@ -1075,7 +1069,7 @@ waiting times. This is a considerable improvement
 over version 0.x, which scaled quadratically with the number of populations.
 
 A major change for \msprime\ 1.0 is the introduction of the new Demography API,
-designed to address a design flaw in the \msprime\ 0.x interface which lead to
+designed to address a design flaw in the \msprime\ 0.x interface which led to
 a number of avoidable errors in downstream
 simulations~\citep{ragsdale2020lessons}. Briefly, the 0.x API required three
 separate parameters be provided to the \texttt{simulate} function to describe a
@@ -1455,7 +1449,7 @@ and \discoal~\citep{kern2016discoal}.
 performance in \msprime\ and \discoal\ (Intel Xeon E5-2680 CPU).
 We report the total CPU time and maximum memory usage when simulating 100
 replicates for 10 samples in a model
-with a single selective sweep in its history where the benefical
+with a single selective sweep in its history where the beneficial
 allele had a scaled selection coefficient of $2Ns=1000$,
 a per-base recombination rate of $10^{-9}$ and sequence
 length varying from 1kb--200kb.}
@@ -1472,12 +1466,7 @@ Moreover because this implements the basic infrastructure for the structured
 coalescent, adding support for similar situations,
 such as inversions~\citep{peischl2013sequential}, is straightforward.
 Fig.~\ref{fig-selection-perf} shows that \msprime\ has far better
-CPU time and memory performance than \discoal. We have previously shown
-that \msprime\ is much more efficient than \msms\ and \cosiTwo\
-when simulating without selection~\citep{kelleher2016efficient}.
-% jk - this just seems clumsy to me: surely the conclusion is clear?
-% and we therefore believe \msprime\ to be the most efficient
-% coalescent simulator when simulating sweeps.
+CPU time and memory performance than \discoal.
 
 \subsection*{Discrete time Wright-Fisher}
 The coalescent is an idealised model and makes many simplifying assumptions,
@@ -1608,17 +1597,17 @@ to write reliable, stable software if no-one used it?
 \section*{Discussion}
 
 % We can simulate so much more now
-This release makes \msprime\ able to produce simulations
-with a great deal more biological realism, without a loss in speed and efficiency.
-This ability will allow researchers to perform more robust
-power analyses, more reliably test new methods,
-and carry out more reliable inferences,
-without worrying that gene conversion or back mutation might be sabotaging
-their applications to real data.
+The 1.0 release of \msprime\ marks a major increase in the
+biological realism of simulations
+and the breadth of available features, without a loss of efficiency.
+These abilities will allow researchers to perform more robust power analyses,
+more reliably test new methods,
+carry out more reliable inferences,
+and explore the properties of more theoretical models.
 These advances have only been possible thanks to a distributed,
 collaborative model of software development,
 and the work of many people.
-We hope the tool continues to be useful to many.
+% We hope the tool continues to be useful to many.
 
 % Simulation software is historically a beautiful shitshow
 
@@ -1643,7 +1632,7 @@ Scientific software is vital apparatus, and must be engineered
 to a high quality if we are to trust its results. There is a growing
 realisation across the sciences
 % More citations?
-\citep{siepel2019challenges,harris2020array,gardner2021sustained}
+\citep[e.g.][]{siepel2019challenges,harris2020array,gardner2021sustained}
 that investing in
 shared community infrastructure produces better results than a
 proliferation of individually maintained tools, allowing scientists
@@ -1664,8 +1653,8 @@ features they require are missing will continue to contribute to
 \msprime, leading to a community project that is both high quality
 and sustainable in the long term.
 
-
-The tree sequence developed for \msprime\ allows users a view of not only
+The succinct tree sequence data structure developed
+for \msprime\ allows users a view of not only
 genetic variation but also the genetic ancestry that produced that variation.
 Recent breakthroughs in methods to infer genetic ancestry in recombining
 organisms~\citep{kelleher2019inferring,
@@ -1691,22 +1680,15 @@ will be essential.
 \section*{Acknowledgements}
 We would like to thank Iain Mathieson and Alywyn Scally for helpful comments
 on the manuscript.
-
-% TODO alphabetise this by author I guess
-Jerome Kelleher is supported by the Robertson Foundation.
-Jere Koskela is supported in part by EPSRC grant EP/R044732/1.
+% alphabetised by author. Names spelled out if there's an initial collision
 ADK was supported by NIH awards R01GM117241 and R01HG010774.
-Franz Baumdicker is funded by the Deutsche Forschungsgemeinschaft
-EXC 2064/1 -- Project number 390727645, and EXC 2124 -- Project number 390838134.
+BE was supported by  DFG grant  273887127 through Priority Programme SPP 1819: Rapid Evolutionary Adaptation (grant STE 325/17-2) to Wolfgang Stephan; BE would also like to acknowledge  funding through The Icelandic Research Centre (Rann{\'i}s) through an Icelandic Research Fund Grant of  Excellence nr.\ 185151-051 to Einar \'Arnason,  Katr\'in Halld\'orsd\'ottir,  Alison Etheridge,  Wolfgang Stephan, and BE.
+FB is funded by the Deutsche Forschungsgemeinschaft EXC 2064/1 -- Project number 390727645, and EXC 2124 -- Project number 390838134.
 Graham Gower was supported by a Villum Fonden Young Investigator award to Fernando Racimo (project no. 00025300).
-BE was supported by  DFG grant  273887127 through Priority
-Programme SPP 1819: Rapid Evolutionary Adaptation (grant STE 325/17-2) to Wolfgang Stephan; BE would also like to acknowledge  funding through The Icelandic Research
-Centre (Rann{\'i}s) through an Icelandic Research Fund Grant of  Excellence nr.\ 185151-051 to Einar \'Arnason,  Katr\'in Halld\'orsd\'ottir,  Alison Etheridge,  Wolfgang Stephan, and BE.
-Gregor Gorjanc is supported by the Chancellor's Fellowship of the University of
-Edinburgh and the BBSRC grant to The Roslin Institute BBS/E/D/30002275.
-SG acknowledges funding from the Canada Research Chairs Program, from the
-Canadian Institutes of Health Research PJT 173300, and from the Canadian
-Foundation for Innovation.
+Gregor Gorjanc is supported by the Chancellor's Fellowship of the University of Edinburgh and the BBSRC grant to The Roslin Institute BBS/E/D/30002275.
+Jere Koskela is supported in part by EPSRC grant EP/R044732/1.
+Jerome Kelleher is supported by the Robertson Foundation.
+SG acknowledges funding from the Canada Research Chairs Program, from the Canadian Institutes of Health Research PJT 173300, and from the Canadian Foundation for Innovation.
 
 \bibliographystyle{plainnat}
 \bibliography{paper}
