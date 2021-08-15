@@ -198,28 +198,32 @@ a sample from a Wright-Fisher population, without explicitly representing
 the population in memory or stepping through the generations.
 Indeed, \cite{hudson1983testing} independently derived the
 % Anyone disagree here? That's the impression I get from the paper.
-coalescent \emph{in order to} efficiently simulate data.
+coalescent \emph{in order to} efficiently simulate data under a neutral model.
 This efficiency, and the adaptability of the model to different
 applications has led to dozens of different simulation tools
 being developed over the decades~\citep{carvajal2008simulation,liu2008survey,
 arenas2012simulation,yuan2012overview,hoban2012computer,yang2014critical,
 peng2015genetic}.
-Two technological developments of recent years, however,
-pose major challenges to the majority of these methods.
+
+Two technological developments of recent years
+pose major challenges to the majority of existing simulation methods.
+Firstly, fourth-generation sequencing technologies have made
+complete chromosome-level assemblies possible~\citep{miga2020telomere},
 % Some citations here? Darwin tree of life maybe?
-Firstly, whole genome sequencing---and in particular fourth-generation
-sequencing technologies---have made chromosome-level assemblies
-commonplace. Thus, modelling genetic variation data as a series of unlinked loci,
-a previously reasonable assumption, is no longer defensible and
+and high quality assemblies are now available for many species.
+Thus, modelling genetic variation data as a series of unlinked loci
+is no longer a reasonable approximation, and
 we must fully account for recombination.
 While a genealogical tree relating $n$ samples in the single-locus coalescent
 can be simulated in $O(n)$ time~\citep{hudson1990gene},
-the coalescent with recombination is far more challenging,
-and methods such as
+the coalescent with recombination is far more complex,
+and programs such as
 Hudson's classical \ms~\citep{hudson2002generating}
 can only simulate short segments under the influence of recombination.
-The second major challenge to existing coalescent simulators is the
-exponential increase in sample size of genetic studies. Human datasets like the
+The second challenge facing simulation methods is that
+sample sizes in genetic studies have grown very quickly
+in recent years, enabled by the precipitous fall in genome sequencing costs.
+Human datasets like the
 UK Biobank~\citep{bycroft2018genome} and
 gnomAD~\citep{karczewski2020mutational} now consist of hundreds of
 thousands of genomes and many other datasets on a similar scale
@@ -234,8 +238,8 @@ and it is now straightforward to simulate millions of whole chromosomes.
 The ``succinct tree sequence'' data
 structure~\citep{kelleher2016efficient,kelleher2018efficient,kelleher2019inferring,
 wohns2021unified},
-introduced as part of \msprime\, makes it possible to store
-such huge simulations in a few gigabytes, several orders
+originally introduced as part of \msprime, makes it possible to store
+such large simulations in a few gigabytes, several orders
 of magnitude smaller than commonly used formats.
 The succinct tree sequence has also led to major advances in forwards-time
 simulation~\citep{kelleher2018efficient,haller2018tree},
