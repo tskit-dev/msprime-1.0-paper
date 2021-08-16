@@ -1737,6 +1737,10 @@ Otherwise (i.e., for an infinite-sites model),
 positions are rejection sampled to obtain a unique floating-point number.
 If an edge spans a region of the genome with more than one mutation rate,
 this is done separately for each distinct region.
+% I am a bit confused with the following lines - as the section in the main paper says, algo is done on edges,
+% but this is skipped here and the way its written it makes it confusing - #edges are propto #marginal_trees
+% so there should be no difference (the way I read this part), but in fact the difference on working with edges
+% or each tree and its branches can be large
 The algorithm scales with the number of edges in the tree sequence.
 Since the number of edges is proportional to the number of marginal trees,
 an algorithm that applies mutations separately to each marginal tree
@@ -1747,9 +1751,12 @@ Next, alleles are chosen for each mutation.
 If the site was not previously mutated, then a new ancestral allele is chosen for the site,
 according to an input distribution of ancestral state allele probabilities.
 Then, each mutation on the tree is considered in turn,
+% I don't understand what is meant by "older mutations are considered first"?
+% Aren't past/older mutations irrelevant given the current state (=parental allele) and a transition matrix?
 in order so that older mutations are considered first,
 and a derived allele is chosen based on the parental allele
 (which may be the ancestral allele or the derived allele of a previous mutation)
+% What is meant by "some randomness"?
 and some randomness.
 Finally, information about the mutations are recorded in the site and mutation tables
 of the tree sequence.
@@ -1762,6 +1769,7 @@ Perhaps the simplest mutation model implemented in \msprime\ is the
 which keeps an internal counter so that the requested alleles are
 assigned subsequent (and therefore unique) integers.
 
+% which algo do you refer above? InfiniteAlleles or the general version above the above paragraph? Better to spell it out.
 Since the algorithm above applies mutations at a single rate
 independent of ancestral state,
 a model in which different alleles mutate at different rates
@@ -1784,6 +1792,7 @@ with probability $\beta / (\alpha + \beta)$ is equivalent to a Poisson
 process with rate $\beta$.
 All finite-state models (implemented under the generic \texttt{MatrixMutationModel} class)
 work in this way: mutations are placed at the maximum mutation rate,
+% I think I understand what you want to say here, but it would be clearer if an example would have been given - similar to the next section.
 and then some silent mutations will result.
 
 In previous versions of \msprime, silent mutations were disallowed,
