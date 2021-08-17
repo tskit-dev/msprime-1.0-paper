@@ -1736,27 +1736,25 @@ Otherwise (i.e., for an infinite-sites model),
 positions are rejection sampled to obtain a unique floating-point number.
 If an edge spans a region of the genome with more than one mutation rate,
 this is done separately for each distinct region.
-% I am a bit confused with the following lines - as the section in the main paper says, algo is done on edges,
-% but this is skipped here and the way its written it makes it confusing - #edges are propto #marginal_trees
-% so there should be no difference (the way I read this part), but in fact the difference on working with edges
-% or each tree and its branches can be large
 The algorithm scales with the number of edges in the tree sequence.
+
 Since the number of edges is proportional to the number of marginal trees,
-an algorithm that applies mutations separately to each marginal tree
-would take at least as many steps,
-and would require additional bookkeeping necessary to place mutations uniformly on a tree.
+this algorithm is $O(T)$,
+where $T$ is the number of trees.
+An alternative algorithm would apply mutations separately to each tree.
+Since the number of branches per tree is proportional to the number of leaves,
+the simplest implementation would be $O(T S)$,
+where $S$ is the number of samples.
+Any more efficient tree-by-tree algorithm would have to make use of the fact
+that structure is shared between adjacent trees---effectively, therefore,
+working with shared edges.
 
 Next, alleles are chosen for each mutation.
 If the site was not previously mutated, then a new ancestral allele is chosen for the site,
 according to an input distribution of ancestral state allele probabilities.
 Then, each mutation on the tree is considered in turn,
-% I don't understand what is meant by "older mutations are considered first"?
-% Aren't past/older mutations irrelevant given the current state (=parental allele) and a transition matrix?
-in order so that older mutations are considered first,
-and a derived allele is chosen based on the parental allele
-(which may be the ancestral allele or the derived allele of a previous mutation)
-% What is meant by "some randomness"?
-and some randomness.
+and a derived allele is randomly chosen based on the parental allele
+(which may be the ancestral allele or the derived allele of a previous mutation).
 Finally, information about the mutations are recorded in the site and mutation tables
 of the tree sequence.
 
@@ -1768,30 +1766,42 @@ Perhaps the simplest mutation model implemented in \msprime\ is the
 which keeps an internal counter so that the requested alleles are
 assigned subsequent (and therefore unique) integers.
 
-% which algo do you refer above? InfiniteAlleles or the general version above the above paragraph? Better to spell it out.
-Since the algorithm above applies mutations at a single rate
+The distribution of ancestral alleles
+is used to choose the allele present at the root of the tree at each mutated site,
+i.e., the \texttt{root\_distribution}.
+Mutation models with a finite possible set of alleles have a natural choice
+for this distribution---the \emph{stationary distribution} of the mutation process.
+(All mutation models are Markovian,
+so this may be found as the top left eigenvector of the mutation matrix.)
+This is the default in most models,
+except, e.g., the \texttt{BinaryMutationModel}, whose alleles are 0 and 1
+and always labels the ancestral allele ``0''.
+However, mutational processes are not in general stationary,
+so we often allow different root distribution to be specified.
+
+Since the general algorithm above applies mutations at a single rate
 independent of ancestral state,
 a model in which different alleles mutate at different rates
 must necessarily produce some silent mutations,
 i.e., mutations in which the derived allele is equal to the parental allele.
-To illustrate this, consider a mutation model on the binary alphabet
-$\{X, Y\}$ in which $X$ mutates to $Y$ at rate $\alpha$
-and $Y$ mutates to $X$ at rate $\beta$, with $\beta < \alpha$.
+To illustrate this, consider a mutation model
+in which $A$ or $T$ mutates to a randomly chosen different nucleotide at rate $\alpha$
+and $C$ or $G$ mutates at rate $\beta$, with $\beta < \alpha$.
 To implement this, first place mutations at the largest total rate, which is $\alpha$.
-Then, at each site, choose an ancestral allele from the ``root distribution''
-(a natural choice would be to choose from the stationary distribution,
-$X$ with probability $\beta / (\alpha + \beta)$),
+Then, at each site, choose an ancestral allele from the root distribution,
 and for each mutation, choose a derived allele as follows:
-if the parental allele is $X$, then choose $Y$;
-if the parental allele is $Y$, then choose $X$ with probability $\beta/(\alpha + \beta)$,
-and choose $Y$ otherwise.
+if the parental allele is $A$ or $T$, then choose a random derived allele
+different than the parental allele;
+if the parental allele is $C$ or $G$,
+then choose the derived allele to be equal to the parent allele
+with probability $\beta/(\alpha + \beta)$,
+and randomly choose a different nucleotide otherwise.
 This produces the correct distribution by Poisson thinning:
 a Poisson process with rate $\alpha$ in which each point is discarded independently
 with probability $\beta / (\alpha + \beta)$ is equivalent to a Poisson
 process with rate $\beta$.
 All finite-state models (implemented under the generic \texttt{MatrixMutationModel} class)
 work in this way: mutations are placed at the maximum mutation rate,
-% I think I understand what you want to say here, but it would be clearer if an example would have been given - similar to the next section.
 and then some silent mutations will result.
 
 In previous versions of \msprime, silent mutations were disallowed,
@@ -1799,9 +1809,9 @@ and we could have removed them from the output entirely.
 However, we have chosen to leave them in, so that for instance
 simulating with the \texttt{HKY} mutation model will result in silent mutations
 if not all equilibrium frequencies are the same.
-Although the presence of silent mutations may at first be surprising
+The presence of silent mutations may at first be surprising
 (although they don't affect calculations of statistics in any way),
-there is a good reason to leave them in:
+but there is a good reason to leave them in:
 to allow layering of different mutation models.
 Suppose that we wanted to model the mutation process as a mixture of more than one model,
 e.g., Jukes-Cantor mutations at rate $\mu_1$, and
