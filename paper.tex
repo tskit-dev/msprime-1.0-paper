@@ -188,7 +188,7 @@ genealogical tree that relates the samples to one another.
 It has proved to be a powerful model,
 and is now central to
 population genetics~\citep{hudson1990gene,hein2004gene,wakely2008coalescent}.
-The coalescent is a very efficient framework for population genetic
+The coalescent is an efficient framework for population genetic
 simulation, because it allows us to simulate the genetic ancestry for
 a sample from an idealised population model, without explicitly representing
 the population in memory or stepping through the generations.
@@ -647,8 +647,7 @@ Part of the reason for this poor record of software reuse and modularity is the
 lack of standardised file formats, and in particular, the absence of common
 library infrastructure to abstract the details of interchanging simulation
 data. Although \msprime\ also supports simulating both ancestry and mutations,
-the two aspects are functionally independent within the software.
-Both ancestry and mutation simulators are present in \msprime\
+the two aspects are functionally independent within the software; both ancestry and mutation simulators are present in \msprime\
 for reasons of convenience and history,
 and could be split into separate packages.
 The mature and efficient C and Python interfaces for
@@ -737,7 +736,7 @@ We do not attempt a systematic benchmarking of \msprime's
 mutation generation code against other methods, because at this scale it is
 difficult to disentangle the effects of inefficient input and
 output formats from the mutation generation algorithms.
-Given these timings, it seems quite unlikely
+Given these timings, it seems unlikely
 that generating mutations with \msprime\ would be a bottleneck in any
 realistic analysis.
 
@@ -766,7 +765,7 @@ lineages. Using the appropriate data structures~\citep{kelleher2016efficient},
 this process is much more efficient to simulate
 than the equivalent left-to-right
 approach~\citep{wiuf1999recombination,wiuf1999ancestry}.
-In \msprime\ 1.0 recombination rates can vary along a chromosome, allowing
+In \msprime\ 1.0, recombination rates can vary along a chromosome, allowing
 us to simulate recombination hotspots and patterns
 of recombination from empirical maps.
 The implementation of recombination in \msprime\ is extensively validated
@@ -897,8 +896,8 @@ predicts that simulation would require around 177 hours for 1000 samples.
 For such large values of $\rho$  we recommend
 users consider approximate simulations. Since \msprime\ does not currently
 have efficient implementations of approximate coalescent with recombination
-models, we recommend using SMC based methods such as \scrm,
-particularly for small sample sizes.
+models, in these cases we recommend using SMC based methods such as \scrm,
+particularly if sample sizes are small.
 In practice, to predict the running time of a given
 simulation in \msprime, we recommend that users
 measure run time in a series of simulations with short genome lengths and
@@ -917,9 +916,9 @@ At any point in time, \msprime\ must keep track of some number of lineages,
 each of which contains some number of chunks of genetic material.
 Common ancestor events reduce the number of lineages,
 and recombination events increase their number.
-However, with long genomes
+However, with long genomes,
 only a small fraction of the common ancestor events
-will involve overlapping segments of ancestry,
+will involve overlapping segments of ancestry
 and lead to coalescence in the marginal trees.
 Such disjoint segments are often far apart (on average, about distance $L/2$),
 and so recombine apart again immediately;
@@ -1512,7 +1511,7 @@ efficient than the coalescent with recombination when the
 number of lineages is significantly less than the population size
 (the regime where the coalescent is an accurate approximation),
 which usually happens in the quite recent
-past~\cite{bhaskar2014distortion}.
+past~\citep{bhaskar2014distortion}.
 We therefore support changing the simulation model during a simulation
 so that we can run hybrid simulations, as proposed by~\cite{bhaskar2014distortion}.
 Any number of different simulation models can be combined, allowing for the
@@ -1587,7 +1586,7 @@ With the goal of lowering the entry barrier to new users,
 we have invested significant effort in writing examples and introductions,
 and making common tasks discoverable.
 We also view contributions to documentation as equally important to the project
-as writing code or designing methods---what use would it be
+as writing code or designing methods: what use would it be
 to write reliable, stable software if no-one used it?
 
 \section*{Discussion}
