@@ -1736,18 +1736,8 @@ Otherwise (i.e., for an infinite-sites model),
 positions are rejection sampled to obtain a unique floating-point number.
 If an edge spans a region of the genome with more than one mutation rate,
 this is done separately for each sub-region on which the mutation rate is constant.
-The algorithm scales with the number of edges in the tree sequence.
-
-Since the number of edges is proportional to the number of marginal trees,
-this algorithm is $O(T)$,
-where $T$ is the number of trees.
-An alternative algorithm would apply mutations separately to each tree.
-Since the number of branches per tree is proportional to the number of leaves,
-the simplest implementation would be $O(T S)$,
-where $S$ is the number of samples.
-Any more efficient tree-by-tree algorithm would have to make use of the fact
-that structure is shared between adjacent trees---effectively, therefore,
-working with shared edges.
+Since each edge is processed independently, the algorithm
+scales linearly with the number of edges in the tree sequence.
 
 Next, alleles are chosen for each mutation.
 If the site was not previously mutated, then a new ancestral allele is chosen for the site,
@@ -1791,7 +1781,7 @@ To implement this, first place mutations at the largest total rate, which is $\a
 Then, at each site, choose an ancestral allele from the root distribution,
 and for each mutation, choose a derived allele as follows:
 if the parental allele is $A$ or $T$, then choose a random derived allele
-different than the parental allele;
+different to the parental allele;
 if the parental allele is $C$ or $G$,
 then choose the derived allele to be equal to the parent allele
 with probability $\beta/(\alpha + \beta)$,
@@ -1810,7 +1800,8 @@ However, we have chosen to leave them in, so that for instance
 simulating with the \texttt{HKY} mutation model will result in silent mutations
 if not all equilibrium frequencies are the same.
 The presence of silent mutations may at first be surprising
-(although they don't affect calculations of statistics in any way),
+(although they are fully accounted for in downstream calculations of statistics
+by \tskit),
 but there is a good reason to leave them in:
 to allow layering of different mutation models.
 Suppose that we wanted to model the mutation process as a mixture of more than one model,
@@ -1831,8 +1822,8 @@ The solution is to make the Jukes-Cantor model \emph{state-independent}
 (also called ``parent-independent''),
 by placing mutations at rate $4/3 \mu_1$ and then choosing the derived state for each mutation
 \emph{independently} of the parent (so that 1/4 of mutations will be silent).
-If so -- and, more generally, if the first mutational process put down is state-independent --
-then the result of sequentially applying the two mutation models
+If so---and, more generally, if the first mutational process put down is
+state-independent---then the result of sequentially applying the two mutation models
 is equivalent to the simultaneous model.
 To facilitate this, many mutation models have a \texttt{state\_independent} option
 that increases the number of silent mutations
@@ -2057,12 +2048,12 @@ the next time step back in time, call it $p^\prime$ is
 	    p + \mu(p)\delta t -\sqrt{p(1-p)\delta t} & \quad \mbox{with probability $1/2$}\\
 	\end{array} \right.
 \end{eqnarray*}
-where 
+where
 \begin{eqnarray*}
 	\mu(p)=\frac{\alpha p (1 - p)}{tanh(\alpha(1-p))}.
 \end{eqnarray*}
 Here, $\alpha=2Ns$ and $s$ is the fitness advantage in homozygotes. This model
-assumes genic selection (i.e., that the dominance coefficient $h=0.5$). 
+assumes genic selection (i.e., that the dominance coefficient $h=0.5$).
 
 While our current implementation only deals with genic selection,
 we plan in the future to add sweeps with arbitrary dominance. Further planned
