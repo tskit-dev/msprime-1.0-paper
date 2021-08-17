@@ -19,7 +19,7 @@
 @ivan-krukov
 @jerekoskela        https://orcid.org/0000-0002-2836-8777
 @jeromekelleher     https://orcid.org/0000-0002-7894-5253
-@jgallowa07
+@jgallowa07         https://orcid.org/0000-0001-5838-7840
 @klohse             https://orcid.org/0000-0001-9918-058X
 @mmatschiner        https://orcid.org/0000-0003-4741-3884
 @molpopgen          https://orcid.org/0000-0003-0743-4445
