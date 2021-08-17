@@ -39,7 +39,7 @@ def mutations_perf():
     dfL = df[df.L == 10]
     for rate in rates:
         dfr = dfL[dfL.rate == rate].sort_values("n")
-        ax1.plot(dfr.n, dfr.time, label=f"rate={rate}")
+        ax1.plot(dfr.n, dfr.time, label=f"mutation rate={rate}")
 
     ax2.set_xlabel("Sequence length (Megabases)")
     ax1.set_ylabel("Time (seconds)")
@@ -47,7 +47,7 @@ def mutations_perf():
     dfn = df[df.n == 1000].sort_values("L")
     for rate in rates:
         dfr = dfn[dfn.rate == rate]
-        ax2.plot(dfr.L, dfr.time, label=f"rate={rate}")
+        ax2.plot(dfr.L, dfr.time, label=f"mutation rate={rate}")
     print(dfn[dfn.L == 100])
 
     ax1.legend()
