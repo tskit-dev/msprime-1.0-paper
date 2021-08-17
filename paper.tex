@@ -46,6 +46,7 @@
 
 \begin{document}
 
+\linenumbers
 \title{Efficient ancestry and mutation simulation with msprime 1.0}
 % First authors
 \author[1,$\star$]{Franz Baumdicker}
@@ -182,11 +183,11 @@ software quality via community engagement.
 \textbf{Keywords:} Simulation, Coalescent, Mutations, Ancestral Recombination
 Graphs
 
-\linenumbers
 \section*{Introduction}
 
 The coalescent
-process~\citep{kingman1982coalescent,hudson1983testing,tajima1983evolutionary}
+process~\citep{kingman1982coalescent,kingman1982genealogy,hudson1983testing,
+tajima1983evolutionary}
 models the ancestry of a set of sampled genomes,
 providing a mathematical description of the
 genealogical tree that relates the samples to one another.
@@ -655,7 +656,7 @@ data. Although \msprime\ also supports simulating both ancestry and mutations,
 the two aspects are functionally independent within the software; both ancestry and mutation simulators are present in \msprime\
 for reasons of convenience and history,
 and could be split into separate packages.
-The mature and efficient C and Python interfaces for
+The efficient C and Python interfaces for
 \tskit\ make it straightforward to add further information to
 an existing file, and because of its efficient data interchange mechanisms,
 there is no performance penalty for additional operations
@@ -1175,8 +1176,9 @@ None of these methods work with large genomes, and very little work
 has been performed on simulating multiple merger processes with recombination.
 
 We have added two multiple merger coalescent models in \msprime\ 1.0, the
-Beta-coalescent and ``Dirac''-coalescent, allowing us to simulate
-such models with recombination efficiently for the first time.
+Beta-coalescent~\citep{schweinsberg03} and
+``Dirac''-coalescent~\citep{BBE13}, allowing us to efficiently simulate
+such models with recombination for the first time.
 These simulation models have been extensively validated against
 analytical results from the site frequency
 spectrum~\citep{birkner2013statistical,blath2016site,hobolth2019phase}
@@ -1715,8 +1717,9 @@ SG acknowledges funding from the Canada Research Chairs Program, from the Canadi
 \setcounter{secnumdepth}{2} % Print out appendix section numbers
 
 \appendix
+\section*{Appendix}
 
-\section*{Mutation generation}
+\subsection*{Mutation generation}
 \label{app-mutation-algorithm}
 
 The algorithm that \msprime\ uses to simulate mutations on a tree sequence
@@ -1835,7 +1838,7 @@ that increases the number of silent mutations
 and makes the model closer to state-independent.
 
 
-\section*{Likelihood calculations}
+\subsection*{Likelihood calculations}
 \label{app-likelihoods}
 
 We provide two functions to facilitate likelihood-based inference.
@@ -1888,7 +1891,7 @@ edges.
 
 
 \label{app-multiple-mergers}
-\section*{Multiple merger coalescent model}
+\subsection*{Multiple merger coalescent model}
 
 Multiple merger coalescents, in which a random number of ancestral
 lineages may merge into a common ancestor at a given time,
@@ -2031,7 +2034,7 @@ or $\phi(N)/N \to 0$ then  the  ancestral process converges to  the Kingman-coal
 \citep{CDEE2020}.
 
 \label{app-sweeps}
-\section*{Selective sweep trajectories}
+\subsection*{Selective sweep trajectories}
 We have implemented the coalescent with selective sweeps as a structured
 coalescent process (as in~\citep{braverman1995hitchhiking}). During the
 ``sweep phase'' of the simulation the rate of coalescence and recombination
