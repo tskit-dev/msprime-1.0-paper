@@ -39,7 +39,7 @@ def mutations_perf():
     dfL = df[df.L == 10]
     for rate in rates:
         dfr = dfL[dfL.rate == rate].sort_values("n")
-        ax1.plot(dfr.n, dfr.time, label=f"rate={rate}")
+        ax1.plot(dfr.n, dfr.time, label=f"Mutation rate={rate}")
 
     ax2.set_xlabel("Sequence length (Megabases)")
     ax1.set_ylabel("Time (seconds)")
@@ -47,7 +47,7 @@ def mutations_perf():
     dfn = df[df.n == 1000].sort_values("L")
     for rate in rates:
         dfr = dfn[dfn.rate == rate]
-        ax2.plot(dfr.L, dfr.time, label=f"rate={rate}")
+        ax2.plot(dfr.L, dfr.time, label=f"Mutation rate={rate}")
     print(dfn[dfn.L == 100])
 
     ax1.legend()
@@ -132,7 +132,7 @@ def sweeps_perf():
     ax1.annotate(
         f"{round(largest_value * 60)} seconds",
         textcoords="offset points",
-        xytext=(-30, 5),
+        xytext=(-38, 5),
         xy=(largest_L, largest_value),
         xycoords="data",
     )

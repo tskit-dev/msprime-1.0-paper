@@ -16,6 +16,7 @@
 \usepackage{nameref}
 \usepackage{caption,subcaption}
 \usepackage{tikz}
+\usepackage[right]{lineno}
 \usetikzlibrary{calc,positioning}
 %\usepackage{showkeys}
 
@@ -45,6 +46,7 @@
 
 \begin{document}
 
+\linenumbers
 \title{Efficient ancestry and mutation simulation with msprime 1.0}
 % First authors
 \author[1,$\star$]{Franz Baumdicker}
@@ -58,31 +60,31 @@
 % Middle Authors
 \author[8]{Bjarki Eldon}
 \author[9]{Castedo E. Ellerman}
-\author[10]{Jared G. Galloway}
-\author[11,12]{Ariella L. Gladstein}
-\author[13]{Gregor Gorjanc}
-\author[14]{Bing Guo}
+\author[10,11]{Jared G. Galloway}
+\author[12,13]{Ariella L. Gladstein}
+\author[14]{Gregor Gorjanc}
+\author[15]{Bing Guo}
 \author[7]{Ben Jeffery}
-\author[15]{Warren W. Kretzschmar}
-\author[16]{Ivan Krukov}
+\author[16]{Warren W. Kretzschmar}
+\author[17]{Ivan Krukov}
 \author[2]{Konrad Lohse}
-\author[17]{Michael Matschiner}
-\author[16]{Dominic Nelson}
-\author[18]{Nathaniel S. Pope}
-\author[19]{Consuelo D. Quinto-Cort\'es}
+\author[18]{Michael Matschiner}
+\author[17]{Dominic Nelson}
+\author[19]{Nathaniel S. Pope}
+\author[20]{Consuelo D. Quinto-Cort\'es}
 \author[10]{Murillo F. Rodrigues}
-\author[20]{Kumar Saunack}
-\author[21]{Thibaut Sellinger}
-\author[22]{Kevin Thornton}
+\author[21]{Kumar Saunack}
+\author[22]{Thibaut Sellinger}
+\author[23]{Kevin Thornton}
 \author[9]{Hugo van Kemenade}
 \author[7]{Anthony W. Wohns}
 \author[7]{H. Yan Wong}
 
 % Senior Authors
-\author[15,$\dagger$]{Simon Gravel}
+\author[16,$\dagger$]{Simon Gravel}
 \author[10,$\dagger$]{Andrew D. Kern}
-\author[23,$\dagger$]{Jere Koskela}
-\author[10,24,$\dagger$]{Peter L. Ralph}
+\author[24,$\dagger$]{Jere Koskela}
+\author[10,25,$\dagger$]{Peter L. Ralph}
 
 % Corresponding
 \author[7,$\ddagger$]{Jerome Kelleher}
@@ -113,36 +115,39 @@ Science, Museum f\"ur Naturkunde Berlin }
 % Jared, Murillo, Peter, Andy
 \affil[10]{Institute of Ecology and Evolution, Department of Biology,
     University of Oregon}
+% Jared
+\affil[11]{Computational Biology Program, Fred Hutchinson Cancer Research
+Center, Seattle, WA 98102, USA}
 % Ariella
-\affil[11]{Department of Genetics, University of North Carolina at Chapel Hill}
-\affil[12]{Embark Veterinary, Inc., Boston}
+\affil[12]{Department of Genetics, University of North Carolina at Chapel Hill}
+\affil[13]{Embark Veterinary, Inc., Boston}
 % Gregor
-\affil[13]{The Roslin Institute and Royal (Dick) School of Veterinary Studies,
+\affil[14]{The Roslin Institute and Royal (Dick) School of Veterinary Studies,
     University of Edinburgh}
 % Bing
-\affil[14]{Institute for Genome Sciences, University of Maryland School of
+\affil[15]{Institute for Genome Sciences, University of Maryland School of
 Medicine, Baltimore, MD}
 % Winni
-\affil[15]{Center for Hematology and Regenerative Medicine, Karolinska Institute}
+\affil[16]{Center for Hematology and Regenerative Medicine, Karolinska Institute}
 % Simon, Dom, Ivan
-\affil[16]{Department of Human Genetics, McGill University}
+\affil[17]{Department of Human Genetics, McGill University}
 % Michael
-\affil[17]{Natural History Museum, University of Oslo}
+\affil[18]{Natural History Museum, University of Oslo}
 % Nathaniel
-\affil[18]{Department of Entomology, Pennsylvania State University}
+\affil[19]{Department of Entomology, Pennsylvania State University}
 % Consuelo
-\affil[19]{National Laboratory of Genomics for Biodiversity (LANGEBIO),
+\affil[20]{National Laboratory of Genomics for Biodiversity (LANGEBIO),
     Unit of Advanced Genomics, CINVESTAV, Irapuato, Mexico}
 % Saunack
-\affil[20]{IIT Bombay, India}
+\affil[21]{IIT Bombay, India}
 % Thibaut
-\affil[21]{Professorship for Population Genetics, Department of Life Science Systems, Technical University of Munich}
+\affil[22]{Professorship for Population Genetics, Department of Life Science Systems, Technical University of Munich}
 % Kevin
-\affil[22]{Ecology and Evolutionary Biology, University of California Irvine}
+\affil[23]{Ecology and Evolutionary Biology, University of California Irvine}
 % Jere
-\affil[23]{Department of Statistics, University of Warwick}
+\affil[24]{Department of Statistics, University of Warwick}
 % Peter (second affil)
-\affil[24]{Department of Mathematics, University of Oregon}
+\affil[25]{Department of Mathematics, University of Oregon}
 
 \affil[$\star$]{Denotes shared first authorship, listed alphabetically}
 \affil[$\dagger$]{Denotes shared senior authorship, listed alphabetically}
@@ -181,7 +186,8 @@ Graphs
 \section*{Introduction}
 
 The coalescent
-process~\citep{kingman1982coalescent,hudson1983testing,tajima1983evolutionary}
+process~\citep{kingman1982coalescent,kingman1982genealogy,hudson1983testing,
+tajima1983evolutionary}
 models the ancestry of a set of sampled genomes,
 providing a mathematical description of the
 genealogical tree that relates the samples to one another.
@@ -595,7 +601,7 @@ ancestral lineages~\citep{chen2013asymptotic},
 % leaving this out because it's not about hidden information
 % an array of population genetic statistics~\citep{ramos2007mlcoalsim}
 % Any more?
-and \ms's fork \msHOT~\citep{hellenthal2007mshot},
+and \ms's fork \msHOT~\citep{hellenthal2007mshot}
 has in turn been forked to output information on local
 ancestry~\citep{racimo2017archaic}.
 All of this information
@@ -650,7 +656,7 @@ data. Although \msprime\ also supports simulating both ancestry and mutations,
 the two aspects are functionally independent within the software; both ancestry and mutation simulators are present in \msprime\
 for reasons of convenience and history,
 and could be split into separate packages.
-The mature and efficient C and Python interfaces for
+The efficient C and Python interfaces for
 \tskit\ make it straightforward to add further information to
 an existing file, and because of its efficient data interchange mechanisms,
 there is no performance penalty for additional operations
@@ -880,7 +886,7 @@ to predict how long simulations should take for a wide range of
 species. Taking a typical chromosome to be 1 Morgan in length,
 these plots show, roughly, that simulating chromosome-length
 samples from a population of thousands of individuals takes seconds,
-while samples from a population of tens of thousands takes minutes.
+while samples from a population of tens of thousands take minutes.
 Simulating whole chromosomes for many species is very fast,
 with 1000 samples of chromosome 1 for
 \emph{Arabidopsis thaliana} taking less than a second, and a few
@@ -1170,8 +1176,9 @@ None of these methods work with large genomes, and very little work
 has been performed on simulating multiple merger processes with recombination.
 
 We have added two multiple merger coalescent models in \msprime\ 1.0, the
-Beta-coalescent and ``Dirac''-coalescent, allowing us to simulate
-such models with recombination efficiently for the first time.
+Beta-coalescent~\citep{schweinsberg03} and
+``Dirac''-coalescent~\citep{BBE13}, allowing us to efficiently simulate
+such models with recombination for the first time.
 These simulation models have been extensively validated against
 analytical results from the site frequency
 spectrum~\citep{birkner2013statistical,blath2016site,hobolth2019phase}
@@ -1710,8 +1717,9 @@ SG acknowledges funding from the Canada Research Chairs Program, from the Canadi
 \setcounter{secnumdepth}{2} % Print out appendix section numbers
 
 \appendix
+\section*{Appendix}
 
-\section*{Mutation generation}
+\subsection*{Mutation generation}
 \label{app-mutation-algorithm}
 
 The algorithm that \msprime\ uses to simulate mutations on a tree sequence
@@ -1736,18 +1744,8 @@ Otherwise (i.e., for an infinite-sites model),
 positions are rejection sampled to obtain a unique floating-point number.
 If an edge spans a region of the genome with more than one mutation rate,
 this is done separately for each sub-region on which the mutation rate is constant.
-The algorithm scales with the number of edges in the tree sequence.
-
-Since the number of edges is proportional to the number of marginal trees,
-this algorithm is $O(T)$,
-where $T$ is the number of trees.
-An alternative algorithm would apply mutations separately to each tree.
-Since the number of branches per tree is proportional to the number of leaves,
-the simplest implementation would be $O(T S)$,
-where $S$ is the number of samples.
-Any more efficient tree-by-tree algorithm would have to make use of the fact
-that structure is shared between adjacent trees---effectively, therefore,
-working with shared edges.
+Since each edge is processed independently, the algorithm
+scales linearly with the number of edges in the tree sequence.
 
 Next, alleles are chosen for each mutation.
 If the site was not previously mutated, then a new ancestral allele is chosen for the site,
@@ -1791,7 +1789,7 @@ To implement this, first place mutations at the largest total rate, which is $\a
 Then, at each site, choose an ancestral allele from the root distribution,
 and for each mutation, choose a derived allele as follows:
 if the parental allele is $A$ or $T$, then choose a random derived allele
-different than the parental allele;
+different to the parental allele;
 if the parental allele is $C$ or $G$,
 then choose the derived allele to be equal to the parent allele
 with probability $\beta/(\alpha + \beta)$,
@@ -1810,7 +1808,6 @@ However, we have chosen to leave them in, so that for instance
 simulating with the \texttt{HKY} mutation model will result in silent mutations
 if not all equilibrium frequencies are the same.
 The presence of silent mutations may at first be surprising
-(although they don't affect calculations of statistics in any way),
 but there is a good reason to leave them in:
 to allow layering of different mutation models.
 Suppose that we wanted to model the mutation process as a mixture of more than one model,
@@ -1831,15 +1828,19 @@ The solution is to make the Jukes-Cantor model \emph{state-independent}
 (also called ``parent-independent''),
 by placing mutations at rate $4/3 \mu_1$ and then choosing the derived state for each mutation
 \emph{independently} of the parent (so that 1/4 of mutations will be silent).
-If so -- and, more generally, if the first mutational process put down is state-independent --
-then the result of sequentially applying the two mutation models
+If so---and, more generally, if the first mutational process put down is
+state-independent---then the result of sequentially applying the two mutation models
 is equivalent to the simultaneous model.
 To facilitate this, many mutation models have a \texttt{state\_independent} option
 that increases the number of silent mutations
 and makes the model closer to state-independent.
 
+Silent mutations are fully supported by \tskit, which correctly accounts for
+their presence when computing statistics and performing other operations.
+For example, silent mutations have no effect on calculations of nucleotide
+site diversity.
 
-\section*{Likelihood calculations}
+\subsection*{Likelihood calculations}
 \label{app-likelihoods}
 
 We provide two functions to facilitate likelihood-based inference.
@@ -1892,7 +1893,7 @@ edges.
 
 
 \label{app-multiple-mergers}
-\section*{Multiple merger coalescent model}
+\subsection*{Multiple merger coalescent model}
 
 Multiple merger coalescents, in which a random number of ancestral
 lineages may merge into a common ancestor at a given time,
@@ -2035,7 +2036,7 @@ or $\phi(N)/N \to 0$ then  the  ancestral process converges to  the Kingman-coal
 \citep{CDEE2020}.
 
 \label{app-sweeps}
-\section*{Selective sweep trajectories}
+\subsection*{Selective sweep trajectories}
 We have implemented the coalescent with selective sweeps as a structured
 coalescent process (as in~\citep{braverman1995hitchhiking}). During the
 ``sweep phase'' of the simulation the rate of coalescence and recombination
@@ -2057,12 +2058,12 @@ the next time step back in time, call it $p^\prime$ is
 	    p + \mu(p)\delta t -\sqrt{p(1-p)\delta t} & \quad \mbox{with probability $1/2$}\\
 	\end{array} \right.
 \end{eqnarray*}
-where 
+where
 \begin{eqnarray*}
 	\mu(p)=\frac{\alpha p (1 - p)}{tanh(\alpha(1-p))}.
 \end{eqnarray*}
 Here, $\alpha=2Ns$ and $s$ is the fitness advantage in homozygotes. This model
-assumes genic selection (i.e., that the dominance coefficient $h=0.5$). 
+assumes genic selection (i.e., that the dominance coefficient $h=0.5$).
 
 While our current implementation only deals with genic selection,
 we plan in the future to add sweeps with arbitrary dominance. Further planned
