@@ -1851,7 +1851,7 @@ constant population size, and require tree sequences compatible with the
 The \texttt{msprime.log\_arg\_likelihood(ts, r, N)} function
 returns the natural logarithm of
 the sampling probability of the tree sequence \texttt{ts} under the ARG with per-link,
-per-generation recombination probability \texttt{r} and population size \texttt{N}.
+per-generation recombination probability \texttt{r} and population size \texttt{N} \citep[e.g.][equation (1)]{kuhner2000maximum}.
 Specifically, the function returns the logarithm of
 \begin{equation*}
 \Bigg( \frac{ 1 }{ 2 N } \Bigg)^{ q_c } \Bigg( \prod_{ i : \mathcal{R} } r g_i \Bigg)
@@ -1863,11 +1863,11 @@ $k_i$ is the number of extant ancestors in that interval, $l_i$ is the number of
 in that interval that would split ancestral material should they recombine,
 $q$ is the total number of events in the tree sequence $\texttt{ts}$,
 $q_c$ is the number of coalescences, $\mathcal{R}$ is the set of indices
-of time intervals which end in a recombination, and $g_i$ is the corresponding
-\emph{gap}:  the length of material in which the recombination at the end of the
-$i$th period could have taken place without affecting the resulting genealogy.
-A recombination in ancestral material will always have $g_i = 1$, while a recombination
-in trapped non-ancestral material can result in other values of $g_i$.
+of time intervals which end in a recombination, and $g_i$ is the corresponding \emph{gap}:
+the length of contiguous non-ancestral material around the link at which
+the recombination in question took place. The gap indicates the number of links
+(or length of genome in a continuous model) at which a recombination would result
+in exactly the observed pattern of ancestral material in the ARG.
 For a continuous model of the genome and a recombination in ancestral material,
 we set $g_i = 1$ and interpret the result as a density.
 
