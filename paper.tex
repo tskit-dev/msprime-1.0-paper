@@ -1735,7 +1735,7 @@ may occur at the same position on the same edge.
 Otherwise (i.e., for an infinite-sites model),
 positions are rejection sampled to obtain a unique floating-point number.
 If an edge spans a region of the genome with more than one mutation rate,
-this is done separately for each distinct region.
+this is done separately for each sub-region on which the mutation rate is constant.
 The algorithm scales with the number of edges in the tree sequence.
 
 Since the number of edges is proportional to the number of marginal trees,
