@@ -2057,12 +2057,12 @@ the next time step back in time, call it $p^\prime$ is
 	    p + \mu(p)\delta t -\sqrt{p(1-p)\delta t} & \quad \mbox{with probability $1/2$}\\
 	\end{array} \right.
 \end{eqnarray*}
-where $\alpha=2Ns$ and $s$ is the fitness advantage in homozygotes. This model
-assumes genic selection (i.e., that the dominance coefficient $h=0.5$). Further
-$\mu(p)$ is
+where 
 \begin{eqnarray*}
-	\mu(p)=\frac{\alpha p (1 - p)}{tanh(\alpha(1-p))}
+	\mu(p)=\frac{\alpha p (1 - p)}{tanh(\alpha(1-p))}.
 \end{eqnarray*}
+Here, $\alpha=2Ns$ and $s$ is the fitness advantage in homozygotes. This model
+assumes genic selection (i.e., that the dominance coefficient $h=0.5$). 
 
 While our current implementation only deals with genic selection,
 we plan in the future to add sweeps with arbitrary dominance. Further planned
