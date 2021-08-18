@@ -1808,8 +1808,6 @@ However, we have chosen to leave them in, so that for instance
 simulating with the \texttt{HKY} mutation model will result in silent mutations
 if not all equilibrium frequencies are the same.
 The presence of silent mutations may at first be surprising
-(although they are fully accounted for in downstream calculations of statistics
-by \tskit),
 but there is a good reason to leave them in:
 to allow layering of different mutation models.
 Suppose that we wanted to model the mutation process as a mixture of more than one model,
@@ -1837,6 +1835,10 @@ To facilitate this, many mutation models have a \texttt{state\_independent} opti
 that increases the number of silent mutations
 and makes the model closer to state-independent.
 
+Silent mutations are fully supported by \tskit, which correctly accounts for
+their presence when computing statistics and performing other operations.
+For example, silent mutations have no effect on calculations of nucleotide
+site diversity.
 
 \subsection*{Likelihood calculations}
 \label{app-likelihoods}
