@@ -845,7 +845,8 @@ segments represent an ancestral chromosome that is a genetic ancestor
 of the two lineages, but not the most recent common genetic ancestor
 at any location along the genome.
 When this happens, the merged lineage carries ``trapped'' genetic material
-that is not ancestral to any samples, but where recombinations can still occur.
+that is not ancestral to any samples, but where recombinations can still
+occur~\citep{wiuf1999recombination}.
 The SMC approximations work by disallowing common ancestor events
 that generate trapped material, greatly simplifying the process.
 However, this also removes subtle long-range
@@ -1431,10 +1432,9 @@ sweeps~\citep{kaplan1989hitchhiking,braverman1995hitchhiking,kim2002detecting}.
 Sweeps are modelled by creating a structured population
 during the sojourn of the beneficial mutation through the population (i.e., the sweep phase)
 in which lineages may transit between favoured and unfavoured backgrounds through
-recombination. This allows for many selective sweep scenarios to be simulated
+recombination. This approach allows for many selective sweep scenarios to be simulated
 efficiently, including recurrent, partial, and soft selective sweeps.
-However in general this
-efficiency comes at the cost of flexibility in comparison to forwards in
+However this efficiency comes at the cost of flexibility in comparison to forwards in
 time simulation.
 Several specialised simulators have been developed to simulate
 sweeps in the coalescent,
@@ -1457,18 +1457,58 @@ a per-base recombination rate of $10^{-9}$ and sequence
 length varying from 1kb--200kb.}
 \end{figure}
 
-Following the approach taken in \discoal, we
-have implemented selective sweeps in \msprime\ by generating
-sweep trajectories from a jump process approximation to the conditional diffusion
-of an allele bound for
-fixation~\citep{coop2004ancestral}---see the Appendix for more details.
-This implementation facilitates future changes to generalise sweep models to
-changing population sizes as well as selection from standing variation.
-Moreover because this implements the basic infrastructure for the structured
-coalescent, adding support for similar situations,
-such as inversions~\citep{peischl2013sequential}, is straightforward.
-Fig.~\ref{fig-selection-perf} shows that \msprime\ has far better
-CPU time and memory performance than \discoal.
+Selective sweeps are implemented in the coalescent as a two
+step-process: first generating an allele frequency trajectory,
+and then simulating a structured coalescent process conditioned
+on that trajectory.
+Following \discoal, we generate sweep trajectories in \msprime\ using a
+jump process approximation to the conditional
+diffusion of an allele bound for
+fixation~\citep{coop2004ancestral}.
+The jump process moves back in time following the beneficial
+allele frequency, $p$, from some initial frequency (e.g., $p=1$) back to
+the origination of the allele at $p=1/(2N)$, tracking time in small
+increments $\delta t$. Then, given the frequency $p$ at time $t$,
+the frequency $p^\prime$ at time $t + \delta t$ is given by
+\begin{equation*}
+p^\prime =
+\begin{cases}
+    p + \mu(p)\delta t +\sqrt{p(1-p)\delta t} & \mbox{with probability $1/2$}\\
+    p + \mu(p)\delta t -\sqrt{p(1-p)\delta t} & \mbox{with probability $1/2$}\\
+\end{cases}
+\end{equation*}
+where
+\begin{eqnarray*}
+	\mu(p)=\frac{\alpha p (1 - p)}{\tanh(\alpha(1-p))}.
+\end{eqnarray*}
+Here, $\alpha=2Ns$ and $s$ is the fitness advantage in homozygotes. This model
+assumes genic selection (i.e., that the dominance coefficient $h=0.5$), but
+can be generalised straightforwardly to include arbitrary dominance.
+We can also define trajectories to model nuetral alleles and soft
+selective sweeps, which we plan as future additions to \msprime.
+
+Then, given a randomly generated allele frequency trajectory under
+the above model, the simulation of a sweep works by assigning lineages to
+two different structured coalescent ``labels'', based on
+whether they carry the beneficial allele.
+The allele frequency trajectory determines the relative sizes
+of the ``populations'' in these labels over time, and therefore
+the rates at which various events occur.
+Common ancestor events can then only merge lineages from \emph{within}
+a label, but lineages can transfer from one label to the other
+(i.e., from the advantageous to disadvantageous backgrounds,
+and vice versa) as a result of recombination events.
+Once we have reached the end of the simulated trajectory the sweep
+is complete, and we remove the structured coalescent labels.
+Simulation may then resume under any other ancestry model.
+
+Fig.~\ref{fig-selection-perf} compares the performance of \msprime\
+and \discoal\ under a simple sweep model, and shows
+that \msprime\ has far better
+CPU time and memory performance.
+Since our implementation uses the abstract label system mentioned above,
+adding support for similar situations,
+such as inversions~\citep{peischl2013sequential}, should be straightforward.
 
 \subsection*{Discrete time Wright-Fisher}
 The coalescent is an idealised model and makes many simplifying assumptions,
@@ -2034,42 +2074,5 @@ the multiple mergers is of the same form as in \eqref{Fbeta}  with $0 < x
 \le M$ in the case $1 < \alpha < 2$ and $\lim_{ N \to \infty } \phi(N) / N > 0$.   If $\alpha \ge 2$
 or $\phi(N)/N \to 0$ then  the  ancestral process converges to  the Kingman-coalescent
 \citep{CDEE2020}.
-
-\label{app-sweeps}
-\subsection*{Selective sweep trajectories}
-We have implemented the coalescent with selective sweeps as a structured
-coalescent process (as in~\citep{braverman1995hitchhiking}). During the
-``sweep phase'' of the simulation the rate of coalescence and recombination
-is tracked separately in lineages linked to the beneficial allele or not,
-with those rates depending on the frequency of the beneficial allele in
-the population at a given time. The allele frequency trajectory of the
-sweeping allele is modelled using a jump process that approximates
-the conditional diffusion of the allele, conditioning on its eventual
-fixation~\citep{coop2004ancestral}.
-The jump process moves back in time following the beneficial
-allele frequency, $p$, from some initial frequency (e.g., $p=1$) back to
-the origination of the allele at $p=1/2N$, and we track time in small
-increments $\delta t$. This works such that the allele frequency at
-the next time step back in time, call it $p^\prime$ is
-
-\begin{eqnarray*}
-	p'=\left\{ \begin{array}{ll}
-	    p + \mu(p)\delta t +\sqrt{p(1-p)\delta t} & \quad \mbox{with probability $1/2$}\\
-	    p + \mu(p)\delta t -\sqrt{p(1-p)\delta t} & \quad \mbox{with probability $1/2$}\\
-	\end{array} \right.
-\end{eqnarray*}
-where
-\begin{eqnarray*}
-	\mu(p)=\frac{\alpha p (1 - p)}{tanh(\alpha(1-p))}.
-\end{eqnarray*}
-Here, $\alpha=2Ns$ and $s$ is the fitness advantage in homozygotes. This model
-assumes genic selection (i.e., that the dominance coefficient $h=0.5$).
-
-While our current implementation only deals with genic selection,
-we plan in the future to add sweeps with arbitrary dominance. Further planned
-additions include trajectories of purely neutral alleles, as well as trajectories
-that model soft selective sweeps.
-
-
 
 \end{document}
