@@ -6,7 +6,7 @@
 @castedo            https://orcid.org/0000-0002-5014-4809
 @cdquinto           https://orcid.org/0000-0002-0338-3321
 @daniel-goldstein   https://orcid.org/0000-0002-5967-5569
-@domnelson
+@domnelson          https://orcid.org/0000-0003-2496-8588
 @eldonb             https://orcid.org/0000-0001-9354-2391
 @fbaumdicker        https://orcid.org/0000-0001-9106-7259
 @gbinux             https://orcid.org/0000-0002-3998-5981

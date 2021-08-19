@@ -18,9 +18,9 @@
 @hyanwong           approve
 @ivan-krukov
 @jerekoskela        approve
-@jeromekelleher     
+@jeromekelleher     approve
 @jgallowa07         approve
-@klohse             
+@klohse             approve
 @mmatschiner        approve
 @molpopgen          approve
 @mufernando         approve

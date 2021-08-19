@@ -401,6 +401,12 @@ from \msprime\ to create the \tskit\ library,
 which provides a large suite of tools for processing genetic ancestry
 and variation data via APIs
 in the Python and C languages~\citep{tskit2021tskit}.
+The availability of \tskit\ as a liberally licensed (MIT) open source
+toolkit has enabled several other
+projects~\citep[e.g.][]{kelleher2019inferring,haller2019slim,wohns2021unified,
+de2021geonomics} to take advantage
+of the same efficient data structures used in \msprime,
+and we hope that many more will follow.
 While a full discussion of tree sequences and the capabilities
 of \tskit\ is beyond the scope of this article, we summarise
 some aspects that are important for simulation.
@@ -1589,8 +1595,8 @@ simulation produced by \SLiM~\citep{haller2019slim}
 or \fwdpy~\citep{thornton2014cpp} can be picked up and completed
 by another simulator, with complete information
 retained---at scale---is unprecedented.
-This interoperability indicates an opportunity for
-other forward genetic simulators ~\citep[e.g.][]{Gaynor2021AlphaSimR}
+There may be an opportunity for
+other forward genetic simulators~\citep[e.g.][]{gaynor2021alphasimr}
 to leverage the tree sequence data format and associated tools.
 
 \subsection*{Development model}
