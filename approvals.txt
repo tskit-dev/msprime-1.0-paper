@@ -6,11 +6,11 @@
 @castedo            approve
 @cdquinto           approve
 @daniel-goldstein   approve
-@domnelson
+@domnelson          approve
 @eldonb             
 @fbaumdicker        
 @gbinux             approve
-@gertjanbisschop    
+@gertjanbisschop    approve
 @grahamgower        
 @gregorgorjanc      approve
 @gtsambos           approve
