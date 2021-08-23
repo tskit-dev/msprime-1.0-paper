@@ -381,7 +381,7 @@ much more information can be associated with the various entities).
 The node table
 stores information about sampled and ancestral genomes. The
 edge table describes how these genomes are related along a
-chromosome, and defines the marginal trees at each position.
+chromosome, and defines the genealogical tree at each position.
 The site and mutation tables together describe sequence variation
 % JK: also amongst the ancestral genomes, but only in positions where
 % they inherit from the sample. I thought it would be less confusing
@@ -436,8 +436,9 @@ of the contiguous chromosomal segment over which
 the child genome inherited genetic material from the parent genome.
 Parent and child nodes may correspond to ancestor and descendant
 genomes separated by many generations.
-Critically, edges can span multiple marginal trees along the
-genome, and identical node IDs across different trees corresponds
+Critically, edges can span multiple trees  along the
+genome (usually referred to as ``marginal'' trees),
+and identical node IDs across different trees corresponds
 to the same ancestral genome.
 For example, in Fig.~\ref{fig-ts-example} the branch from node
 0 to 4 is present in both marginal trees, and represented
