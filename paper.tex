@@ -77,14 +77,14 @@
 \author[22]{Thibaut Sellinger}
 \author[23]{Kevin Thornton}
 \author[9]{Hugo van Kemenade}
-\author[7]{Anthony W. Wohns}
+\author[7,24]{Anthony W. Wohns}
 \author[7]{H. Yan Wong}
 
 % Senior Authors
 \author[16,$\dagger$]{Simon Gravel}
 \author[10,$\dagger$]{Andrew D. Kern}
-\author[24,$\dagger$]{Jere Koskela}
-\author[10,25,$\dagger$]{Peter L. Ralph}
+\author[25,$\dagger$]{Jere Koskela}
+\author[10,26,$\dagger$]{Peter L. Ralph}
 
 % Corresponding
 \author[7,$\ddagger$]{Jerome Kelleher}
@@ -144,10 +144,12 @@ Medicine, Baltimore, MD}
 \affil[22]{Professorship for Population Genetics, Department of Life Science Systems, Technical University of Munich}
 % Kevin
 \affil[23]{Ecology and Evolutionary Biology, University of California Irvine}
+% Wilder 2
+\affil[24]{Broad Institute of MIT and Harvard}
 % Jere
-\affil[24]{Department of Statistics, University of Warwick}
+\affil[25]{Department of Statistics, University of Warwick}
 % Peter (second affil)
-\affil[25]{Department of Mathematics, University of Oregon}
+\affil[26]{Department of Mathematics, University of Oregon}
 
 \affil[$\star$]{Denotes shared first authorship, listed alphabetically}
 \affil[$\dagger$]{Denotes shared senior authorship, listed alphabetically}
@@ -379,7 +381,7 @@ much more information can be associated with the various entities).
 The node table
 stores information about sampled and ancestral genomes. The
 edge table describes how these genomes are related along a
-chromosome, and defines the marginal trees at each position.
+chromosome, and defines the genealogical tree at each position.
 The site and mutation tables together describe sequence variation
 % JK: also amongst the ancestral genomes, but only in positions where
 % they inherit from the sample. I thought it would be less confusing
@@ -434,8 +436,9 @@ of the contiguous chromosomal segment over which
 the child genome inherited genetic material from the parent genome.
 Parent and child nodes may correspond to ancestor and descendant
 genomes separated by many generations.
-Critically, edges can span multiple marginal trees along the
-genome, and identical node IDs across different trees corresponds
+Critically, edges can span multiple trees  along the
+genome (usually referred to as ``marginal'' trees),
+and identical node IDs across different trees corresponds
 to the same ancestral genome.
 For example, in Fig.~\ref{fig-ts-example} the branch from node
 0 to 4 is present in both marginal trees, and represented
@@ -514,8 +517,9 @@ no software library support is available.
 % \msprime, on the other hand, provides a fast, powerful, and well-tested
 % generic interface for generating and storing mutations on trees.
 
-The software ecosystem built around \tskit\ is stable and mature;
-simulators such as
+The software ecosystem built around \tskit\ is stable, mature and
+rapidly growing.
+Simulators such as
 \fwdpy~\citep{thornton2014cpp},
 \SLiM~\citep{haller2019slim},
 \stdpopsim~\citep{adrion2020community},
@@ -1135,7 +1139,7 @@ i.e.\ there is no growth in genealogical branches during $B$ and the probability
 single pair of lineages entering the bottleneck coalesce during the bottleneck
 is $1-e^{-B}$. Although this simple two parameter model of bottlenecks is
 attractive and both analytic results and empirical
-inference~\citep{griffiths1994sampling, galtier2000detecting,
+inference~\citep{griffiths1994sampling, birkner2009modified,galtier2000detecting,
 bunnefeld2015inferring} have been developed under this model, there has
 been no software available to simulate data under instantaneous
 bottleneck histories.
@@ -1489,7 +1493,7 @@ where
 Here, $\alpha=2Ns$ and $s$ is the fitness advantage in homozygotes. This model
 assumes genic selection (i.e., that the dominance coefficient $h=0.5$), but
 can be generalised straightforwardly to include arbitrary dominance.
-We can also define trajectories to model nuetral alleles and soft
+We can also define trajectories to model neutral alleles and soft
 selective sweeps, which we plan as future additions to \msprime.
 
 Then, given a randomly generated allele frequency trajectory under
@@ -1650,10 +1654,10 @@ potential biological realism of simulations.
 These abilities will allow researchers to perform more robust power analyses,
 more reliably test new methods,
 carry out more reliable inferences,
-and more throughly explore the properties of theoretical models.
+and more thoroughly explore the properties of theoretical models.
 Despite this complexity and generality,
 \msprime's performance is state-of-the-art
-and all features are thoroughly tested and statistically validated.
+and all features are extensively tested and statistically validated.
 These advances have only been possible thanks to a distributed,
 collaborative model of software development,
 and the work of many people.
@@ -1951,7 +1955,9 @@ The rate at which  a given group of $k$ out of a total of  $b$ lineages merges  
 \begin{equation}\label{lambdabk}
 \lambda_{b, k} =  \int_0^1  x^{k-2}(1-x)^{b-k}\Lambda(dx) + a\one{k=2}, \quad 2 \le k \le b,
 \end{equation}
-where $a \geq 0$ is a constant and $\Lambda$ is a finite measure on the unit interval without an atom at zero \citep{DK99,P99,S99}.
+where $\one{A} := 1$ if $A$ holds, and zero otherwise,
+$a \geq 0$ is a constant, and $\Lambda$ is a finite measure on the
+unit interval without an atom at zero \citep{DK99,P99,S99}.
 There is also a larger class of simultaneous multiple merger coalescents involving
 simultaneous mergers of distinct groups of lineages into several common ancestors \citep{S00}.
 These are commonly referred to as $\Xi$-coalescents, and

@@ -1,20 +1,20 @@
 @agladstein         
 @andrewkern         approve
 @apragsdale         approve
-@awohns             
+@awohns             approve
 @benjeffery         
 @castedo            approve
 @cdquinto           approve
 @daniel-goldstein   approve
-@domnelson
-@eldonb             
+@domnelson          approve
+@eldonb             approve
 @fbaumdicker        
 @gbinux             approve
-@gertjanbisschop    
+@gertjanbisschop    approve
 @grahamgower        
 @gregorgorjanc      approve
 @gtsambos           approve
-@hugovk             
+@hugovk             approve
 @hyanwong           approve
 @ivan-krukov
 @jerekoskela        approve
@@ -26,8 +26,8 @@
 @mufernando         approve
 @nspope             approve
 @petrelharp         approve
-@saunack            
+@saunack            approve
 @sgravel            approve
 @shajoezhu          approve
 @tppsellinger       approve
-@winni2k            
+@winni2k            approve
