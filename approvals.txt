@@ -8,10 +8,10 @@
 @daniel-goldstein   approve
 @domnelson          approve
 @eldonb             approve
-@fbaumdicker        
+@fbaumdicker        approve
 @gbinux             approve
 @gertjanbisschop    approve
-@grahamgower        
+@grahamgower        approve
 @gregorgorjanc      approve
 @gtsambos           approve
 @hugovk             approve
