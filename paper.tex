@@ -1545,7 +1545,7 @@ We simulated ancestry for a sample of 1000 haploids from a population of 10000,
 and report the (A) total CPU time and (B) maximum memory usage for varying
 sequence lengths, and a per-base recombination rate of $10^{-8}$. Each
 point is the average over $5$ replicate simulations.
-We show observations for \ARGON, \msprime's DTWF implementation (``DWTF'')
+We show observations for \ARGON, \msprime's DTWF implementation (``DTWF'')
 and a hybrid simulation of 100 generations of the DTWF followed by
 the standard coalescent with recombination model (``DTWF + Hudson'').
 Memory usage for \msprime's DTWF and hybrid simulations are very similar.
@@ -1840,7 +1840,7 @@ This is the default in most models,
 except, e.g., the \texttt{BinaryMutationModel}, whose alleles are 0 and 1
 and always labels the ancestral allele ``0''.
 However, mutational processes are not in general stationary,
-so we often allow different root distribution to be specified.
+so we often allow a different root distribution to be specified.
 
 Since the general algorithm above applies mutations at a single rate
 independent of ancestral state,
