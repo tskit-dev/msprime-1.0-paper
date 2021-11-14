@@ -10,6 +10,8 @@ ILLUSTRATIONS=\
 	illustrations/mutated_tree.pdf\
 	illustrations/example_tree_sequence.pdf
 
+all: paper.pdf response-to-reviewers.pdf
+
 paper.pdf: paper.tex paper.bib ${DATA} ${FIGURES} ${ILLUSTRATIONS}
 	pdflatex paper.tex
 	bibtex paper
@@ -64,3 +66,15 @@ clean:
 
 mrproper: clean
 	rm -f *.ps *.pdf
+
+review-diff.tex: paper.tex
+	latexdiff reviewed-paper.tex paper.tex > review-diff.tex
+
+review-diff.pdf: review-diff.tex
+	pdflatex review-diff.tex
+	pdflatex review-diff.tex
+	bibtex review-diff
+	pdflatex review-diff.tex
+
+response-to-reviewers.pdf: response-to-reviewers.tex
+	pdflatex $<
