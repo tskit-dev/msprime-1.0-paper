@@ -871,7 +871,7 @@ in Hudson's algorithm for $n$ samples.
 % a natural conjecture is that the time complexity of Hudson's
 % algorithm is $O(\rho^2 \log^2 n)$.
 Fig.~\ref{fig-ancestry-perf} shows the observed run time for
-simulations with a variety of population size, chromosome
+simulations with a variety of population sizes, chromosome
 length and sample sizes, and demonstrates that Eq.~\eqref{eqn-hsw-bound}
 correctly predicts the quadratic dependence on $\rho$,
 as previously conjectured~\citep[Fig.~2]{kelleher2016efficient}.
@@ -1606,10 +1606,7 @@ on code quality, correctness, good documentation, and inclusive development.
 As in any large code base,
 unit tests play a key role in ensuring that new additions behave
 as expected and \msprime\ has an extensive suite.
-As of the 1.0.0 release \msprime\ consists of around 13K lines of C and 11K
-lines of Python, with suites of 122 C tests (7K lines of code) and
-1350 Python tests (22K lines of code). These tests are run
-automatically on different operating systems on each pull request
+These tests are run automatically on different operating systems on each pull request
 (where a contributor proposes a code change), using standard Continuous
 Integration (CI) methodology. Other CI services
 check for common errors, code formatting issues, and produce reports on
@@ -1619,7 +1616,7 @@ Unit tests are vital for ensuring software quality and correctness, but
 they are usually of little value in assessing the statistical properties
 of simulations. To validate the correctness of simulation output
 we maintain a suite of statistical tests (as of 1.0.0,
-217 validation tests, in 6K lines of code). These consist of running many
+217 validation tests). These consist of running many
 replicate simulations to check the properties of the output
 against other simulators, and where possible against analytical results.
 For example, simulations of complex demography are validated against \ms,
