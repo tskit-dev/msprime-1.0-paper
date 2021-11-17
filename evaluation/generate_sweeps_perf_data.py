@@ -97,7 +97,6 @@ def run_msprime(args):
     for _ in replicates:
         pass
 
-
 def get_process_resources():
     utime = 0
     stime = 0
@@ -137,8 +136,8 @@ tool_map = {
 
 
 @click.command()
-@click.option("--replicates", type=int, default=100)
-@click.option("--processes", type=int, default=None)
+@click.option("--replicates", type=int, default=3)
+@click.option("--processes", type=int, default=1)
 def benchmark(replicates, processes):
     """
     Runs the benchmark between msprime and discoal
@@ -153,14 +152,14 @@ def benchmark(replicates, processes):
     # Set theta to 0 to avoid conflating mutation generation
     theta = 0
     refsize = 1e4
-    # 1kb up to 500kb
-    Ls = np.linspace(1_000, 500_000, 20).astype(int)
+    # 100kb up to 3000kb
+    Ls = np.linspace(100_000, 3_000_000, 20).astype(int)
     work = []
     for L in Ls:
         for name in tool_map.keys():
             rho = 4 * refsize * (L - 1) * r
             cmd = (
-                f"10 {replicates} {L} -t {theta} -r {rho} -ws 0 -a 1000 -x 0.5 -N {refsize}"
+                f"200 {replicates} {L} -t {theta} -r {rho} -ws 0 -a 50 -x 0.5 -N {refsize}"
             )
             work.extend([(name, L, cmd)])
 
