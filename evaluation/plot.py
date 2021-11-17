@@ -288,7 +288,8 @@ def ancestry_perf():
                         rho[utN] / 4, df["time"][utN], color=rgb[k], marker=m, **sargs
                     )
 
-            xx = np.linspace(0, 1.05 * max(X[:, 0]), 51)
+            # xx = np.linspace(0, 1.05 * max(X[:, 0]), 51)
+            xx = np.linspace(0, max(X[:, 0]), 51)
 
             # Note the two quadratic curves are not the same!
             pargs = {}
