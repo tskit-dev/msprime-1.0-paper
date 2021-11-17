@@ -1412,16 +1412,18 @@ The method is described in more detail by~\cite{nelson2020accounting}.
 \end{center}
 \caption{\label{fig-dtwf-perf} Comparison of Discrete Time Wright-Fisher
 (DTWF) simulation performance in \msprime\ and \ARGON\ (Intel Xeon E5-2680 CPU).
-We simulated ancestry for a sample of 1000 haploids from a population of 10000,
-and report the (A) total CPU time and (B) maximum memory usage for varying
-sequence lengths, and a per-base recombination rate of $10^{-8}$. Each
-point is the average over $5$ replicate simulations.
+We ran simulations with a population size of $10^4$ and
+recombination rate of $10^{-8}$, with 500 diploid samples
+and varying sequence length.
+We report (A) total CPU time and (B) maximum memory usage;
+each point is the average over $5$ replicate simulations.
 We show observations for \ARGON, \msprime's DTWF implementation (``DTWF'')
 and a hybrid simulation of 100 generations of the DTWF followed by
-the standard coalescent with recombination model (``DTWF + Hudson'').
-Memory usage for \msprime's DTWF and hybrid simulations are very similar.
+the standard coalescent with recombination (``DTWF + Hudson'').
 We ran \ARGON\ with a mutation rate of $0$ and with minimum output options,
-to ensure we are measuring only ancestry simulation time.}
+with a goal of measuring only ancestry simulation time.
+Memory usage for \msprime's DTWF and hybrid simulations are very similar.
+}
 \end{figure}
 
 Fig.~\ref{fig-dtwf-perf} shows that \msprime\ simulates the DTWF

@@ -37,17 +37,18 @@ def mutations_perf():
     fig, (ax1, ax2) = two_panel_fig(sharey=True)
     ax1.set_xlabel("Sample size")
     dfL = df[df.L == 10]
-    for rate in rates:
+    markers= ["+", "x", "1"]
+    for marker, rate in zip(markers, rates):
         dfr = dfL[dfL.rate == rate].sort_values("n")
-        ax1.plot(dfr.n, dfr.time, label=f"Mutation rate={rate}")
+        ax1.plot(dfr.n, dfr.time, marker=marker, label=f"Mutation rate={rate}")
 
     ax2.set_xlabel("Sequence length (Megabases)")
     ax1.set_ylabel("Time (seconds)")
 
     dfn = df[df.n == 1000].sort_values("L")
-    for rate in rates:
+    for marker, rate in zip(markers, rates):
         dfr = dfn[dfn.rate == rate]
-        ax2.plot(dfr.L, dfr.time, label=f"Mutation rate={rate}")
+        ax2.plot(dfr.L, dfr.time, marker=marker, label=f"Mutation rate={rate}")
     print(dfn[dfn.L == 100])
 
     ax1.legend()
@@ -68,10 +69,18 @@ def gc_perf():
 
     lines = {}
     fig, (ax1, ax2) = two_panel_fig()
+    marker_map = {
+        "msprime": ".",
+        "SimBac": "+",
+        "fastSimBac": "x",
+    }
+
     for tool in ["msprime", "SimBac", "fastSimBac"]:
         dft = df[df.tool == tool]
-        (line,) = ax1.plot(dft.sample_size, dft.user_time, label=tool)
-        ax2.plot(dft.sample_size, dft.memory, label=tool, color=line.get_color())
+        (line,) = ax1.plot(dft.sample_size, dft.user_time,
+                marker=marker_map[tool], label=tool)
+        ax2.plot(dft.sample_size, dft.memory, label=tool,
+                marker=marker_map[tool], color=line.get_color())
         lines[tool] = line
 
     ax1.set_xlabel("Sample size")
@@ -83,7 +92,7 @@ def gc_perf():
     dfmsp = df[df["tool"] == "msprime"]
     largest_n = np.array(dfmsp.sample_size)[-1]
     largest_value = np.array(dfmsp.user_time)[-1]
-    ax1.plot([largest_n], [largest_value], "o", color=lines["msprime"].get_color())
+    ax1.plot([largest_n], [largest_value], marker="*", color="black")
     ax1.annotate(
         f"{round(largest_value * 60)} mins",
         textcoords="offset points",
@@ -113,11 +122,16 @@ def sweeps_perf():
 
     fig, (ax1, ax2) = two_panel_fig()
     lines = {}
+    marker_map = {
+        "msprime": ".",
+        "discoal": "x",
+    }
+
     for tool in ["msprime", "discoal"]:
         dft = df[df.tool == tool]
-        (line,) = ax1.plot(dft.L, dft.time, label=tool)
+        (line,) = ax1.plot(dft.L, dft.time, marker=marker_map[tool], label=tool)
         lines[tool] = line
-        ax2.plot(dft.L, dft.memory, label=tool)
+        ax2.plot(dft.L, dft.memory, marker=marker_map[tool], label=tool)
 
     ax1.set_xlabel("Sequence length (Kilobases)")
     ax1.set_ylabel("Time (minutes)")
@@ -128,7 +142,7 @@ def sweeps_perf():
     dfmsp = df[df["tool"] == "msprime"]
     largest_L = np.array(dfmsp.L)[-1]
     largest_value = np.array(dfmsp.time)[-1]
-    ax1.plot([largest_L], [largest_value], "o", color=lines["msprime"].get_color())
+    ax1.plot([largest_L], [largest_value], "*", color="black")
     ax1.annotate(
         f"{round(largest_value * 60)} seconds",
         textcoords="offset points",
@@ -137,7 +151,7 @@ def sweeps_perf():
         xycoords="data",
     )
     largest_value = np.array(dfmsp.memory)[-1]
-    ax2.plot([largest_L], [largest_value], "o", color=lines["msprime"].get_color())
+    ax2.plot([largest_L], [largest_value], "*", color="black")
     ax2.annotate(
         f"{round(largest_value * 1024)} MiB",
         textcoords="offset points",
@@ -163,10 +177,13 @@ def dtwf_perf():
 
     fig, (ax1, ax2) = two_panel_fig()
     lines = {}
+    marker_map = {"msprime": ".",
+            "hybrid": "+", "ARGON": "x"}
+
     for tool in ["msprime", "hybrid", "ARGON"]:
         dft = df[df.tool == tool]
-        ax1.plot(dft.L, dft.user_time, label=label_map[tool])
-        (line,) = ax2.plot(dft.L, dft.memory, label=label_map[tool])
+        ax1.plot(dft.L, dft.user_time, marker=marker_map[tool], label=label_map[tool])
+        (line,) = ax2.plot(dft.L, dft.memory, marker=marker_map[tool], label=label_map[tool])
         lines[tool] = line
 
     ax1.set_xlabel("Sequence length (Megabases)")
@@ -177,7 +194,7 @@ def dtwf_perf():
     dfmsp = df[df["tool"] == "hybrid"]
     largest_L = np.array(dfmsp.L)[-1]
     largest_value = np.array(dfmsp.memory)[-1]
-    ax2.plot([largest_L], [largest_value], "o", color=lines["hybrid"].get_color())
+    ax2.plot([largest_L], [largest_value], "*", color="black")
     ax2.annotate(
         f"{round(largest_value * 1024)} MiB",
         textcoords="offset points",
