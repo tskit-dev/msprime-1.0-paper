@@ -35,7 +35,7 @@ def mutations_perf():
     rates = np.unique(df.rate)
 
     fig, (ax1, ax2) = two_panel_fig(sharey=True)
-    ax1.set_xlabel("Sample size")
+    ax1.set_xlabel("Sample size (haploid)")
     dfL = df[df.L == 10]
     markers= ["+", "x", "1"]
     for marker, rate in zip(markers, rates):
@@ -83,9 +83,9 @@ def gc_perf():
                 marker=marker_map[tool], color=line.get_color())
         lines[tool] = line
 
-    ax1.set_xlabel("Sample size")
+    ax1.set_xlabel("Sample size (haploid)")
     ax1.set_ylabel("Time (hours)")
-    ax2.set_xlabel("Sample size")
+    ax2.set_xlabel("Sample size (haploid)")
     ax2.set_ylabel("Memory (GiB)")
     ax1.legend()
 

@@ -871,7 +871,8 @@ conversion in \msprime\ 1.0, and validated the output against
 \includegraphics{figures/gc-perf}
 \end{center}
 \caption{\label{fig-gc-perf}Comparison of simulation performance
-using \msprime, \SimBac, and \FastSimBac\ for varying sample sizes,
+using \msprime\ (\texttt{sim\_ancestry}), \SimBac, and \FastSimBac\ for varying
+(haploid) sample sizes,
 with parameters roughly equivalent to the current estimate
 for \textit{E.~coli}~\citep{lapierre2016the}:
 a 4.5Mb genome with scaled gene conversion rate of 0.015 and
@@ -1324,7 +1325,7 @@ and \discoal~\citep{kern2016discoal}.
 \caption{\label{fig-selection-perf}Comparison of selective sweep simulation
 performance in \msprime\ and \discoal\ (Intel Xeon E5-2680 CPU).
 We report the average CPU time and maximum memory usage when simulating 3
-replicates for 200 samples in a model
+replicates for 200 haploid samples in a model
 with a single selective sweep in its history where the beneficial
 allele had a selection coefficient of $s=0.05$,
 a per-base recombination rate of $10^{-8}$, population size of $N=10^4$,
@@ -1411,7 +1412,8 @@ The method is described in more detail by~\cite{nelson2020accounting}.
 \includegraphics{figures/dtwf-perf}
 \end{center}
 \caption{\label{fig-dtwf-perf} Comparison of Discrete Time Wright-Fisher
-(DTWF) simulation performance in \msprime\ and \ARGON\ (Intel Xeon E5-2680 CPU).
+(DTWF) simulation performance in \msprime\ (\texttt{sim\_ancestry})
+and \ARGON\ (Intel Xeon E5-2680 CPU).
 We ran simulations with a population size of $10^4$ and
 recombination rate of $10^{-8}$, with 500 diploid samples
 and varying sequence length.
@@ -1815,11 +1817,11 @@ given $\rho$ and $n$.
     \includegraphics{figures/ancestry-perf}
 \end{center}
 \caption{\label{fig-ancestry-perf}
-    Running time for \msprime\
+    Running time of \texttt{sim\_ancestry}
     for (A) small and (B) larger simulations on an Intel i7-6600U CPU.
     Each point is the run time of one simulation,
     for various values of effective population size ($N_e$),
-    chromosome length in Morgans ($L$), and number of samples ($n$).
+    chromosome length in Morgans ($L$), and number of diploid samples ($n$).
     Run time scales quadratically with the product of $N_e$ and $L$,
     shown on the horizontal axis. For example, (A) shows that
     1,000 samples of 1 Morgan-length chromosomes

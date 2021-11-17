@@ -142,21 +142,47 @@ or sometime haploid (Figure 3), but other times the ploidy is left implied (e.g
 Figure 4). Sometimes the population size is referred to "effective population
 size" (e.g Figure 4) and other times just "population size" (Figure 3). More
 consistency in these simulations, descriptions, and figures could add clarity
-to the presentation. I did find the lack of a disk storage benchmark an
-interesting choice, as this aspect of the software is highlighted in the
-introduction but is not present in the manuscript. The algorithmic details of
-the simulations and methods are generally not included in the current
-manuscript (with some presented in the supplement, and some available in the
-2016 paper), and are left for citations. I think this decision serves the
-manuscript well otherwise it would likely become unwieldy.
+to the presentation.
 \end{point}
 
 \begin{reply}
-TODO Issue 202
+Thank you for examining the figures in this detail and providing such
+helpful feedback. We have tried to improve the presentation by taking
+the following steps for the main text figures:
+
+\begin{itemize}
+
+\item All plots now contain data markers to help show where the data
+points are and to distinguish the lines from each other.
+
+\item All plots state they are running ``sim\_ancestry`` or ``sim\_mutations``.
+
+\item Stated explicitly whether samples are haploid or diploid in the
+figure captions, and updated axis labels also.
+
+\item TODO discoal figure showing total time over 100 reps. (Issue 214)
+
+\end{itemize}
+
+In addition figure 4 has been moved to the appendix, making the remaining
+figures much more uniform in appearance and purpose (it is a special
+case because it is showing how well our theoretical predictions map
+to observations, as well as those observations).
 \end{reply}
 
 \begin{point}
-Figure comments
+I did find the lack of a disk storage benchmark an
+interesting choice, as this aspect of the software is highlighted in the
+introduction but is not present in the manuscript.
+\end{point}
+
+\begin{reply}
+We did not include any benchmarks of storage space as this was explored
+in detail in the 2019 Nature Genetics paper, and we directly reference
+this paper when discussing the storage efficiency of tree sequences.
+\end{reply}
+
+\begin{point} Figure comments
 Figure 2
 I think it could be made more clear that the genotype matrix is not part of the set of tables.
 \end{point}
