@@ -368,7 +368,8 @@ the new APIs default to discrete genome coordinates and finite sites mutations,
 making the default settings more realistic and resolving a major source of confusion and error.
 The previous APIs are fully
 supported and tested, and will be maintained for the foreseeable future.
-The \texttt{msp} program has been extended to include new commands
+The \texttt{msp} program (a command line interface to the library)
+has been extended to include new commands
 for simulating ancestry and mutations separately. A particularly useful
 feature is the ability to specify demographic models in
 Demes format~\citep{gower2021demes} from the command line,
@@ -1797,8 +1798,8 @@ in Hudson's algorithm for $n$ samples.
 Fig.~\ref{fig-ancestry-perf} shows the observed run time for
 simulations with a variety of population size, chromosome
 length and sample sizes, and demonstrates that Eq.~\eqref{eqn-hsw-bound}
-correctly predicts the quadratic dependence on $\rho$,
-as previously conjectured~\citep[Fig.~2]{kelleher2016efficient}.
+correctly predicts the quadratic dependence on $\rho$
+\citep[see also][Fig.~2]{kelleher2016efficient}.
 We also see that the dependence on $n$ is quite weak,
 since increasing sample size 100-fold
 only increases run time by a factor of 2 or so. However, the
