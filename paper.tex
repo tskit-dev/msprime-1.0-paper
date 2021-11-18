@@ -291,12 +291,13 @@ see~\cite{kelleher2016efficient} for a performance comparison of
 \msprime\ against simulators such as \ms, \msms, and \scrm.
 
 \begin{table}
+{ % begin box to localize effect of arraystretch change
+\renewcommand{\arraystretch}{1.5}
 \begin{tabular}{lp{12cm}}
 Interface
 & Separation of ancestry and mutation simulations. Integration
 with forward simulators such as \SLiM\ and \fwdpy.
 Rich suite of analytical and visualisation methods via \tskit\ library. \\
-\midrule
 
 Ancestry
 & SMC, SMC', Beta- and Dirac-coalescent, discrete time Wright-Fisher,
@@ -321,6 +322,7 @@ of mutations, exact times associated with mutations,
 restricted time interval.\\
 
 \end{tabular}
+}
 \caption{Major features of \msprime\ 1.0 new since version
 0.3.0~\citep{kelleher2016efficient}.}
 \end{table}
