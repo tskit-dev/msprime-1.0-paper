@@ -1323,12 +1323,12 @@ and \discoal~\citep{kern2016discoal}.
 \end{center}
 \caption{\label{fig-selection-perf}Comparison of selective sweep simulation
 performance in \msprime\ and \discoal\ (Intel Xeon E5-2680 CPU).
-We report the total CPU time and maximum memory usage when simulating 100
-replicates for 10 samples in a model
+We report the average CPU time and maximum memory usage when simulating 3
+replicates for 200 samples in a model
 with a single selective sweep in its history where the beneficial
-allele had a scaled selection coefficient of $2Ns=1000$,
-a per-base recombination rate of $10^{-9}$ and sequence
-length varying from 1kb--200kb.}
+allele had a selection coefficient of $s=0.05$,
+a per-base recombination rate of $10^{-8}$, population size of $N=10^4$,
+and sequence length varying from 100kb--3000kb.}
 \end{figure}
 
 Selective sweeps are implemented in the coalescent as a two

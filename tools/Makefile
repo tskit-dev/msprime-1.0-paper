@@ -17,6 +17,8 @@ discoal:
 	rm v0.1.5.tar.gz
 	sed -e 's/makeGametesMS/\/\/makeGametesMS/' discoal-0.1.5/discoal_multipop.c > tmp
 	mv tmp discoal-0.1.5/discoal_multipop.c
+	sed -e  's/220020/5000000/' discoal-0.1.5/discoal.h > tmp
+	mv tmp discoal-0.1.5/discoal.h
 	cd discoal-0.1.5/ &&  make 
 	cp discoal-0.1.5/discoal ./
 
