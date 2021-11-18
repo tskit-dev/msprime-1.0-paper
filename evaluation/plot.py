@@ -115,7 +115,7 @@ def sweeps_perf():
     print(df)
 
     df.memory /= 1024 ** 3
-    df.L /= 1000
+    df.L /= 1000**2
     # discoal has very high systime usage, so we need to
     # include it here as well.
     df["time"] = (df.user_time + df.sys_time) / 60
@@ -133,9 +133,9 @@ def sweeps_perf():
         lines[tool] = line
         ax2.plot(dft.L, dft.memory, marker=marker_map[tool], label=tool)
 
-    ax1.set_xlabel("Sequence length (Kilobases)")
+    ax1.set_xlabel("Sequence length (Megabases)")
     ax1.set_ylabel("Time (minutes)")
-    ax2.set_xlabel("Sequence length (Kilobases)")
+    ax2.set_xlabel("Sequence length (Megabases)")
     ax2.set_ylabel("Memory (GiB)")
     ax1.legend()
 
@@ -144,7 +144,7 @@ def sweeps_perf():
     largest_value = np.array(dfmsp.time)[-1]
     ax1.plot([largest_L], [largest_value], "*", color="black")
     ax1.annotate(
-        f"{round(largest_value * 60)} seconds",
+        f"{largest_value * 60:.2f} seconds",
         textcoords="offset points",
         xytext=(-38, 5),
         xy=(largest_L, largest_value),
