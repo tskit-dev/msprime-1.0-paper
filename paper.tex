@@ -368,7 +368,8 @@ the new APIs default to discrete genome coordinates and finite sites mutations,
 making the default settings more realistic and resolving a major source of confusion and error.
 The previous APIs are fully
 supported and tested, and will be maintained for the foreseeable future.
-The \texttt{msp} program has been extended to include new commands
+The \texttt{msp} program (a command line interface to the library)
+has been extended to include new commands
 for simulating ancestry and mutations separately. A particularly useful
 feature is the ability to specify demographic models in
 Demes format~\citep{gower2021demes} from the command line,
@@ -871,7 +872,8 @@ conversion in \msprime\ 1.0, and validated the output against
 \includegraphics{figures/gc-perf}
 \end{center}
 \caption{\label{fig-gc-perf}Comparison of simulation performance
-using \msprime, \SimBac, and \FastSimBac\ for varying sample sizes,
+using \msprime\ (\texttt{sim\_ancestry}), \SimBac, and \FastSimBac\ for varying
+(haploid) sample sizes,
 with parameters roughly equivalent to the current estimate
 for \textit{E.~coli}~\citep{lapierre2016the}:
 a 4.5Mb genome with scaled gene conversion rate of 0.015 and
@@ -1322,10 +1324,10 @@ and \discoal~\citep{kern2016discoal}.
 \includegraphics{figures/sweeps-perf}
 \end{center}
 \caption{\label{fig-selection-perf}Comparison of selective sweep simulation
-performance in \msprime\ and \discoal\ (Intel Xeon E5-2680 CPU).
+performance in \msprime\ (\texttt{sim\_ancestry}) and \discoal\ (Intel Xeon Gold 6148 CPU).
 We report the average CPU time and maximum memory usage when simulating 3
-replicates for 200 samples in a model
-with a single selective sweep in its history where the beneficial
+replicates for 100 diploid samples in a model
+with a single selective sweep in its history, where the beneficial
 allele had a selection coefficient of $s=0.05$,
 a per-base recombination rate of $10^{-8}$, population size of $N=10^4$,
 and sequence length varying from 100kb--3000kb.}
@@ -1411,17 +1413,20 @@ The method is described in more detail by~\cite{nelson2020accounting}.
 \includegraphics{figures/dtwf-perf}
 \end{center}
 \caption{\label{fig-dtwf-perf} Comparison of Discrete Time Wright-Fisher
-(DTWF) simulation performance in \msprime\ and \ARGON\ (Intel Xeon E5-2680 CPU).
-We simulated ancestry for a sample of 1000 haploids from a population of 10000,
-and report the (A) total CPU time and (B) maximum memory usage for varying
-sequence lengths, and a per-base recombination rate of $10^{-8}$. Each
-point is the average over $5$ replicate simulations.
+(DTWF) simulation performance in \msprime\ (\texttt{sim\_ancestry})
+and \ARGON\ (Intel Xeon E5-2680 CPU).
+We ran simulations with a population size of $10^4$ and
+recombination rate of $10^{-8}$, with 500 diploid samples
+and varying sequence length.
+We report (A) total CPU time and (B) maximum memory usage;
+each point is the average over $5$ replicate simulations.
 We show observations for \ARGON, \msprime's DTWF implementation (``DTWF'')
 and a hybrid simulation of 100 generations of the DTWF followed by
-the standard coalescent with recombination model (``DTWF + Hudson'').
-Memory usage for \msprime's DTWF and hybrid simulations are very similar.
+the standard coalescent with recombination (``DTWF + Hudson'').
 We ran \ARGON\ with a mutation rate of $0$ and with minimum output options,
-to ensure we are measuring only ancestry simulation time.}
+with a goal of measuring only ancestry simulation time.
+Memory usage for \msprime's DTWF and hybrid simulations are very similar.
+}
 \end{figure}
 
 Fig.~\ref{fig-dtwf-perf} shows that \msprime\ simulates the DTWF
@@ -1793,8 +1798,8 @@ in Hudson's algorithm for $n$ samples.
 Fig.~\ref{fig-ancestry-perf} shows the observed run time for
 simulations with a variety of population size, chromosome
 length and sample sizes, and demonstrates that Eq.~\eqref{eqn-hsw-bound}
-correctly predicts the quadratic dependence on $\rho$,
-as previously conjectured~\citep[Fig.~2]{kelleher2016efficient}.
+correctly predicts the quadratic dependence on $\rho$
+\citep[see also][Fig.~2]{kelleher2016efficient}.
 We also see that the dependence on $n$ is quite weak,
 since increasing sample size 100-fold
 only increases run time by a factor of 2 or so. However, the
@@ -1813,11 +1818,11 @@ given $\rho$ and $n$.
     \includegraphics{figures/ancestry-perf}
 \end{center}
 \caption{\label{fig-ancestry-perf}
-    Running time for \msprime\
+    Running time of \texttt{sim\_ancestry}
     for (A) small and (B) larger simulations on an Intel i7-6600U CPU.
     Each point is the run time of one simulation,
     for various values of effective population size ($N_e$),
-    chromosome length in Morgans ($L$), and number of samples ($n$).
+    chromosome length in Morgans ($L$), and number of diploid samples ($n$).
     Run time scales quadratically with the product of $N_e$ and $L$,
     shown on the horizontal axis. For example, (A) shows that
     1,000 samples of 1 Morgan-length chromosomes

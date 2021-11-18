@@ -142,21 +142,47 @@ or sometime haploid (Figure 3), but other times the ploidy is left implied (e.g
 Figure 4). Sometimes the population size is referred to "effective population
 size" (e.g Figure 4) and other times just "population size" (Figure 3). More
 consistency in these simulations, descriptions, and figures could add clarity
-to the presentation. I did find the lack of a disk storage benchmark an
-interesting choice, as this aspect of the software is highlighted in the
-introduction but is not present in the manuscript. The algorithmic details of
-the simulations and methods are generally not included in the current
-manuscript (with some presented in the supplement, and some available in the
-2016 paper), and are left for citations. I think this decision serves the
-manuscript well otherwise it would likely become unwieldy.
+to the presentation.
 \end{point}
 
 \begin{reply}
-TODO Issue 202
+Thank you for examining the figures in this detail and providing such
+helpful feedback. We have tried to improve the presentation by taking
+the following steps for the main text figures:
+
+\begin{itemize}
+
+\item All plots now contain data markers to help show where the data
+points are and to distinguish the lines from each other.
+
+\item All plots state they are running ``sim\_ancestry`` or ``sim\_mutations``.
+
+\item Stated explicitly whether samples are haploid or diploid in the
+figure captions, and updated axis labels also.
+
+\item All figures now show the time averaged across replicates.
+
+\end{itemize}
+
+In addition figure 4 has been moved to the appendix, making the remaining
+figures much more uniform in appearance and purpose (it is a special
+case because it is showing how well our theoretical predictions map
+to observations, as well as those observations).
 \end{reply}
 
 \begin{point}
-Figure comments
+I did find the lack of a disk storage benchmark an
+interesting choice, as this aspect of the software is highlighted in the
+introduction but is not present in the manuscript.
+\end{point}
+
+\begin{reply}
+We did not include any benchmarks of storage space as this was explored
+in detail in the 2019 Nature Genetics paper, and we directly reference
+this paper when discussing the storage efficiency of tree sequences.
+\end{reply}
+
+\begin{point} Figure comments
 Figure 2
 I think it could be made more clear that the genotype matrix is not part of the set of tables.
 \end{point}
@@ -176,7 +202,17 @@ suggest this figure should also include a smaller sample size, (eg n=10)
 \end{point}
 
 \begin{reply}
-TODO
+We have moved Figure 4 to the appendix, as it is of more specialised interest
+than the other main text figures. We have truncated the x-axis on the
+quadratic fits to just the available data, to clarify that we are showing
+all of the data. We have clarified that samples are diploid.
+
+The plot is already quite complex and it is difficult to
+see how we could add a third line without major changes. The figure is
+primarily intended as a useful yardstick for users who wish to run simulations
+and would like a rough idea of how long it should take, and therefore adding
+a third line for very small sample sizes is likely to make it less useful
+for this purpose.
 \end{reply}
 
 \begin{point}
@@ -186,7 +222,13 @@ addition to the scaled rate.
 \end{point}
 
 \begin{reply}
-TODO
+We avoided included the absolute values here in order to make the comparison
+between the simulators as simple as possible (since SimBac and FastSimBac
+require scaled inputs). Since the values we use aren't precisely the estimates
+for E.~coli (we rounded some values for simplicity), it would probably
+be misleading to include some Ne and gc rates that are consistent with the
+scaled value we used, but not equal to the actual E.~coli estimates, and
+we would therefore prefer not to include them.
 \end{reply}
 
 \begin{point}
@@ -199,13 +241,13 @@ addition to the scaled rate.
 \end{point}
 
 \begin{reply}
-TODO
-
-The difference is out of necessity to run discoal (note the y scale).
+We have redone this figure to use the same recombination rate and population
+sizes as the rest of the paper, clarified that samples are diploid, given
+results in terms of the average per replicate and generally made the plot
+as close to the others as possible.
 \end{reply}
 
 \begin{point}
-
 Figure 8
 Averaged points are referenced but not shown "Each point...". The plot could be
 more clear where the data points are and where the lines are interpolating
@@ -217,7 +259,9 @@ figure says "to ensure we are measuring" I would suggest changing the text to
 \end{point}
 
 \begin{reply}
-TODO
+We have update this figure (and all others in the main text) to include
+data markers. We have also rephrased the caption to try to clarify the
+parameters simulated and make them consistent with other figures.
 \end{reply}
 
 \begin{point}
@@ -226,18 +270,17 @@ Line 142 - what is the "msp" program? Is this a command line version?
 \end{point}
 
 \begin{reply}
-TODO
+We have clarified this point with a parenthetical comment.
 \end{reply}
 
 \begin{point}
 Line 370 - the text here makes it sound like Kelleher et al (2016) makes a
 statement relating eq. 1, but the Hein et al (2004) is not cited in the Keleher
 et al (2016).
-
 \end{point}
 
 \begin{reply}
-TODO
+We have rephrased this to say "(see also Kelleher et al., 2016, Fig. 2)".
 \end{reply}
 
 \begin{point}
@@ -245,7 +288,7 @@ Line 370 - population size(s)
 \end{point}
 
 \begin{reply}
-Thank you, we have corrected this sentence in the revised manuscript. 
+Thank you, we have corrected this sentence in the revised manuscript.
 \end{reply}
 
 \begin{point}
@@ -380,7 +423,7 @@ work, and the work is impressive as it is.
 
 \end{point}
 \begin{reply}
-Thank you for your suggestion, we have removed the number of lines of code in the revised manuscript. 
+Thank you for your suggestion, we have removed the number of lines of code in the revised manuscript.
 \end{reply}
 
 \reviewersection
