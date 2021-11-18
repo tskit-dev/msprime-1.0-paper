@@ -48,6 +48,24 @@
 
 \begin{document}
 
+\section*{Response to the editor}
+% General intro text goes here
+TODO thanks editor
+
+% \reviewersection
+
+\textit{
+It is most important that you address the following in your resubmission:
+Improve the structure and focus of the main body of the manuscript. This should
+include moving a significant portion of the material to appendices or
+supplemental material, and adding an up-front summary of the main new features
+of msprime (relative to the 2016 paper).}
+
+TODO
+
+We have moved  Hudson's alg and selective sweeps details to appendixes.
+
+
 \section*{Response to the reviewers}
 % General intro text goes here
 We thank the reviewers for their close reading of our manuscript and
@@ -197,7 +215,7 @@ Figure 4
 It is not clear if these two plots present all the data used for the quadratic
 fits, or if these data continue outside of the plots. Samples are described,
 but not their ploidy, are they haploids or diploid? From the plots here, it is
-not clear if the quadratic relationship holds for sample sizes << 1000. I
+not clear if the quadratic relationship holds for sample sizes $\ll$ 1000. I
 suggest this figure should also include a smaller sample size, (eg n=10)
 \end{point}
 
@@ -321,7 +339,6 @@ TODO
 \end{reply}
 
 \begin{point}
-
 Line 607 - The equations for the allele frequencies during sweeps seem slightly
 out of place as (I assume) these are not novel to msprime. There are many
 places where more details could be provided about methods discussed here, but
@@ -329,7 +346,7 @@ in other cases the equations are left for the supplement or other papers.
 \end{point}
 
 \begin{reply}
-TODO
+We have moved the sweep trajectory equations to an appendix.
 \end{reply}
 
 \reviewersection
@@ -360,18 +377,49 @@ Thanks reviewer 2, TODO.
 \end{reply}
 
 \begin{point}
-
 The paper itself however is less polished. It is very long (37 pages / 1200
 lines without appendix), mostly because it is in places overly detailed, and
 seems to err on the side of completeness rather than conciseness or clarity.
+\end{point}
+
+\begin{reply}
+Thank you for this criticism --- we have reduced the length of the manuscript
+by moving some material to appendices, and tried to address specific points
+raised below.
+\end{reply}
+
+\begin{point}
 For instance, lines 160-177 describe the data structure in some detail, while
 this is published information. Line 192 remarks that "storage space is
 dramatically reduced", and goes on to make this more precise and point out some
 (fairly obvious) advantages in lines 193-202.
+\end{point}
+
+\begin{reply}
+It is true that the details of the succinct tree sequence have been laid out
+in earlier publications, and it is reassuring that the advantages are
+obvious to you. However, for many of the intended audience these methods will
+be new, and we feel it's important that this paper is a self-contained,
+thorough, and convincing argument for the advantages of tree sequences and the
+tskit library for performing simulations.
+Very many papers are still published using ms and other
+simulators that use inefficient data formats, and it is these users that
+we want to convince.
+\end{reply}
+
+\begin{point}
 As another example, line 301-4
 states that "Simulating mutations ... is efficient" and refers to Fig 3 for
 evidence. The rest of the section (304-319) details a number of examples shown
-in Fig 3 that do not add much to the story. As a third example, in the
+in Fig 3 that do not add much to the story.
+\end{point}
+
+\begin{reply}
+TODO
+\end{reply}
+
+\begin{point}
+As a third example, in the
 recombination section after useful comparisons with other approaches, line 354
 states that the proposed algorithm is still quadratic in the recombination
 rate. The long section from line 354 to 426 details the algorithmic reasons,
@@ -379,11 +427,10 @@ and use various analytic approximations and simulations to support this. This
 material is of interest only to a few algorithm developers, and I would imagine
 it would be better placed in an appendix, with the key observations summarized
 in the main text.
-
 \end{point}
 
 \begin{reply}
-TODO.
+We have moved this detailed discussion to an appendix.
 \end{reply}
 
 \begin{point}
@@ -397,7 +444,6 @@ that allow for a more integrated and less error prone workflow. I would suggest
 to introduce separate sections for algorithmic efficiency and the API, and
 discuss the various features (as you do now) in their own separate section, but
 focus on these features from a user's rather than a developer's perspective.
-
 \end{point}
 \begin{reply}
 TODO.
@@ -407,7 +453,6 @@ TODO.
 Occasionally the paper reads more like documentation than a paper, such as when
 the Demography class is introduced and several associated functions are
 mentioned - this is not relevant for a paper in my opinion.
-
 \end{point}
 \begin{reply}
 TODO.
