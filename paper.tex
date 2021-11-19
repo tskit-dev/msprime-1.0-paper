@@ -1450,9 +1450,7 @@ on code quality, correctness, good documentation, and inclusive development.
 As in any large code base,
 unit tests play a key role in ensuring that new additions behave
 as expected and \msprime\ has an extensive suite.
-As of the 1.0.0 release \msprime\ consists of around 13K lines of C and 11K
-lines of Python, with suites of 122 C tests (7K lines of code) and
-1350 Python tests (22K lines of code). These tests are run
+These tests are run
 automatically on different operating systems on each pull request
 (where a contributor proposes a code change), using standard Continuous
 Integration (CI) methodology. Other CI services
@@ -1463,7 +1461,7 @@ Unit tests are vital for ensuring software quality and correctness, but
 they are usually of little value in assessing the statistical properties
 of simulations. To validate the correctness of simulation output
 we maintain a suite of statistical tests (as of 1.0.0,
-217 validation tests, in 6K lines of code). These consist of running many
+217 validation tests). These consist of running many
 replicate simulations to check the properties of the output
 against other simulators, and where possible against analytical results.
 For example, simulations of complex demography are validated against \ms,
@@ -1753,7 +1751,7 @@ quadratic in the population scaled recombination rate
 $\rho = 4 N_e L$ (where $L$ is the length of the genome in units of
 recombination distance) by Eq.~\eqref{eqn-hsw-bound}.
 Fig.~\ref{fig-ancestry-perf} shows the running time for
-simulations with a variety of population size, chromosome
+simulations with a variety of population sizes, chromosome
 length and sample sizes, and shows this quadratic
 prediction is well supported by
 observations~\citep[see also][Fig.~2]{kelleher2016efficient}.
