@@ -297,12 +297,15 @@ see~\cite{kelleher2016efficient} for a performance comparison of
 Interface
 & Separation of ancestry and mutation simulations. Integration
 with forward simulators such as \SLiM\ and \fwdpy.
+Ability to store arbitrary metadata along with simulation
+results, and automatic recording of provenance information
+for reproducibility.
 Rich suite of analytical and visualisation methods via \tskit\ library. \\
 
 Ancestry
 & SMC, SMC', Beta- and Dirac-coalescent, discrete time Wright-Fisher,
   and selective sweep models. Instantaneous bottlenecks.
-  Discrete or continuous coordinates, arbitary ploidy,
+  Discrete or continuous genomic coordinates, arbitary ploidy,
   gene conversion.
   Recording full ARG, full migration history, census
   events.  More efficient for large numbers of populations.\\
@@ -317,7 +320,7 @@ Mutations
 & JC69, HKY, F84, GTR, BLOSUM62, PAM, infinite alleles, SLiM and
 general matrix mutation models.
 Varying rates along the genome, recurrent/back mutations,
-discrete or continuous coordinates, overlaying multiple layers
+discrete or continuous genomic coordinates, overlaying multiple layers
 of mutations, exact times associated with mutations,
 restricted time interval.\\
 
