@@ -295,20 +295,24 @@ see~\cite{kelleher2016efficient} for a performance comparison of
 \renewcommand{\arraystretch}{1.5}
 \begin{tabular}{lp{12cm}}
 Interface
-& Separation of ancestry and mutation simulations. Integration
-with forward simulators such as \SLiM\ and \fwdpy.
+& Separation of ancestry and mutation simulations.
 Ability to store arbitrary metadata along with simulation
 results, and automatic recording of provenance information
 for reproducibility.
+Jupyter notebook~\citep{kluyver2016jupyter} integration.
 Rich suite of analytical and visualisation methods via \tskit\ library. \\
 
 Ancestry
 & SMC, SMC', Beta- and Dirac-coalescent, discrete time Wright-Fisher,
-  and selective sweep models. Instantaneous bottlenecks.
-  Discrete or continuous genomic coordinates, arbitary ploidy,
-  gene conversion.
-  Recording full ARG, full migration history, census
-  events.  More efficient for large numbers of populations.\\
+and selective sweep models. Instantaneous bottlenecks.
+Discrete or continuous genomic coordinates, arbitary ploidy,
+gene conversion.
+Output full ARG with recombination nodes, ARG likelihood calculations.
+Record full migration history and census
+events.  Improved performance for large numbers of populations.
+Integration with forward simulators such as \SLiM\ and \fwdpy\
+(``recapitation'').
+\\
 
 Demography
 & Improved inferface, import from Newick species tree and
