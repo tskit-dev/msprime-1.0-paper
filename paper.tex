@@ -874,20 +874,14 @@ conversion in \msprime\ 1.0, and validated the output against
 \caption{\label{fig-gc-perf}Comparison of simulation performance
 using \msprime\ (\texttt{sim\_ancestry}), \SimBac, and \FastSimBac\ for varying
 (haploid) sample sizes,
-with parameters roughly equivalent to the current estimate
-for \textit{E.~coli}~\citep{lapierre2016the}:
-a 4.5Mb genome with scaled gene conversion rate of 0.015 and
-a mean tract length of 500.
+and the current estimates
+for \textit{E.~coli} parameters~\citep{lapierre2016the}:
+a 4.6Mb genome, $N_e = 1.8\times 10^8$, gene conversion rate of $8.9\times 10^{-11}$
+per base and tract length of $542$.
 We report (A) the total CPU time and (B) maximum memory usage
 averaged over 5 replicates (Intel Xeon E5-2680 CPU).
 We did not run \SimBac\ beyond first two data points because
 of the very long running times.}
-% The genome length was set to 4.5 Mb, the scaled per site
-% gene conversion rate was set to $N_e g = \gamma = 0.015$ and
-% the mean gene conversion tract length was set to $L = 500$, which is close to
-% estimated parameters for \textit{E.~coli}, i.e.\ an effective populations size
-% $N_e = 1.8e^8$ and a per site per generation conversion rate $g = 8.9e^{-11}$
-% with mean tract length $L = 542$~\citep{lapierre2016the}.}
 \end{figure}
 
 Gene conversion is particularly useful to model homologous recombination in
