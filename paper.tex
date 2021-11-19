@@ -18,6 +18,7 @@
 \usepackage{tikz}
 \usepackage[right]{lineno}
 \usetikzlibrary{calc,positioning}
+\usepackage{booktabs}
 %\usepackage{showkeys}
 
 % local definitions
@@ -289,6 +290,50 @@ illustrative and not intended to be systematic or exhaustive. Please
 see~\cite{kelleher2016efficient} for a performance comparison of
 \msprime\ against simulators such as \ms, \msms, and \scrm.
 
+\begin{table}
+{ % begin box to localize effect of arraystretch change
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{lp{12cm}}
+Interface
+& Separation of ancestry and mutation simulations.
+Ability to store arbitrary metadata along with simulation
+results, and automatic recording of provenance information
+for reproducibility.
+Jupyter notebook~\citep{kluyver2016jupyter} integration.
+Rich suite of analytical and visualisation methods via \tskit\ library. \\
+
+Ancestry
+& SMC, SMC', Beta- and Dirac-coalescent, discrete time Wright-Fisher,
+and selective sweep models. Instantaneous bottlenecks.
+Discrete or continuous genomic coordinates, arbitary ploidy,
+gene conversion.
+Output full ARG with recombination nodes, ARG likelihood calculations.
+Record full migration history and census
+events.  Improved performance for large numbers of populations.
+Integration with forward simulators such as \SLiM\ and \fwdpy\
+(``recapitation'').
+\\
+
+Demography
+&
+Improved interface with integrated metadata and referencing populations by
+name. Import from Newick species tree, *BEAST~\citep{heled2009bayesian},
+and Demes~\citep{gower2022demes}. Numerical methods to compute
+coalescence rates.\\
+
+Mutations
+& JC69, HKY, F84, GTR, BLOSUM62, PAM, infinite alleles, SLiM and
+general matrix mutation models.
+Varying rates along the genome, recurrent/back mutations,
+discrete or continuous genomic coordinates, overlaying multiple layers
+of mutations, exact times associated with mutations.
+
+\end{tabular}
+}
+\caption{Major features of \msprime\ 1.0 added since version
+0.3.0~\citep{kelleher2016efficient}.}
+\end{table}
+
 % jk: I started writing a roadmap here, but it's quite hard to do concisely
 % and you either end up leaving sections out, or just summarising them
 % one-by-one which makes it long and tedious. I think readers can either read
@@ -307,7 +352,7 @@ or a mixture of both.
 Command line interfaces make it easy to run simple
 simulations, but as model complexity and the number of parameters increase,
 they become difficult to understand and
-error-prone~\citep{ragsdale2020lessons,gower2021demes}.
+error-prone~\citep{ragsdale2020lessons,gower2022demes}.
 Specifying parameters through a text file alleviates this problem to a degree,
 but lacks flexibility, for example, when running simulations with parameters
 drawn from a distribution. In practice, for any reproducible simulation
@@ -372,7 +417,7 @@ The \texttt{msp} program (a command line interface to the library)
 has been extended to include new commands
 for simulating ancestry and mutations separately. A particularly useful
 feature is the ability to specify demographic models in
-Demes format~\citep{gower2021demes} from the command line,
+Demes format~\citep{gower2022demes} from the command line,
 making simulation of complex demographies straightforward.
 We also provide an \ms\ compatible
 command line interface to support existing workflows.
@@ -413,7 +458,7 @@ We subsequently extracted the core tree sequence functionality
 from \msprime\ to create the \tskit\ library,
 which provides a large suite of tools for processing genetic ancestry
 and variation data via APIs
-in the Python and C languages~\citep{tskit2021tskit}.
+in the Python and C languages~\citep{tskit2022tskit}.
 The availability of \tskit\ as a liberally licensed (MIT) open source
 toolkit has enabled several other
 projects~\citep[e.g.][]{kelleher2019inferring,haller2019slim,wohns2021unified,
@@ -948,7 +993,7 @@ Another improvement over the
 0.x APIs is the introduction of explicit population split and admixture events,
 and a population state machine that ensures that lineages cannot migrate into
 (or be sampled from) inactive populations. This demography model is compatible
-with the Demes standard~\citep{gower2021demes}, and the \texttt{Demography}
+with the Demes standard~\citep{gower2022demes}, and the \texttt{Demography}
 class supports importing and exporting Demes models.
 Models previously constructed using the 0.x API can be seamlessly imported into
 the \texttt{Demography} class, and we also support importing demographic
