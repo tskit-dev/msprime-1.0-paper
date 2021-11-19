@@ -680,7 +680,7 @@ and could be split into separate packages.
 The efficient C and Python interfaces for
 \tskit\ make it straightforward to add further information to
 an existing file, and because of its efficient data interchange mechanisms,
-there is no performance penalty for additional operations
+there is no performance penalty for operations being performed
 in a different software package.
 Thanks to this interoperability, \msprime's
 mutation generator can work with \emph{any} \tskit\ tree sequence,
@@ -739,6 +739,12 @@ For example, the longest running simulation in
 Fig.~\ref{fig-mutations-perf}B required less than 2 seconds to
 generate an average of 1.5 million mutations over 137,081 trees
 in a tree sequence with 508,125 edges.
+This efficiency for large numbers of trees is possible because
+the tree sequence encoding allows us to generate mutations
+on an edge-by-edge basis
+(see Fig.~\ref{fig-ts-example} and the~\nameref{app-mutation-algorithm}
+appendix),
+rather than tree-by-tree and branch-by-branch as would otherwise be required.
 Simulating mutations on a single tree is also very efficient;
 for example,
 we simulated mutations under the BLOSUM62 amino
