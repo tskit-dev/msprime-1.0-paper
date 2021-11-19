@@ -284,7 +284,9 @@ open-source community-based development.
 \section*{Results}
 In the following sections we describe the main features of \msprime\ 1.0,
 focusing on the aspects that are either new for this version, or in which
-our approach differs significantly from classical methods. Where appropriate,
+our approach differs significantly from classical methods
+(summarised in Table~\ref{tab-v1-summary}).
+Where appropriate,
 we benchmark \msprime\ against other simulators, but the comparisons are
 illustrative and not intended to be systematic or exhaustive. Please
 see~\cite{kelleher2016efficient} for a performance comparison of
@@ -330,8 +332,8 @@ of mutations, exact times associated with mutations.
 
 \end{tabular}
 }
-\caption{Major features of \msprime\ 1.0 added since version
-0.3.0~\citep{kelleher2016efficient}.}
+\caption{\label{tab-v1-summary}Major features
+of \msprime\ 1.0 added since version 0.3.0~\citep{kelleher2016efficient}.}
 \end{table}
 
 % jk: I started writing a roadmap here, but it's quite hard to do concisely
@@ -368,8 +370,8 @@ The more recent trend has been to move away from this file and command-line
 driven approach and to instead provide direct interfaces to the simulation
 engines via an Application Programming Interface (API)~\citep[e.g.][]{
 thornton2014cpp,kelleher2016efficient,becheler2019quetzal,haller2019slim}.
-The primary interface for \msprime\ is through a thoroughly documented and
-stable Python
+The primary interface for \msprime\ is through a thoroughly documented
+Python
 API, which has encouraged the development of an ecosystem of downstream
 % Found these through the Dependent packages on GitHub
 tools~\citep{terhorst2017robust,chan2018likelihood,spence2019inference,
@@ -1379,7 +1381,7 @@ in \msprime\ to address the issue. The DTWF simulates backwards in
 time generation-by-generation so that each gamete has a unique
 diploid parent, and multiple recombinations within a generation results in
 crossover events between the same two parental haploid copies.
-The method is described in more detail by~\cite{nelson2020accounting}.
+The method is described in detail by~\cite{nelson2020accounting}.
 
 \begin{figure}
 \begin{center}
@@ -1415,7 +1417,7 @@ We therefore support changing the simulation model during a simulation
 so that we can run hybrid simulations, as proposed by~\cite{bhaskar2014distortion}.
 Any number of different simulation models can be combined, allowing for the
 flexible choice of simulation scenarios.
-As the discrete time Wright-Fisher model improves accuracy of genealogical
+As the DTWF improves accuracy of genealogical
 patterns in the recent past, we can simulate the recent history using this
 model and then switch to the standard coalescent to more efficiently simulate
 the more ancient history.
