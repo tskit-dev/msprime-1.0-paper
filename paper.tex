@@ -948,22 +948,6 @@ required to model bacteria, and so an important avenue for future work
 is to add features such as circular genomes
 and bacterial gene transfer~\citep{baumdicker2014AGTG}.
 
-In terms of predicting the run time for a simulation including gene conversion,
-we recommend following the same approach as discussed in the previous section:
-run a number of simulations for short genome lengths, fit a quadratic to the
-observed CPU times, and use this to predict run time for larger simulations.
-Depending on the relative contributions of gene conversion and crossover
-recombination, this may be an over-estimate since gene conversion events
-tend to generate less trapped ancestral material than crossovers.
-Thus, simulations using mammalian-like gene conversion parameters
-may run faster than simulations in which an equivalent amount of
-crossover recombination is imposed.
-% TODO check this again!
-Since each gene conversion creates two breakpoints and a crossover
-creates only one, we expect the output tree sequence for a given rate
-of gene conversion to be roughly twice the size of the output from a simulation
-with the same rate of crossovers.
-
 \subsection*{Demography}
 \label{sec-demography}
 One of the key applications of population genetic simulations is to generate
