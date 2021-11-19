@@ -19,7 +19,7 @@ def run_simbac(*, sample_size, L, gc_rate, gc_tract_length, count_trees=False):
     R = gc_rate * 2
     # Set theta to 0 to remove mutations (defaults to 0.01)
     args = f"-N {sample_size} -B {int(L)} -R {R} -D {gc_tract_length} -T 0"
-    print(args)
+    # print(args)
     if count_trees:
         # This is cleaned up automatically when the variable goes out of scope
         tempdir = tempfile.TemporaryDirectory()
@@ -46,15 +46,15 @@ def run_fastsimbac(
     # using R=2*gc_rate as gene conversion/recombination rate
     R = gc_rate * 2
     # Set theta to 0 to remove mutations (defaults to 0.01)
-    # We need the -b 500 to set the burn-in so we get the correct distribution
+    # We need the -b {L} to set the burn-in so we get the correct distribution
     # of trees.
-    args = f"{sample_size} {int(L)} -r {R} {gc_tract_length} -t 0 -b 500"
+    args = f"{sample_size} {int(L)} -r {R} {gc_tract_length} -t 0 -b {int(L)}"
     if count_trees:
         args += " -T "
     if set_seed > 0:
         args += " -s " + str(set_seed)
 
-    print("running", args)
+    # print("running", args)
     output = subprocess.run(
         "./tools/fastSimBac " + args, shell=True, check=True, capture_output=True
     )
