@@ -509,8 +509,12 @@ generalises the original
 and is the key to the efficiency of tree
 sequences~\citep{
 kelleher2018efficient,kelleher2019inferring,ralph2020efficiently}.
-See the \nameref{sec-arg} section below for a discussion of this
-closely related concept.
+Note that this formulation is fully compatible with
+the concept of an Ancestral Recombination Graph (ARG)
+and any ARG topology can be fully and efficiently encoded
+in the node and edge tables illustrated in Fig.~\ref{fig-ts-example};
+see the \nameref{sec-arg} section below for
+more details.
 
 % OK, back to tree sequences: what about sequence variation?
 The final output of most population genetic simulations is some representation
@@ -876,16 +880,21 @@ at any location along the genome.
 When this happens, the merged lineage carries ``trapped'' genetic material
 that is not ancestral to any samples, but where recombinations can still
 occur~\citep{wiuf1999recombination}.
-The SMC approximations work by disallowing common ancestor events
-that generate trapped material, greatly simplifying the process.
-However, this also removes subtle long-range
-correlations in the trees since there are many ways in which ancestry
-segments can merge without overlapping.
-
-Recombination events have a dominant effect on the execution time of
-simulations. For details on the time complexity of the simulation algorithm,
-see the appendix: \nameref{app-time-complexity}.
-
+For large $\rho$, recombination events in trapped
+ancestral material will dominate, and so we can use this as a proxy for the
+overall number of events in Hudson's algorithm.
+\citet[Eq.~5.10]{hein2004gene} gave
+\begin{equation}\label{eqn-hsw-bound}
+\rho (\rho + 1) \left( \sum_{i=1}^{n-1} \frac{1}{i} \right)^2
+\end{equation}
+as an upper bound
+on the number of recombination events within trapped ancestral material
+for $n$ samples.
+As discussed in the \nameref{app-time-complexity} appendix, the quadratic
+dependence of simulation running time on $\rho$ implied
+by \eqref{eqn-hsw-bound} is well supported
+by observations, and provides a useful means of predicting how long
+a particular simulation might require.
 
 \subsection*{Gene conversion}
 Gene conversion is a form of recombination that results in the transfer
@@ -1751,30 +1760,19 @@ For example, silent mutations have no effect on calculations of nucleotide
 site diversity.
 
 
-\subsection*{Time complexity of the algorithm}
+\subsection*{Time complexity of Hudson's algorithm}
 \label{app-time-complexity}
 
 As discussed in the \nameref{sec-recombination} section, the time complexity of
-Hudson's algorithm is quadratic in the population scaled recombination rate
-$\rho = 4 N_e L$, where $L$ is the length of the genome in units of
-recombination distance. For large $\rho$, recombination events in trapped
-ancestral material will dominate, and so we can use this as a proxy for the
-overall number of events in Hudson's algorithm.
-\citet[Eq.~5.10]{hein2004gene} gave
-\begin{equation}\label{eqn-hsw-bound}
-\rho (\rho + 1) \left( \sum_{i=1}^{n-1} \frac{1}{i} \right)^2
-\end{equation}
-as an upper bound
-on the number of recombination events within trapped ancestral material
-in Hudson's algorithm for $n$ samples.
-% Since the sum is well approximated by $\log{n}$,
-% a natural conjecture is that the time complexity of Hudson's
-% algorithm is $O(\rho^2 \log^2 n)$.
-Fig.~\ref{fig-ancestry-perf} shows the observed run time for
+Hudson's algorithm is predicted to be
+quadratic in the population scaled recombination rate
+$\rho = 4 N_e L$ (where $L$ is the length of the genome in units of
+recombination distance) by Eq.~\eqref{eqn-hsw-bound}.
+Fig.~\ref{fig-ancestry-perf} shows the running time for
 simulations with a variety of population size, chromosome
-length and sample sizes, and demonstrates that Eq.~\eqref{eqn-hsw-bound}
-correctly predicts the quadratic dependence on $\rho$
-\citep[see also][Fig.~2]{kelleher2016efficient}.
+length and sample sizes, and shows this quadratic
+prediction is well supported by
+observations~\citep[see also][Fig.~2]{kelleher2016efficient}.
 We also see that the dependence on $n$ is quite weak,
 since increasing sample size 100-fold
 only increases run time by a factor of 2 or so. However, the
@@ -1785,8 +1783,6 @@ except possibly at very
 large values of $\rho$. It therefore appears that a different dependence
 on $n$ is required to accurately predict simulation time for a
 given $\rho$ and $n$.
-
-\subsubsection*{Practical examples}
 
 \begin{figure}
 \begin{center}
@@ -1852,8 +1848,6 @@ It is important to note that the quadratic curves in the two
 panels of Fig.~\ref{fig-ancestry-perf} are different, and
 predicting the run times of days-long simulations
 using the timing of seconds-long runs is unlikely to be very accurate.
-
-\subsubsection*{Changing population size}
 
 What about simulations with changing population size?
 To understand how run time depends on demography
