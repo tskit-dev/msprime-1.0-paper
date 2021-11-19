@@ -443,8 +443,23 @@ to introduce separate sections for algorithmic efficiency and the API, and
 discuss the various features (as you do now) in their own separate section, but
 focus on these features from a user's rather than a developer's perspective.
 \end{point}
+
 \begin{reply}
-TODO.
+The large number and diversity of features in msprime has made the
+organisation of this
+manuscript a major challenge, and the present layout of a series of
+relatively self-contained topics arrived at after much experimentation.
+Issues like interface design and algorithmic efficiency necessarily
+cut across most of these topics. Separate sections on efficiency
+and API design would need to refer to these other sections for context,
+and would lead, we believe, to a longer and less cohesive document.
+
+However, we do agree that some sections are too long and this criticism
+has been very helpful to allow us see where content could be cut
+without loss of information.
+For example, we have cut out references to the API design in the
+Simulation Mutations section, and substantially cut back the Demography
+section (see next point).
 \end{reply}
 
 \begin{point}
@@ -453,7 +468,8 @@ the Demography class is introduced and several associated functions are
 mentioned - this is not relevant for a paper in my opinion.
 \end{point}
 \begin{reply}
-TODO.
+This is a very helpful observation, and helped us clarify where
+text can be cut. We have substantially but back the Demography section.
 \end{reply}
 
 \begin{point}
@@ -466,7 +482,8 @@ work, and the work is impressive as it is.
 
 \end{point}
 \begin{reply}
-Thank you for your suggestion, we have removed the number of lines of code in the revised manuscript.
+Thank you for your suggestion, we have removed the number of lines of code
+in the revised manuscript.
 \end{reply}
 
 \reviewersection
@@ -480,7 +497,7 @@ that has been previously done in the msprime sphere. The contributions proposed
 here clearly improve on a number of features, and that of course has value.
 \end{point}
 \begin{reply}
-TODO.
+Thank you, we appreciate the kind words.
 \end{reply}
 
 \begin{point}
@@ -493,11 +510,21 @@ statistical inference problems that are in need of development in this area,
 which could justify publication in a journal like Genetics.
 \end{point}
 \begin{reply}
-TODO.
+We respectfully disagree, and believe that this paper is both of substantial
+interest to the readership of Genetics, and presents a number of significant
+innovations that will enable years of research to follow.
+These innovations either
+allow simulation of models for which there is no other available simulator
+(for example, the $\Lambda$-coalescent models and instantaneous bottlenecks)
+or at a genuinely transformative performance differential from existing
+methods. For example, msprime can simulate E-coli genomes tens of
+times faster than specialised bacterial simulators, and selective
+sweeps multiple orders of magnitude faster than discoal.
+These are not minor incremental improvements, and fundamentally shift
+the realms of possibility for population genetic simulations.
 \end{reply}
 
 \begin{point}
-
 Specifically, the need of the field is really to simulate more realistic models
 in a coalescent framework, rather than the slower forward-in-time choice that
 stands as the only option presently. For example, the practical use of a tool
@@ -553,14 +580,19 @@ inference of population history: problems and prospects. MBE.
 
 Murphy et al. 2021. Broad-scale variation in human genetic diversity levels is
 predicted by purifying selection on coding and non-coding elements. bioRxiv.
-
 \end{point}
+
 \begin{reply}
-TODO.
+It is, of course, absolutely correct to point out that neutral simulations
+are an approximation, and that this approximation will be highly inaccurate
+and inappropriate in many situations. However, it is reasonable to say that
+it is both a widely used approximation, and that the
+shortcomings of the neutral approximation have been thoroughly discussed
+elsewhere. It is surely beyond the scope of this paper
+to settle a decades long debate.
 \end{reply}
 
 \begin{point}
-
 Relatedly, for the simulations of positive selection, while it has certainly
 been common practice in the field for a few decades, it is rather odd to model
 a single positively selected site on a background of all other neutral sites.
@@ -576,11 +608,12 @@ selective pressures, thus returning to the first problem mentioned above that
 regions free of background selection effects may not exist in the first place.
 \end{point}
 \begin{reply}
-TODO.
+This is a fair point and absolutely correct. However, we have simply
+implemented the standard approach that has been used and studied extensively
+for decades, and have not made any claims beyond this.
 \end{reply}
 
 \begin{point}
-
 In summary, I believe this to be a nice software addition that belongs as a
 Note in a bioinformatics journal. The software solution that would represent an
 important biological advance for Genetics would involve simulating more
@@ -590,6 +623,10 @@ simulation-based genomic inference.
 \end{point}
 
 \begin{reply}
-TODO
+Thank you for taking the time to explain your perspective. While we disagree on
+the value of this manuscript and its potential interest to the Genetics
+readership, we do agree that there is a large gap in present-day simulation
+methods and that devising more sophisticated approaches to selection in
+particular is a vital avenue for future work.
 \end{reply}
 \end{document}
