@@ -286,7 +286,9 @@ open-source community-based development.
 \section*{Results}
 In the following sections we describe the main features of \msprime\ 1.0,
 focusing on the aspects that are either new for this version, or in which
-our approach differs significantly from classical methods. Where appropriate,
+our approach differs significantly from classical methods
+(summarised in Table~\ref{tab-v1-summary}).
+Where appropriate,
 we benchmark \msprime\ against other simulators, but the comparisons are
 illustrative and not intended to be systematic or exhaustive. Please
 see~\cite{kelleher2016efficient} for a performance comparison of
@@ -332,8 +334,8 @@ of mutations, exact times associated with mutations.
 
 \end{tabular}
 }
-\caption{Major features of \msprime\ 1.0 added since version
-0.3.0~\citep{kelleher2016efficient}.}
+\caption{\label{tab-v1-summary}Major features
+of \msprime\ 1.0 added since version 0.3.0~\citep{kelleher2016efficient}.}
 \end{table}
 
 % jk: I started writing a roadmap here, but it's quite hard to do concisely
@@ -370,8 +372,8 @@ The more recent trend has been to move away from this file and command-line
 driven approach and to instead provide direct interfaces to the simulation
 engines via an Application Programming Interface (API)~\citep[e.g.][]{
 thornton2014cpp,kelleher2016efficient,becheler2019quetzal,haller2019slim}.
-The primary interface for \msprime\ is through a thoroughly documented and
-stable Python
+The primary interface for \msprime\ is through a thoroughly documented
+Python
 API, which has encouraged the development of an ecosystem of downstream
 % Found these through the Dependent packages on GitHub
 tools~\citep{terhorst2017robust,chan2018likelihood,spence2019inference,
@@ -509,8 +511,12 @@ generalises the original
 and is the key to the efficiency of tree
 sequences~\citep{
 kelleher2018efficient,kelleher2019inferring,ralph2020efficiently}.
-See the \nameref{sec-arg} section below for a discussion of this
-closely related concept.
+Note that this formulation is fully compatible with
+the concept of an Ancestral Recombination Graph (ARG)
+and any ARG topology can be fully and efficiently encoded
+in the node and edge tables illustrated in Fig.~\ref{fig-ts-example};
+see the \nameref{sec-arg} section below for
+more details.
 
 % OK, back to tree sequences: what about sequence variation?
 The final output of most population genetic simulations is some representation
@@ -876,16 +882,21 @@ at any location along the genome.
 When this happens, the merged lineage carries ``trapped'' genetic material
 that is not ancestral to any samples, but where recombinations can still
 occur~\citep{wiuf1999recombination}.
-The SMC approximations work by disallowing common ancestor events
-that generate trapped material, greatly simplifying the process.
-However, this also removes subtle long-range
-correlations in the trees since there are many ways in which ancestry
-segments can merge without overlapping.
-
-Recombination events have a dominant effect on the execution time of
-simulations. For details on the time complexity of the simulation algorithm,
-see the appendix: \nameref{app-time-complexity}.
-
+For large $\rho$, recombination events in trapped
+ancestral material will dominate, and so we can use this as a proxy for the
+overall number of events in Hudson's algorithm.
+\citet[Eq.~5.10]{hein2004gene} gave
+\begin{equation}\label{eqn-hsw-bound}
+\rho (\rho + 1) \left( \sum_{i=1}^{n-1} \frac{1}{i} \right)^2
+\end{equation}
+as an upper bound
+on the number of recombination events within trapped ancestral material
+for $n$ samples.
+As discussed in the \nameref{app-time-complexity} appendix, the quadratic
+dependence of simulation running time on $\rho$ implied
+by \eqref{eqn-hsw-bound} is well supported
+by observations, and provides a useful means of predicting how long
+a particular simulation might require.
 
 \subsection*{Gene conversion}
 Gene conversion is a form of recombination that results in the transfer
@@ -939,26 +950,8 @@ required to model bacteria, and so an important avenue for future work
 is to add features such as circular genomes
 and bacterial gene transfer~\citep{baumdicker2014AGTG}.
 
-In terms of predicting the run time for a simulation including gene conversion,
-we recommend following the same approach as discussed in the previous section:
-run a number of simulations for short genome lengths, fit a quadratic to the
-observed CPU times, and use this to predict run time for larger simulations.
-Depending on the relative contributions of gene conversion and crossover
-recombination, this may be an over-estimate since gene conversion events
-tend to generate less trapped ancestral material than crossovers.
-Thus, simulations using mammalian-like gene conversion parameters
-may run faster than simulations in which an equivalent amount of
-crossover recombination is imposed.
-% TODO check this again!
-Since each gene conversion creates two breakpoints and a crossover
-creates only one, we expect the output tree sequence for a given rate
-of gene conversion to be roughly twice the size of the output from a simulation
-with the same rate of crossovers.
-
 \subsection*{Demography}
 \label{sec-demography}
-% TODO should we put in some citations here for the models? Hardly seems
-% necessary.
 One of the key applications of population genetic simulations is to generate
 data for complex demographies. Beyond idealised cases such as stepping-stone or
 island models, or specialised cases such as isolation-with-migration models,
@@ -969,48 +962,18 @@ supports an arbitrary number of randomly mating populations exchanging migrants
 at specified rates. A range of demographic events are supported, which allow for
 varying population sizes and growth rates, changing migration rates over time,
 as well as population splits, admixtures and pulse migrations.
-The location of sampled lineages
-can be tracked through time in as much detail as required: each tree node is
-automatically associated with the population in which it arose, the location of
-lineages can be recorded at any given time via census events, or every lineage
-migration can be recorded.
-Large demographic models can be simulated efficiently in version \msprime\ 1.0,
-since we only consider populations that contain lineages and
-have non-zero migration rates when generating migration event
-waiting times. This is a considerable improvement
-over version 0.x, which scaled quadratically with the number of populations.
 
 A major change for \msprime\ 1.0 is the introduction of the new Demography API,
 designed to address a design flaw in the \msprime\ 0.x interface which led to
-a number of avoidable errors in downstream
-simulations~\citep{ragsdale2020lessons}. Briefly, the 0.x API required three
-separate parameters be provided to the \texttt{simulate} function to describe a
-demographic model, making it easy to accidentally omit information. The 1.0 API
-resolves this issue by creating a new \texttt{Demography} class, which
-encapsulates all information about the demographic model, and fully decouples
-the definition from other simulation details. An instance of this class is then
-provided as a parameter to the new \texttt{sim\_ancestry} function,
-substantially reducing the potential for error.
-Another improvement over the
-0.x APIs is the introduction of explicit population split and admixture events,
-and a population state machine that ensures that lineages cannot migrate into
-(or be sampled from) inactive populations. This demography model is compatible
-with the Demes standard~\citep{gower2022demes}, and the \texttt{Demography}
-class supports importing and exporting Demes models.
-Models previously constructed using the 0.x API can be seamlessly imported into
-the \texttt{Demography} class, and we also support importing demographic
-models from Newick species trees and the output of programs
-like *BEAST~\citep{heled2009bayesian}.
-
-The \texttt{DemographyDebugger} provides detailed information about
-demographic models as well as numerical methods to make predictions
-about these models. For example, we can compute
+avoidable errors in downstream simulations~\citep{ragsdale2020lessons}.
+The new API is more user-friendly, providing the ability, for example,
+to refer to populations by name rather than their integer identifiers.
+We also provide numerical methods to compute
 the coalescence rates for two or more lineages
-drawn from populations at specified times in the past,
 which can be inverted to obtain the
 ``inverse instantaneous coalescence rate'' of \citet{chikhi2018iicr}.
 Many popular approaches in population genetics use the distribution of
-coalescence rates between pairs of lineages in one or more populations to infer
+coalescence rates between pairs of lineages to infer
 effective population sizes over
 time~\citep{li2011inference,sheehan2013estimating,schiffels2014inferring} or
 split times and subsequent migration rates between
@@ -1046,13 +1009,9 @@ bottleneck histories.
 
 We have implemented instantaneous bottlenecks in \msprime~1.0
 using a variant of Hudson's linear time single-locus coalescent
-algorithm~\citep{hudson1990gene}. Instantaneous bottlenecks are specified
-by adding events to the \texttt{Demography} class
-(see the \nameref{sec-demography} section)
-and can be used in combination with any other demographic modelling
-features. We have validated the results of these simulations by comparing
-against analytical expectations for coalescence times and the
-site frequency spectrum~\citep{bunnefeld2015inferring}.
+algorithm~\citep{hudson1990gene}, and
+validated the results by comparing
+against analytical expectations~\citep{bunnefeld2015inferring}.
 
 \subsection*{Multiple merger coalescents}
 
@@ -1417,7 +1376,7 @@ in \msprime\ to address the issue. The DTWF simulates backwards in
 time generation-by-generation so that each gamete has a unique
 diploid parent, and multiple recombinations within a generation results in
 crossover events between the same two parental haploid copies.
-The method is described in more detail by~\cite{nelson2020accounting}.
+The method is described in detail by~\cite{nelson2020accounting}.
 
 \begin{figure}
 \begin{center}
@@ -1453,7 +1412,7 @@ We therefore support changing the simulation model during a simulation
 so that we can run hybrid simulations, as proposed by~\cite{bhaskar2014distortion}.
 Any number of different simulation models can be combined, allowing for the
 flexible choice of simulation scenarios.
-As the discrete time Wright-Fisher model improves accuracy of genealogical
+As the DTWF improves accuracy of genealogical
 patterns in the recent past, we can simulate the recent history using this
 model and then switch to the standard coalescent to more efficiently simulate
 the more ancient history.
@@ -1493,9 +1452,7 @@ on code quality, correctness, good documentation, and inclusive development.
 As in any large code base,
 unit tests play a key role in ensuring that new additions behave
 as expected and \msprime\ has an extensive suite.
-As of the 1.0.0 release \msprime\ consists of around 13K lines of C and 11K
-lines of Python, with suites of 122 C tests (7K lines of code) and
-1350 Python tests (22K lines of code). These tests are run
+These tests are run
 automatically on different operating systems on each pull request
 (where a contributor proposes a code change), using standard Continuous
 Integration (CI) methodology. Other CI services
@@ -1506,7 +1463,7 @@ Unit tests are vital for ensuring software quality and correctness, but
 they are usually of little value in assessing the statistical properties
 of simulations. To validate the correctness of simulation output
 we maintain a suite of statistical tests (as of 1.0.0,
-217 validation tests, in 6K lines of code). These consist of running many
+217 validation tests). These consist of running many
 replicate simulations to check the properties of the output
 against other simulators, and where possible against analytical results.
 For example, simulations of complex demography are validated against \ms,
@@ -1787,30 +1744,19 @@ For example, silent mutations have no effect on calculations of nucleotide
 site diversity.
 
 
-\subsection*{Time complexity of the algorithm}
+\subsection*{Time complexity of Hudson's algorithm}
 \label{app-time-complexity}
 
 As discussed in the \nameref{sec-recombination} section, the time complexity of
-Hudson's algorithm is quadratic in the population scaled recombination rate
-$\rho = 4 N_e L$, where $L$ is the length of the genome in units of
-recombination distance. For large $\rho$, recombination events in trapped
-ancestral material will dominate, and so we can use this as a proxy for the
-overall number of events in Hudson's algorithm.
-\citet[Eq.~5.10]{hein2004gene} gave
-\begin{equation}\label{eqn-hsw-bound}
-\rho (\rho + 1) \left( \sum_{i=1}^{n-1} \frac{1}{i} \right)^2
-\end{equation}
-as an upper bound
-on the number of recombination events within trapped ancestral material
-in Hudson's algorithm for $n$ samples.
-% Since the sum is well approximated by $\log{n}$,
-% a natural conjecture is that the time complexity of Hudson's
-% algorithm is $O(\rho^2 \log^2 n)$.
-Fig.~\ref{fig-ancestry-perf} shows the observed run time for
-simulations with a variety of population size, chromosome
-length and sample sizes, and demonstrates that Eq.~\eqref{eqn-hsw-bound}
-correctly predicts the quadratic dependence on $\rho$
-\citep[see also][Fig.~2]{kelleher2016efficient}.
+Hudson's algorithm is predicted to be
+quadratic in the population scaled recombination rate
+$\rho = 4 N_e L$ (where $L$ is the length of the genome in units of
+recombination distance) by Eq.~\eqref{eqn-hsw-bound}.
+Fig.~\ref{fig-ancestry-perf} shows the running time for
+simulations with a variety of population sizes, chromosome
+length and sample sizes, and shows this quadratic
+prediction is well supported by
+observations~\citep[see also][Fig.~2]{kelleher2016efficient}.
 We also see that the dependence on $n$ is quite weak,
 since increasing sample size 100-fold
 only increases run time by a factor of 2 or so. However, the
@@ -1821,8 +1767,6 @@ except possibly at very
 large values of $\rho$. It therefore appears that a different dependence
 on $n$ is required to accurately predict simulation time for a
 given $\rho$ and $n$.
-
-\subsubsection*{Practical examples}
 
 \begin{figure}
 \begin{center}
@@ -1888,8 +1832,6 @@ It is important to note that the quadratic curves in the two
 panels of Fig.~\ref{fig-ancestry-perf} are different, and
 predicting the run times of days-long simulations
 using the timing of seconds-long runs is unlikely to be very accurate.
-
-\subsubsection*{Changing population size}
 
 What about simulations with changing population size?
 To understand how run time depends on demography
