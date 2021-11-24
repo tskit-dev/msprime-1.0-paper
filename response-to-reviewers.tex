@@ -50,9 +50,18 @@
 
 \section*{Response to the editor}
 % General intro text goes here
-TODO thanks editor
+Thank you for considering this manuscript for publication. We are glad that
+Reviewers 1 and 2 are enthusiastic about this community effort, and their reviews
+have helped to resolve a number of issues with the manuscript. We are
+disappointed that although Reviewer 3 agrees in the value of the software,
+they do not believe the manuscript
+is appropriate for publication in Genetics. However, as we point out in the
+response, it is unclear whether they were reviewing according to the
+``Methods, technology, and resources`` section scope.
 
-% \reviewersection
+\subsection*{Specific comments}
+% We address your specific comments below:
+% % \reviewersection
 
 \textit{
 It is most important that you address the following in your resubmission:
@@ -61,10 +70,10 @@ include moving a significant portion of the material to appendices or
 supplemental material, and adding an up-front summary of the main new features
 of msprime (relative to the 2016 paper).}
 
-TODO
-
-We have moved  Hudson's alg and selective sweeps details to appendixes.
-
+We have shortened the manuscript by moving the details of the analysis
+of Hudson's algorithm and selective sweeps to appendices, and deleting
+unnecessary text in several sections. We have added Table 1, which
+summarises the features added to msprime since the 2016 paper.
 
 \section*{Response to the reviewers}
 % General intro text goes here
@@ -121,13 +130,22 @@ deficiencies. This manuscript handles a wide range of topics with a high degree
 of clarity. And I find the manuscript certainly reaches the criteria "... tools
 of interest to a wide range of geneticists" and so is a good fit as an
 investigation within the "Methods, Technology, \& Resources" subject.
+\end{point}
 
+\begin{reply}
+Thank you for the comprehensive summary. We are delighted that these community
+efforts are so well received.
+\end{reply}
+
+
+\begin{point}
 However, I do think it would be possible to increase the clarity and usefulness
 of the manuscript with some relatively small changes in organization.
 \end{point}
 
 \begin{reply}
-Thanks Reviewer 1, TODO
+Thank you for the detailed review and suggestions, which we hope have resulted
+in an improved manuscript.
 \end{reply}
 
 \begin{point}
@@ -140,7 +158,7 @@ on the different topics in a somewhat random order.
 \end{point}
 
 \begin{reply}
-TODO Issue 207
+We have added table 1 to summarise the new features.
 \end{reply}
 
 \begin{point}
@@ -184,7 +202,7 @@ figure captions, and updated axis labels also.
 
 In addition figure 4 has been moved to the appendix, making the remaining
 figures much more uniform in appearance and purpose (it is a special
-case because it is showing how well our theoretical predictions map
+case because it is showing how well theoretical predictions map
 to observations, as well as those observations).
 \end{reply}
 
@@ -327,14 +345,6 @@ TODO
 \end{reply}
 
 \begin{point}
-Line 606 - something goes wrong with the line numbering here.
-\end{point}
-
-\begin{reply}
-TODO
-\end{reply}
-
-\begin{point}
 Line 607 - The equations for the allele frequencies during sweeps seem slightly
 out of place as (I assume) these are not novel to msprime. There are many
 places where more details could be provided about methods discussed here, but
@@ -369,7 +379,8 @@ academic software development.
 \end{point}
 
 \begin{reply}
-Thanks reviewer 2, TODO.
+Thank you for the kind words, we are delighted that these community efforts are so well
+received.
 \end{reply}
 
 \begin{point}
@@ -379,9 +390,10 @@ seems to err on the side of completeness rather than conciseness or clarity.
 \end{point}
 
 \begin{reply}
-Thank you for this criticism --- we have reduced the length of the manuscript
-by moving some material to appendices, and tried to address specific points
-raised below.
+Thank you for this well-founded criticism. We have reduced the length of the manuscript
+by moving some material to appendices, cutting ``documentation-like'' text,
+and tried to address specific points raised below. We hope that this has
+resulted in an improved manuscript.
 \end{reply}
 
 \begin{point}
@@ -397,7 +409,7 @@ in earlier publications, and it is reassuring that the advantages are
 obvious to you. However, for many of the intended audience these methods will
 be new, and we feel it's important that this paper is a self-contained,
 thorough, and convincing argument for the advantages of tree sequences and the
-tskit library for performing simulations.
+tskit library in simulation workflows.
 Very many papers are still published using ms and other
 simulators that use inefficient data formats, and it is these users that
 we want to convince. We also hope to convince those that might be developing
@@ -459,7 +471,7 @@ However, we do agree that some sections are too long and this criticism
 has been very helpful to allow us see where content could be cut
 without loss of information.
 For example, we have cut out references to the API design in the
-Simulation Mutations section, and substantially cut back the Demography
+Simulating Mutations section, and substantially cut back the Demography
 section (see next point).
 \end{reply}
 
@@ -470,7 +482,8 @@ mentioned - this is not relevant for a paper in my opinion.
 \end{point}
 \begin{reply}
 This is a very helpful observation, and helped us clarify where
-text can be cut. We have substantially but back the Demography section.
+text can be cut. We have substantially cut back the Demography section
+and other areas where we were veering towards documentation.
 \end{reply}
 
 \begin{point}
