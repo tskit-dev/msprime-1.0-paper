@@ -523,19 +523,42 @@ are valuable, but this work doesn't address much larger biological /
 statistical inference problems that are in need of development in this area,
 which could justify publication in a journal like Genetics.
 \end{point}
+
 \begin{reply}
-We respectfully disagree, and believe that this paper is both of substantial
-interest to the readership of Genetics, and presents a number of significant
-innovations that will enable years of research to follow.
-These innovations either
-allow simulation of models for which there is no other available simulator
-(for example, the $\Lambda$-coalescent models and instantaneous bottlenecks)
-or at a genuinely transformative performance differential from existing
-methods. For example, msprime can simulate E-coli genomes tens of
-times faster than specialised bacterial simulators, and selective
-sweeps multiple orders of magnitude faster than discoal.
-These are not minor incremental improvements, and fundamentally shift
-the realms of possibility for population genetic simulations.
+We respectfully disagree, and wonder if there is perhaps a simple
+misunderstanding. While we absolutely agree that if this
+manuscript were submitted as an ``Investigation'' to GENETICS,
+it would need to make substantial methodological
+advances of the type that you describe. However, we are submitting
+the manuscript for consideration in the ``Methods, Technology, and Resources``
+section, which has the following description:
+
+\begin{quotation}
+GENETICS welcomes manuscripts that describe genetic or analytic methods or
+resources that are likely to have broad impact. They can be full length
+research articles or Communications. The method or resource needs to be novel,
+or be a significant advance in an existing method or resource. It should be of
+considerable interest to a wide range of geneticists or of extraordinary
+interest to a smaller group of geneticists. The method, resource or technology
+should enable experiments that will allow investigators to address significant
+biological questions and should be described well enough so others can
+implement the method. The necessary reagents or resources need to be available
+upon request.
+\end{quotation}
+
+We believe that this manuscript amply meets these requirements:
+
+\begin{itemize}
+\item The software is likely to have broad impact---the 2016 paper has
+been cited 123 times so far in 2021 according to Google Scholar.
+\item This is a significant advance over the 2016 paper, with a great deal of
+new functionality (see the newly-added Table 1).
+\item It is of interest to population geneticists who use simulations.
+\item The functionality enables novel simulation types (e.g.,
+$\Lambda$-coalescents) and greatly increases the scale over which
+existing methods can be applied (e.g., bacterial simulations).
+\end{itemize}
+
 \end{reply}
 
 \begin{point}
@@ -597,13 +620,11 @@ predicted by purifying selection on coding and non-coding elements. bioRxiv.
 \end{point}
 
 \begin{reply}
-It is, of course, absolutely correct to point out that neutral simulations
-are an approximation, and that this approximation will be highly inaccurate
-and inappropriate in many situations. However, it is reasonable to say that
-it is both a widely used approximation, and that the
-shortcomings of the neutral approximation have been thoroughly discussed
-elsewhere. It is surely beyond the scope of this paper
-to settle a decades long debate.
+We agree that neutral simulations are an approximation, and care needs to
+be exercised in their use. We have added a sentence to introduction to
+emphasise this point. However, as we have argued above, major methodological
+advances of the type that you discuss (which we agree are extremely important!)
+are beyond the scope of the current manuscript.
 \end{reply}
 
 \begin{point}
@@ -622,9 +643,12 @@ selective pressures, thus returning to the first problem mentioned above that
 regions free of background selection effects may not exist in the first place.
 \end{point}
 \begin{reply}
-This is a fair point and absolutely correct. However, we have simply
-implemented the standard approach that has been used and studied extensively
-for decades, and have not made any claims beyond this.
+We agree that this is an important point, but again this is a deep
+methodological issue that is beyond the scope of the current manuscript.
+We have simply implemented methodology that has been used and
+studied decades. Even if the goal is to demonstrate that such
+approximations are deeply flawed, it is still necessary to be
+able to simulate them efficiently and conveniently.
 \end{reply}
 
 \begin{point}
@@ -637,10 +661,10 @@ simulation-based genomic inference.
 \end{point}
 
 \begin{reply}
-Thank you for taking the time to explain your perspective. While we disagree on
-the value of this manuscript and its potential interest to the Genetics
-readership, we do agree that there is a large gap in present-day simulation
-methods and that devising more sophisticated approaches to selection in
-particular is a vital avenue for future work.
+Thank you for the detailed and interesting review---we agree that there
+is much work to be done in the field of population genetic simulation!
+As we have argued above, we believe the manuscript is entirely suitable
+for publication in Genetics as a
+``Methods, Technology, and Resources`` article.
 \end{reply}
 \end{document}
