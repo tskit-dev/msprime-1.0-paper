@@ -279,9 +279,15 @@ demonstrate its performance advantages over alternative software,
 and discuss opportunities for ongoing
 open-source community-based development.
 
-% and finally lay out future plans for
-% further open-source development of what we hope will become an industry
-% standard piece of computational infrastructure for the genetics community.
+The efficiency of coalescent simulations depends
+crucially on the assumption of neutrality, and it is important
+to note that there are many situations in which this will be a poor approximation
+of biological reality~\citep{johri2021statistical}.
+In particular the existence of pervasive background
+selection in many
+species~\citep{charlesworth1993effect,charlesworth1995pattern,charlesworth2021effects}
+means that care must be taken to ensure that the results of
+neutral simulations are appropriate for the study in question.
 
 \section*{Results}
 In the following sections we describe the main features of \msprime\ 1.0,
@@ -1881,10 +1887,13 @@ What does this tell us about run time for simulating time-varying population siz
 Suppose that population size today is $N_1$,
 while $T$ generations ago it was $N_2$.
 Does the run time depend more on $4 N_1 L$ or $4 N_2 L$?
-The answer depends on how $T$ compares to $N_1$: if $T/N_1$ is large,
-then run time will be similar to a population of size $N_1$;
-while if $T/N_1$ is small, it will be similar to a population of size $N_2$.
-For instance, in many agricultural species $N_1 \propto 100$, while $N_2 \propto 10^5$,
+The answer depends on how $T$ compares to $N_1$:
+if $T / N_1 \ll 1$ then the number of extant lineages remaining after $T$
+generations is likely to be substantial, and the algorithm runtime is primarily
+determined by $N_2$. Conversely, if $T / N_1 \gg 1$, then few extant
+lineages are likely to remain by time $T$ and runtime depends mainly on $N_1$.
+For instance, in many agricultural species $N_1 \approx 100$, while $N_2
+\approx 10^5$,
 and the run time will depend critically on $T$---in other words,
 simulation will be quick in a species with a strong domestication bottleneck,
 and slow otherwise.
