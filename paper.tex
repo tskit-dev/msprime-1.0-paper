@@ -1,5 +1,6 @@
-\documentclass{article}
-\usepackage[round]{natbib}
+\documentclass[9pt,twocolumn,twoside,lineno]{gsajnl}
+\articletype{inv} % article type
+
 \usepackage{amsmath,amssymb}%
 \usepackage{graphicx}
 \usepackage{authblk}
@@ -54,115 +55,133 @@
 \end{split}\end{equation}
 }
 
-\begin{document}
 
 \title{Efficient ancestry and mutation simulation with msprime 1.0}
-% First authors
-\author[1,$\star$]{Franz Baumdicker}
-\author[2,$\star$]{Gertjan Bisschop}
-\author[3,24,$\star$]{Daniel Goldstein}
-\author[4,$\star$]{Graham Gower}
-\author[5,$\star$]{Aaron P. Ragsdale}
-\author[6,$\star$]{Georgia Tsambos}
-\author[7,$\star$]{Sha Zhu}
 
-% Middle Authors
-\author[8]{Bjarki Eldon}
-\author[9]{E. Castedo Ellerman}
-\author[10,11]{Jared G. Galloway}
-\author[12,13]{Ariella L. Gladstein}
-\author[14]{Gregor Gorjanc}
-\author[15]{Bing Guo}
-\author[7]{Ben Jeffery}
-\author[16]{Warren W. Kretzschmar}
-% Haven't been able to contact Ivan, so forced to drop for preprint
-% \author[17]{Ivan Krukov}
-\author[2]{Konrad Lohse}
-\author[17]{Michael Matschiner}
-\author[18]{Dominic Nelson}
-\author[19]{Nathaniel S. Pope}
-\author[20]{Consuelo D. Quinto-Cort\'es}
-\author[10]{Murillo F. Rodrigues}
-\author[21]{Kumar Saunack}
-\author[22]{Thibaut Sellinger}
-\author[23]{Kevin Thornton}
-\author[24]{Hugo van Kemenade}
-\author[7,25]{Anthony W. Wohns}
-\author[7]{Yan Wong}
+\author[$\ast$,1]{Author One}
+\author[$\dagger$,1]{Author Two}
+\author[$\ddagger$,2]{Author Three}
+\author[$\S$]{Author Four}
+\author[$\ast\ast$,2,3]{Author Five}
 
-% Senior Authors
-\author[18,$\dagger$]{Simon Gravel}
-\author[10,$\dagger$]{Andrew D. Kern}
-\author[26,$\dagger$]{Jere Koskela}
-\author[10,27,$\dagger$]{Peter L. Ralph}
+\affil[$\ast$]{Author one affiliation}
+\affil[$\dagger$]{Author two affiliation}
+\affil[$\ddagger$]{Author three affiliation}
+\affil[$\S$]{Author four affiliation}
+\affil[$\ast\ast$]{Author five affiliation}
 
-% Corresponding
-\author[7,$\ddagger$]{Jerome Kelleher}
+\keywords{Simulation, Coalescent, Mutations, Ancestral Recombination Graphs}
 
-% Franz
-\affil[1]{Cluster of Excellence ``Controlling Microbes to Fight Infections'', Mathematical and Computational Population Genetics, University of T\"ubingen}
-% Gertjan, Konrad
-\affil[2]{Institute of Evolutionary Biology, The University of Edinburgh}
-% Daniel
-\affil[3]{Khoury College of Computer Sciences, Northeastern University}
-% Graham
-\affil[4]{Lundbeck GeoGenetics Centre, Globe Institute, University of Copenhagen}
-% Aaron
-\affil[5]{Department of Integrative Biology, University of Wisconsin--Madison}
-% Georgia
-\affil[6]{Melbourne Integrative Genomics, School of Mathematics and Statistics,
-    University of Melbourne}
-% Jerome, Yan, Wilder, Joe
-\affil[7]{Big Data Institute, Li Ka Shing Centre for Health Information and Discovery, University of Oxford}
+\runningtitle{Efficient ancestry and mutation simulation with msprime 1.0}
+\runningauthor{Baumdicker \textit{et al.}}
 
-% Bjarki
-\affil[8]{Leibniz Institute for Evolution and Biodiversity Science, Museum f\"ur Naturkunde Berlin }
-% Castedo
-\affil[9]{Fresh Pond Research Institute}
-% Jared, Murillo, Peter, Andy
-\affil[10]{Institute of Ecology and Evolution, Department of Biology, University of Oregon}
-% Jared
-\affil[11]{Computational Biology Program, Fred Hutchinson Cancer Research
-Center, Seattle, WA 98102, USA}
-% Ariella
-\affil[12]{Department of Genetics, University of North Carolina at Chapel Hill}
-\affil[13]{Embark Veterinary, Inc., Boston}
-% Gregor
-\affil[14]{The Roslin Institute and Royal (Dick) School of Veterinary Studies, University of Edinburgh}
-% Bing
-\affil[15]{Institute for Genome Sciences, University of Maryland School of Medicine, Baltimore, MD}
-% Winni
-\affil[16]{Center for Hematology and Regenerative Medicine, Karolinska Institute}
-% Michael
-\affil[17]{Natural History Museum, University of Oslo}
-% Simon, Dom, Ivan
-\affil[18]{Department of Human Genetics, McGill University}
-% Nathaniel
-\affil[19]{Department of Entomology, Pennsylvania State University}
-% Consuelo
-\affil[20]{National Laboratory of Genomics for Biodiversity (LANGEBIO), Unit of Advanced Genomics, CINVESTAV, Irapuato, Mexico}
-% Saunack
-\affil[21]{IIT Bombay, India}
-% Thibaut
-\affil[22]{Professorship for Population Genetics, Department of Life Science Systems, Technical University of Munich}
-% Kevin
-\affil[23]{Ecology and Evolutionary Biology, University of California Irvine}
-% Hugo
-\affil[24]{No affiliation}
-% Wilder 2
-\affil[25]{Broad Institute of MIT and Harvard}
-% Jere
-\affil[26]{Department of Statistics, University of Warwick}
-% Peter (second affil)
-\affil[27]{Department of Mathematics, University of Oregon}
+% % First authors
+% \author[1,$\star$]{Franz Baumdicker}
+% \author[2,$\star$]{Gertjan Bisschop}
+% \author[3,24,$\star$]{Daniel Goldstein}
+% \author[4,$\star$]{Graham Gower}
+% \author[5,$\star$]{Aaron P. Ragsdale}
+% \author[6,$\star$]{Georgia Tsambos}
+% \author[7,$\star$]{Sha Zhu}
 
-\affil[$\star$]{Denotes shared first authorship, listed alphabetically}
-\affil[$\dagger$]{Denotes shared senior authorship, listed alphabetically}
-\affil[$\ddagger$]{Denotes corresponding author}
+% % Middle Authors
+% \author[8]{Bjarki Eldon}
+% \author[9]{E. Castedo Ellerman}
+% \author[10,11]{Jared G. Galloway}
+% \author[12,13]{Ariella L. Gladstein}
+% \author[14]{Gregor Gorjanc}
+% \author[15]{Bing Guo}
+% \author[7]{Ben Jeffery}
+% \author[16]{Warren W. Kretzschmar}
+% % Haven't been able to contact Ivan, so forced to drop for preprint
+% % \author[17]{Ivan Krukov}
+% \author[2]{Konrad Lohse}
+% \author[17]{Michael Matschiner}
+% \author[18]{Dominic Nelson}
+% \author[19]{Nathaniel S. Pope}
+% \author[20]{Consuelo D. Quinto-Cort\'es}
+% \author[10]{Murillo F. Rodrigues}
+% \author[21]{Kumar Saunack}
+% \author[22]{Thibaut Sellinger}
+% \author[23]{Kevin Thornton}
+% \author[24]{Hugo van Kemenade}
+% \author[7,25]{Anthony W. Wohns}
+% \author[7]{Yan Wong}
 
-% \section*{Contact:} \href{jerome.kelleher@bdi.ox.ac.uk}{jerome.kelleher@bdi.ox.ac.uk}
+% % Senior Authors
+% \author[18,$\dagger$]{Simon Gravel}
+% \author[10,$\dagger$]{Andrew D. Kern}
+% \author[26,$\dagger$]{Jere Koskela}
+% \author[10,27,$\dagger$]{Peter L. Ralph}
 
-\maketitle
+% % Corresponding
+% \author[7,$\ddagger$]{Jerome Kelleher}
+
+% % Franz
+% \affil[1]{Cluster of Excellence ``Controlling Microbes to Fight Infections'', Mathematical and Computational Population Genetics, University of T\"ubingen}
+% % Gertjan, Konrad
+% \affil[2]{Institute of Evolutionary Biology, The University of Edinburgh}
+% % Daniel
+% \affil[3]{Khoury College of Computer Sciences, Northeastern University}
+% % Graham
+% \affil[4]{Lundbeck GeoGenetics Centre, Globe Institute, University of Copenhagen}
+% % Aaron
+% \affil[5]{Department of Integrative Biology, University of Wisconsin--Madison}
+% % Georgia
+% \affil[6]{Melbourne Integrative Genomics, School of Mathematics and Statistics,
+%     University of Melbourne}
+% % Jerome, Yan, Wilder, Joe
+% \affil[7]{Big Data Institute, Li Ka Shing Centre for Health Information and Discovery, University of Oxford}
+
+% % Bjarki
+% \affil[8]{Leibniz Institute for Evolution and Biodiversity Science, Museum f\"ur Naturkunde Berlin }
+% % Castedo
+% \affil[9]{Fresh Pond Research Institute}
+% % Jared, Murillo, Peter, Andy
+% \affil[10]{Institute of Ecology and Evolution, Department of Biology, University of Oregon}
+% % Jared
+% \affil[11]{Computational Biology Program, Fred Hutchinson Cancer Research
+% Center, Seattle, WA 98102, USA}
+% % Ariella
+% \affil[12]{Department of Genetics, University of North Carolina at Chapel Hill}
+% \affil[13]{Embark Veterinary, Inc., Boston}
+% % Gregor
+% \affil[14]{The Roslin Institute and Royal (Dick) School of Veterinary Studies, University of Edinburgh}
+% % Bing
+% \affil[15]{Institute for Genome Sciences, University of Maryland School of Medicine, Baltimore, MD}
+% % Winni
+% \affil[16]{Center for Hematology and Regenerative Medicine, Karolinska Institute}
+% % Michael
+% \affil[17]{Natural History Museum, University of Oslo}
+% % Simon, Dom, Ivan
+% \affil[18]{Department of Human Genetics, McGill University}
+% % Nathaniel
+% \affil[19]{Department of Entomology, Pennsylvania State University}
+% % Consuelo
+% \affil[20]{National Laboratory of Genomics for Biodiversity (LANGEBIO), Unit of Advanced Genomics, CINVESTAV, Irapuato, Mexico}
+% % Saunack
+% \affil[21]{IIT Bombay, India}
+% % Thibaut
+% \affil[22]{Professorship for Population Genetics, Department of Life Science Systems, Technical University of Munich}
+% % Kevin
+% \affil[23]{Ecology and Evolutionary Biology, University of California Irvine}
+% % Hugo
+% \affil[24]{No affiliation}
+% % Wilder 2
+% \affil[25]{Broad Institute of MIT and Harvard}
+% % Jere
+% \affil[26]{Department of Statistics, University of Warwick}
+% % Peter (second affil)
+% \affil[27]{Department of Mathematics, University of Oregon}
+
+% \affil[$\star$]{Denotes shared first authorship, listed alphabetically}
+% \affil[$\dagger$]{Denotes shared senior authorship, listed alphabetically}
+% \affil[$\ddagger$]{Denotes corresponding author}
+
+% % \section*{Contact:} \href{jerome.kelleher@bdi.ox.ac.uk}{jerome.kelleher@bdi.ox.ac.uk}
+
+% \maketitle
+
 
 \begin{abstract}
 Stochastic simulation is a key tool in population genetics,
@@ -187,10 +206,22 @@ software quality via community engagement.
 % "Bazaar" development model: https://en.wikipedia.org/wiki/The_Cathedral_and_the_Bazaar
 \end{abstract}
 
-\textbf{Keywords:} Simulation, Coalescent, Mutations, Ancestral Recombination
-Graphs
+\begin{document}
 
-\section*{Introduction}
+\maketitle
+\thispagestyle{firststyle}
+\marginmark
+\firstpagefootnote
+
+% Use the \equalcontrib command to mark authors with equal
+% contributions, using the relevant superscript numbers
+\equalcontrib{1}
+\equalcontrib{2}
+
+\correspondingauthoraffiliation{3}{Corresponding author: Please insert the affiliation correspondence address and email for the corresponding author. The corresponding author should be marked with the relevant number in the author list, as shown in the example.}
+\vspace{-33pt}% Only used for adjusting extra space in the left column of the first page
+
+\section{Introduction}
 
 The coalescent
 process~\citep{kingman1982coalescent,kingman1982genealogy,hudson1983testing,
@@ -1616,10 +1647,7 @@ Jere Koskela is supported in part by EPSRC grant EP/R044732/1.
 Jerome Kelleher is supported by the Robertson Foundation.
 SG acknowledges funding from the Canada Research Chairs Program, from the Canadian Institutes of Health Research PJT 173300, and from the Canadian Foundation for Innovation.
 
-\bibliographystyle{plainnat}
 \bibliography{paper}
-
-
 
 \setcounter{secnumdepth}{2} % Print out appendix section numbers
 
