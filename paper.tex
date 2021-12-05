@@ -777,7 +777,7 @@ against both theoretical expectations and output from
 \SeqGen~\citep{rambaut1997seq} and
 \Pyvolve~\citep{spielman2015pyvolve}.
 
-\begin{figure*}
+\begin{figure}
     \includegraphics{figures/mutations-perf}
 \caption{\label{fig-mutations-perf} Time required to run
 \texttt{sim\_mutations} on tree sequences generated
@@ -789,8 +789,9 @@ CPU time required (Intel Core i7-9700).
 (A) Holding sequence length fixed at 10 megabases and varying the
 number of samples (tree tips) from 10 to 100,000.
 (B) Holding number of samples fixed at 1000, and varying the sequence
-length from 1 to 100 megabases.}
-\end{figure*}
+length from 1 to 100 megabases.
+\the\columnwidth}
+\end{figure}
 
 Simulating mutations in \msprime\ is efficient.
 Fig.~\ref{fig-mutations-perf} shows the time required to generate
@@ -928,7 +929,7 @@ We have implemented this model of gene
 conversion in \msprime\ 1.0, and validated the output against
 \ms\ and analytical results~\citep{wiuf2000coalescent}.
 
-\begin{figure*}
+\begin{figure}
 \begin{center}
 \includegraphics{figures/gc-perf}
 \end{center}
@@ -943,7 +944,7 @@ We report (A) the total CPU time and (B) maximum memory usage
 averaged over 5 replicates (Intel Xeon E5-2680 CPU).
 We did not run \SimBac\ beyond first two data points because
 of the very long running times.}
-\end{figure*}
+\end{figure}
 
 Gene conversion is particularly useful to model homologous recombination in
 bacterial evolution,
@@ -1323,7 +1324,7 @@ including \texttt{SelSim}~\citep{spencer2004selsim},
 \cosiTwo~\citep{shlyakhter2014cosi2}
 and \discoal~\citep{kern2016discoal}.
 
-\begin{figure*}
+\begin{figure}
 \begin{center}
 \includegraphics{figures/sweeps-perf}
 \end{center}
@@ -1335,7 +1336,7 @@ with a single selective sweep in its history, where the beneficial
 allele had a selection coefficient of $s=0.05$,
 a per-base recombination rate of $10^{-8}$, population size of $N=10^4$,
 and sequence length varying from 100kb--3000kb.}
-\end{figure*}
+\end{figure}
 
 Selective sweeps are implemented in the coalescent as a two
 step-process: first generating an allele frequency trajectory,
@@ -1390,7 +1391,7 @@ diploid parent, and multiple recombinations within a generation results in
 crossover events between the same two parental haploid copies.
 The method is described in detail by~\cite{nelson2020accounting}.
 
-\begin{figure*}
+\begin{figure}
 \begin{center}
 \includegraphics{figures/dtwf-perf}
 \end{center}
@@ -1409,7 +1410,7 @@ We ran \ARGON\ with a mutation rate of $0$ and with minimum output options,
 with a goal of measuring only ancestry simulation time.
 Memory usage for \msprime's DTWF and hybrid simulations are very similar.
 }
-\end{figure*}
+\end{figure}
 
 Fig.~\ref{fig-dtwf-perf} shows that \msprime\ simulates the DTWF
 more quickly and requires substantially less memory than

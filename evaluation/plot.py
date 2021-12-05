@@ -4,7 +4,10 @@ import pandas as pd
 import numpy as np
 import click
 
-plt.rcParams.update({"font.size": 8})
+# Main text size is 9pt
+plt.rcParams.update({"font.size": 7})
+plt.rcParams.update({"legend.fontsize": 6})
+plt.rcParams.update({"lines.markersize": 4})
 
 
 @click.group()
@@ -19,7 +22,10 @@ def save(name):
 
 
 def two_panel_fig(**kwargs):
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(6, 3), **kwargs)
+    # The columnwidth of the genetics format is ~250pt, which is
+    # 3 15/32 inch, = 3.46
+    width = 3.46
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(width, width / 2), **kwargs)
     ax1.set_title("(A)")
     ax2.set_title("(B)")
     return fig, (ax1, ax2)
@@ -40,7 +46,9 @@ def mutations_perf():
     markers= ["+", "x", "1"]
     for marker, rate in zip(markers, rates):
         dfr = dfL[dfL.rate == rate].sort_values("n")
-        ax1.plot(dfr.n, dfr.time, marker=marker, label=f"Mutation rate={rate}")
+        rate_exp = int(np.log10(rate))
+        ax1.plot(dfr.n, dfr.time, marker=marker,
+        label=f"Mutation rate=$10^{{{rate_exp}}}$")
 
     ax2.set_xlabel("Sequence length (Megabases)")
     ax1.set_ylabel("Time (seconds)")
@@ -87,7 +95,6 @@ def gc_perf():
     ax1.set_ylabel("Time (hours)")
     ax2.set_xlabel("Sample size (haploid)")
     ax2.set_ylabel("Memory (GiB)")
-    ax1.legend()
 
     dfmsp = df[df["tool"] == "msprime"]
     largest_n = np.array(dfmsp.sample_size)[-1]
@@ -96,11 +103,12 @@ def gc_perf():
     ax1.annotate(
         f"{round(largest_value * 60)} mins",
         textcoords="offset points",
-        xytext=(-30, 5),
+        xytext=(-25, 5),
         xy=(largest_n, largest_value),
         xycoords="data",
     )
     ax2.set_ylim(bottom=0)
+    ax2.legend()
 
     save("gc-perf")
 
@@ -144,9 +152,9 @@ def sweeps_perf():
     largest_value = np.array(dfmsp.time)[-1]
     ax1.plot([largest_L], [largest_value], "*", color="black")
     ax1.annotate(
-        f"{largest_value * 60:.2f} seconds",
+        f"{largest_value * 60:.1f} seconds",
         textcoords="offset points",
-        xytext=(-38, 5),
+        xytext=(-39, 5),
         xy=(largest_L, largest_value),
         xycoords="data",
     )
@@ -155,7 +163,7 @@ def sweeps_perf():
     ax2.annotate(
         f"{round(largest_value * 1024)} MiB",
         textcoords="offset points",
-        xytext=(-30, 5),
+        xytext=(-21, 5),
         xy=(largest_L, largest_value),
         xycoords="data",
     )
