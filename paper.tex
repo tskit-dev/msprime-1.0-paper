@@ -403,7 +403,9 @@ in the influential simulation analysis of
 could be easily run and reanalyzed~\citep{ragsdale2020lessons,martin2020erratum}.
 
 \begin{figure*}
+    \begin{center}
     \includegraphics{illustrations/mutated_tree}
+    \end{center}
     \caption{
         \label{fig-mutated-trees}
         Visualization of the separation between ancestry and mutation
@@ -1098,8 +1100,8 @@ define a graph in which edges are annotated with the
 set of disjoint genomic intervals
 through which ancestry flows.
 
-\begin{figure*}
-\begin{subfigure}[t]{0.33\textwidth}
+\begin{figure}
+\begin{subfigure}[t]{0.33\columnwidth}
 \centering
 \caption*{(A)}
     \begin{tikzpicture}[scale=0.45,nodestyle/.style={font=\scriptsize}]
@@ -1130,7 +1132,7 @@ through which ancestry flows.
 
     \end{tikzpicture}
 \end{subfigure}
-\begin{subfigure}[t]{0.33\textwidth}
+\begin{subfigure}[t]{0.33\columnwidth}
 \centering
 \caption*{(B)}
 \begin{tikzpicture}[node distance=2mm and 4mm,scale=0.45]
@@ -1189,7 +1191,7 @@ nodelabel/.style={font=\scriptsize}}
 \node (topLabel) at ($(topLeft) + 5*(genUnit) + (0,-1.3)$) {$\scriptsize\textrm{Genome position}$};
 \end{tikzpicture}
 \end{subfigure}
-\begin{subfigure}[t]{0.33\textwidth}
+\begin{subfigure}[t]{0.33\columnwidth}
 \centering
 \caption*{(C)}
 \begin{tikzpicture}[node distance=2mm and 4mm,scale=0.45]
@@ -1255,7 +1257,7 @@ topology ``simplified'' down to its minimal tree sequence representation.
 Note that the internal nodes have been renumbered in the simplified
 representation, so that, e.g., node 5 in (C) corresponds to node 6 in
 (A) and (B).}
-\end{figure*}
+\end{figure}
 
 For our purposes, an ARG is a realization of the coalescent with
 recombination, in the Griffiths (little ARG) sense.
