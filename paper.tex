@@ -403,7 +403,9 @@ in the influential simulation analysis of
 could be easily run and reanalyzed~\citep{ragsdale2020lessons,martin2020erratum}.
 
 \begin{figure*}
+    \begin{center}
     \includegraphics{illustrations/mutated_tree}
+    \end{center}
     \caption{
         \label{fig-mutated-trees}
         Visualization of the separation between ancestry and mutation
@@ -777,7 +779,7 @@ against both theoretical expectations and output from
 \SeqGen~\citep{rambaut1997seq} and
 \Pyvolve~\citep{spielman2015pyvolve}.
 
-\begin{figure*}
+\begin{figure}
     \includegraphics{figures/mutations-perf}
 \caption{\label{fig-mutations-perf} Time required to run
 \texttt{sim\_mutations} on tree sequences generated
@@ -789,8 +791,9 @@ CPU time required (Intel Core i7-9700).
 (A) Holding sequence length fixed at 10 megabases and varying the
 number of samples (tree tips) from 10 to 100,000.
 (B) Holding number of samples fixed at 1000, and varying the sequence
-length from 1 to 100 megabases.}
-\end{figure*}
+length from 1 to 100 megabases.
+\the\columnwidth}
+\end{figure}
 
 Simulating mutations in \msprime\ is efficient.
 Fig.~\ref{fig-mutations-perf} shows the time required to generate
@@ -928,7 +931,7 @@ We have implemented this model of gene
 conversion in \msprime\ 1.0, and validated the output against
 \ms\ and analytical results~\citep{wiuf2000coalescent}.
 
-\begin{figure*}
+\begin{figure}
 \begin{center}
 \includegraphics{figures/gc-perf}
 \end{center}
@@ -943,7 +946,7 @@ We report (A) the total CPU time and (B) maximum memory usage
 averaged over 5 replicates (Intel Xeon E5-2680 CPU).
 We did not run \SimBac\ beyond first two data points because
 of the very long running times.}
-\end{figure*}
+\end{figure}
 
 Gene conversion is particularly useful to model homologous recombination in
 bacterial evolution,
@@ -1097,8 +1100,8 @@ define a graph in which edges are annotated with the
 set of disjoint genomic intervals
 through which ancestry flows.
 
-\begin{figure*}
-\begin{subfigure}[t]{0.33\textwidth}
+\begin{figure}
+\begin{subfigure}[t]{0.33\columnwidth}
 \centering
 \caption*{(A)}
     \begin{tikzpicture}[scale=0.45,nodestyle/.style={font=\scriptsize}]
@@ -1129,7 +1132,7 @@ through which ancestry flows.
 
     \end{tikzpicture}
 \end{subfigure}
-\begin{subfigure}[t]{0.33\textwidth}
+\begin{subfigure}[t]{0.33\columnwidth}
 \centering
 \caption*{(B)}
 \begin{tikzpicture}[node distance=2mm and 4mm,scale=0.45]
@@ -1188,7 +1191,7 @@ nodelabel/.style={font=\scriptsize}}
 \node (topLabel) at ($(topLeft) + 5*(genUnit) + (0,-1.3)$) {$\scriptsize\textrm{Genome position}$};
 \end{tikzpicture}
 \end{subfigure}
-\begin{subfigure}[t]{0.33\textwidth}
+\begin{subfigure}[t]{0.33\columnwidth}
 \centering
 \caption*{(C)}
 \begin{tikzpicture}[node distance=2mm and 4mm,scale=0.45]
@@ -1254,7 +1257,7 @@ topology ``simplified'' down to its minimal tree sequence representation.
 Note that the internal nodes have been renumbered in the simplified
 representation, so that, e.g., node 5 in (C) corresponds to node 6 in
 (A) and (B).}
-\end{figure*}
+\end{figure}
 
 For our purposes, an ARG is a realization of the coalescent with
 recombination, in the Griffiths (little ARG) sense.
@@ -1323,7 +1326,7 @@ including \texttt{SelSim}~\citep{spencer2004selsim},
 \cosiTwo~\citep{shlyakhter2014cosi2}
 and \discoal~\citep{kern2016discoal}.
 
-\begin{figure*}
+\begin{figure}
 \begin{center}
 \includegraphics{figures/sweeps-perf}
 \end{center}
@@ -1335,7 +1338,7 @@ with a single selective sweep in its history, where the beneficial
 allele had a selection coefficient of $s=0.05$,
 a per-base recombination rate of $10^{-8}$, population size of $N=10^4$,
 and sequence length varying from 100kb--3000kb.}
-\end{figure*}
+\end{figure}
 
 Selective sweeps are implemented in the coalescent as a two
 step-process: first generating an allele frequency trajectory,
@@ -1390,7 +1393,7 @@ diploid parent, and multiple recombinations within a generation results in
 crossover events between the same two parental haploid copies.
 The method is described in detail by~\cite{nelson2020accounting}.
 
-\begin{figure*}
+\begin{figure}
 \begin{center}
 \includegraphics{figures/dtwf-perf}
 \end{center}
@@ -1404,12 +1407,12 @@ We report (A) total CPU time and (B) maximum memory usage;
 each point is the average over $5$ replicate simulations.
 We show observations for \ARGON, \msprime's DTWF implementation (``DTWF'')
 and a hybrid simulation of 100 generations of the DTWF followed by
-the standard coalescent with recombination (``DTWF + Hudson'').
+the standard coalescent with recombination (``Hybrid'').
 We ran \ARGON\ with a mutation rate of $0$ and with minimum output options,
 with a goal of measuring only ancestry simulation time.
 Memory usage for \msprime's DTWF and hybrid simulations are very similar.
 }
-\end{figure*}
+\end{figure}
 
 Fig.~\ref{fig-dtwf-perf} shows that \msprime\ simulates the DTWF
 more quickly and requires substantially less memory than

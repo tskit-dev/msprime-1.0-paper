@@ -4,7 +4,10 @@ import pandas as pd
 import numpy as np
 import click
 
-plt.rcParams.update({"font.size": 8})
+# Main text size is 9pt
+plt.rcParams.update({"font.size": 7})
+plt.rcParams.update({"legend.fontsize": 6})
+plt.rcParams.update({"lines.markersize": 4})
 
 
 @click.group()
@@ -19,7 +22,17 @@ def save(name):
 
 
 def two_panel_fig(**kwargs):
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(6, 3), **kwargs)
+    # The columnwidth of the genetics format is ~250pt, which is
+    # 3 15/32 inch, = 3.46
+    width = 3.46
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(width, width / 2), **kwargs)
+    ax1.set_title("(A)")
+    ax2.set_title("(B)")
+    return fig, (ax1, ax2)
+
+def two_panel_fig_single_col(**kwargs):
+    width = 6
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(width, width / 2), **kwargs)
     ax1.set_title("(A)")
     ax2.set_title("(B)")
     return fig, (ax1, ax2)
@@ -40,7 +53,9 @@ def mutations_perf():
     markers= ["+", "x", "1"]
     for marker, rate in zip(markers, rates):
         dfr = dfL[dfL.rate == rate].sort_values("n")
-        ax1.plot(dfr.n, dfr.time, marker=marker, label=f"Mutation rate={rate}")
+        rate_exp = int(np.log10(rate))
+        ax1.plot(dfr.n, dfr.time, marker=marker,
+        label=f"Mutation rate=$10^{{{rate_exp}}}$")
 
     ax2.set_xlabel("Sequence length (Megabases)")
     ax1.set_ylabel("Time (seconds)")
@@ -87,7 +102,6 @@ def gc_perf():
     ax1.set_ylabel("Time (hours)")
     ax2.set_xlabel("Sample size (haploid)")
     ax2.set_ylabel("Memory (GiB)")
-    ax1.legend()
 
     dfmsp = df[df["tool"] == "msprime"]
     largest_n = np.array(dfmsp.sample_size)[-1]
@@ -96,11 +110,12 @@ def gc_perf():
     ax1.annotate(
         f"{round(largest_value * 60)} mins",
         textcoords="offset points",
-        xytext=(-30, 5),
+        xytext=(-25, 5),
         xy=(largest_n, largest_value),
         xycoords="data",
     )
     ax2.set_ylim(bottom=0)
+    ax2.legend()
 
     save("gc-perf")
 
@@ -144,9 +159,9 @@ def sweeps_perf():
     largest_value = np.array(dfmsp.time)[-1]
     ax1.plot([largest_L], [largest_value], "*", color="black")
     ax1.annotate(
-        f"{largest_value * 60:.2f} seconds",
+        f"{largest_value * 60:.1f} seconds",
         textcoords="offset points",
-        xytext=(-38, 5),
+        xytext=(-39, 5),
         xy=(largest_L, largest_value),
         xycoords="data",
     )
@@ -155,7 +170,7 @@ def sweeps_perf():
     ax2.annotate(
         f"{round(largest_value * 1024)} MiB",
         textcoords="offset points",
-        xytext=(-30, 5),
+        xytext=(-21, 5),
         xy=(largest_L, largest_value),
         xycoords="data",
     )
@@ -173,7 +188,7 @@ def dtwf_perf():
     # print(df)
 
     df.memory /= 1024 ** 3
-    label_map = {"ARGON": "ARGON", "msprime": "DTWF", "hybrid": "DTWF + Hudson"}
+    label_map = {"ARGON": "ARGON", "msprime": "DTWF", "hybrid": "Hybrid"}
 
     fig, (ax1, ax2) = two_panel_fig()
     lines = {}
@@ -198,7 +213,7 @@ def dtwf_perf():
     ax2.annotate(
         f"{round(largest_value * 1024)} MiB",
         textcoords="offset points",
-        xytext=(-30, 5),
+        xytext=(-26, 5),
         xy=(largest_L, largest_value),
         xycoords="data",
     )
@@ -227,7 +242,7 @@ def ancestry_perf():
     dromel_chr2l = 4 * 1720600 * 23513712 * 2.40462600791e-08
     print(f"Dromel rho {dromel_chr2l:.2g}")
 
-    fig, axes = two_panel_fig()
+    fig, axes = two_panel_fig_single_col()
 
     def annotate_rho(ax, rho, x_offset, y_offset, text):
         ax.axvline(rho / 4, color="0.8", linestyle="-.")
@@ -329,7 +344,9 @@ cli.add_command(mutations_perf)
 cli.add_command(gc_perf)
 cli.add_command(sweeps_perf)
 cli.add_command(dtwf_perf)
-cli.add_command(ancestry_perf)
+
+with matplotlib.rc_context({"font.size": 7}):
+    cli.add_command(ancestry_perf)
 
 if __name__ == "__main__":
     cli()
