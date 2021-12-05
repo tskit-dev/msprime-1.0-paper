@@ -1106,7 +1106,7 @@ through which ancestry flows.
 \begin{subfigure}{\columnwidth}
 \centering
 \caption*{(A)}
-    \begin{tikzpicture}[xscale=0.8, yscale=0.4, node distance=2mm and 30mm]
+    \begin{tikzpicture}[xscale=0.8, yscale=0.3, node distance=2mm and 20mm]
 
 \tikzset{greynode/.style={circle,fill,inner sep=1},
 nodelabel/.style={font=\subfigtextsize}}
@@ -1225,9 +1225,9 @@ nodelabel/.style={font=\subfigtextsize}}
 \node [greynode] (s6) at ($0.25*(s0) + 0.25*(s1) + 0.5*(s2) + (0,5)$) {};
 \node [greynode] (s6r) at ($0.5*(s0r) + 0.25*(s1r) + 0.25*(s2r) + (0,5)$) {};
 %\foreach \u/\lab in {s3/3, s3r/3} \node[nodelabel,anchor=west] at (\u) {\lab};
-\foreach \u/\lab in {s4r/3} \node[nodelabel,anchor=south west] at (\u) {\lab};
-\foreach \u/\lab in {s5/4} \node[nodelabel,anchor=south east] at (\u) {\lab};
-\foreach \u/\lab in {s6/5, s6r/5} \node[nodelabel,anchor=south] at (\u) {\lab};
+\foreach \u/\lab in {s4r/4} \node[nodelabel,anchor=south west] at (\u) {\lab};
+\foreach \u/\lab in {s5/5} \node[nodelabel,anchor=south east] at (\u) {\lab};
+\foreach \u/\lab in {s6/6, s6r/6} \node[nodelabel,anchor=south] at (\u) {\lab};
 
 %% Edges
 \foreach \child/\parent in {
@@ -1237,9 +1237,9 @@ nodelabel/.style={font=\subfigtextsize}}
 	\draw (\child) -| (\parent);
 
 % Axes
-\draw[very thick] ($(s0) + (0,-2.0)$) -- ($(s2r) + (0,-2.0)$);
+\draw[very thick] ($(s0) + (0,-2.5)$) -- ($(s2r) + (0,-2.5)$);
 \node (topAx) at (0,-1.0) {};
-\node (topLeft) at ($(s0) + (0,-2.0)$) {};
+\node (topLeft) at ($(s0) + (0,-2.5)$) {};
 \node (genUnit) at ($0.1*(s2r) - 0.1*(s0)$) {};
 \foreach \x in {0, 5, 10} \draw ($(topLeft) + \x*(genUnit) + (0,0.1)$) -- +(0, -0.2); % tick marks
 \node[anchor=north] at ($(topLeft)$) {\subfigtextsize 0.0};
@@ -1257,9 +1257,7 @@ nodelabel/.style={font=\subfigtextsize}}
 occurs at position 0.3; (B) the equivalent topology depicted as a tree
 sequence, including the recombination node; (C) the same tree sequence
 topology ``simplified'' down to its minimal tree sequence representation.
-Note that the internal nodes have been renumbered in the simplified
-representation, so that, e.g., node 5 in (C) corresponds to node 6 in
-(A) and (B).}
+Note the original node IDs have been retained for clarity.}
 \end{figure}
 
 For our purposes, an ARG is a realization of the coalescent with
