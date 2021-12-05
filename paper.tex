@@ -1101,44 +1101,47 @@ set of disjoint genomic intervals
 through which ancestry flows.
 
 \begin{figure}
-\begin{subfigure}[t]{0.33\columnwidth}
+
+\newcommand\subfigtextsize{\small}
+\begin{subfigure}{\columnwidth}
 \centering
 \caption*{(A)}
-    \begin{tikzpicture}[scale=0.45,nodestyle/.style={font=\scriptsize}]
+    \begin{tikzpicture}[xscale=0.8, yscale=0.4, node distance=2mm and 30mm]
 
-    \draw (-2,0) -- (-2,3) -- (0, 3);
-    \draw (1,0) -- (1,1);
-    \draw (0,1) -- (2,1) -- (2,2) -- (4,2) -- (4,0);
-    \draw (3,2) -- (3,5);
-    \draw (0,1) -- (0,3);
-    \draw (-1, 3) -- (-1, 5) -- (3,5);
+\tikzset{greynode/.style={circle,fill,inner sep=1},
+nodelabel/.style={font=\subfigtextsize}}
 
-    \draw[fill] (-2,0) circle [radius=0.05];
-    \draw[fill] (-1,3) circle [radius=0.05];
-    \draw[fill] (1,0) circle [radius=0.05];
-    \draw[fill] (4,0) circle [radius=0.05];
-    \draw[fill] (1,1) circle [radius=0.05];
-    \draw[fill] (3,2) circle [radius=0.05];
-    \draw[fill] (1,5) circle [radius=0.05];
+\node (s0) [greynode] {};
+\node (s1) [right=of s0,greynode] {};
+\node (s2) [right=of s1,greynode] {};
+\node [greynode] (s3) at ($(s1) + (0,1)$) {};
+\node [greynode] (s4) at ($0.5*(s1) + 0.5*(s2) + (0,2)$) {};
+\node [greynode] (s5) at ($0.5*(s0) + 0.5*(s1) + (0,3)$) {};
+\node [greynode] (s6) at ($(s1) + (0,5)$) {};
 
-    \node[nodestyle] [below] at (-2,0) {0};
-    \node[nodestyle] [below] at (1,0) {1};
-    \node[nodestyle] [below] at (4,0) {2};
-    \node[nodestyle] [above] at (1,1) {3};
-    \node[nodestyle] [below right] at (1,1) {$x = 0.3$};
-    \node[nodestyle] [above right] at (3,2) {4};
-    \node[nodestyle] [above left] at (-1,3) {5};
-    \node[nodestyle] [above] at (1,5) {6};
+\node [nodelabel,anchor=north west] at ($(s3) + (0,0)$) {$x = 0.3$};
+\foreach \u/\lab in {s0/0, s1/1, s2/2} \node[nodelabel,anchor=north] at (\u) {\lab};
+\foreach \u/\lab in {s4/4} \node[nodelabel,anchor=south west] at (\u) {\lab};
+\foreach \u/\lab in {s5/5} \node[nodelabel,anchor=south east] at (\u) {\lab};
+\foreach \u/\lab in {s3/3, s6/6} \node[nodelabel,anchor=south] at (\u) {\lab};
 
-    \end{tikzpicture}
-\end{subfigure}
-\begin{subfigure}[t]{0.33\columnwidth}
+%% Edges
+\draw (s1) -- (s3);
+\foreach \child/\parent in {s6/s5, s6/s4, s5/s0, s4/s2}
+	\draw (\child) -| (\parent);
+
+\draw (s5) -| ($0.5*(s3) + 0.5*(s3-|s5)$) |- (s3);
+\draw (s4) -| ($0.5*(s3) + 0.5*(s3-|s4)$) |- (s3);
+
+\end{tikzpicture}
+\end{subfigure}\\
+\begin{subfigure}{\columnwidth}
 \centering
 \caption*{(B)}
-\begin{tikzpicture}[node distance=2mm and 4mm,scale=0.45]
+\begin{tikzpicture}[xscale=0.8, yscale=0.2, node distance=2mm and 10mm]
 
-\tikzset{greynode/.style={circle,fill,inner sep=0.7},
-nodelabel/.style={font=\scriptsize}}
+\tikzset{greynode/.style={circle,fill,inner sep=1},
+nodelabel/.style={font=\subfigtextsize}}
 
 % Left sample nodes
 \node (s0) [greynode] {};
@@ -1147,7 +1150,7 @@ nodelabel/.style={font=\scriptsize}}
 \foreach \u/\lab in {s0/0, s1/1, s2/2} \node[nodelabel,anchor=north] at (\u) {\lab};
 
 % Right sample nodes
-\node (rightTree) at (4, 0) {};
+\node (rightTree) at (5, 0) {};
 \node [greynode] (s0r) at ($(s0) + (rightTree)$) {};
 \node [greynode] (s1r) at ($(s1) + (rightTree)$) {};
 \node [greynode] (s2r) at ($(s2) + (rightTree)$) {};
@@ -1175,29 +1178,29 @@ nodelabel/.style={font=\scriptsize}}
 	\draw (\child) -| (\parent);
 
 % Axes
-\draw[very thick] ($(s0) + (0,-1.0)$) -- ($(s2r) + (0,-1.0)$);
+\draw[very thick] ($(s0) + (0,-2.5)$) -- ($(s2r) + (0,-2.5)$);
 \node (topAx) at (0,-1.0) {};
-\node (topLeft) at ($(s0) + (0,-1.0)$) {};
+\node (topLeft) at ($(s0) + (0,-2.5)$) {};
 \node (genUnit) at ($0.1*(s2r) - 0.1*(s0)$) {};
 \foreach \x in {0, 5, 10} \draw ($(topLeft) + \x*(genUnit) + (0,0.1)$) -- +(0, -0.2); % tick marks
-\node[anchor=north] at ($(topLeft)$) {\scriptsize 0.0};
-\node[anchor=north] at ($(topLeft) + 5*(genUnit)$) {\scriptsize 0.3};
-\node[anchor=north] at ($(topLeft) + 10*(genUnit)$) {\scriptsize 1.0};
+\node[anchor=north] at ($(topLeft)$) {\subfigtextsize 0.0};
+\node[anchor=north] at ($(topLeft) + 5*(genUnit)$) {\subfigtextsize 0.3};
+\node[anchor=north] at ($(topLeft) + 10*(genUnit)$) {\subfigtextsize 1.0};
 
 % Interval endpoints
 \draw[thin,color=black!50,dashed] ($(topLeft) + 5*(genUnit)$) -- +(0, 5.5);
 
 % Axis titles
-\node (topLabel) at ($(topLeft) + 5*(genUnit) + (0,-1.3)$) {$\scriptsize\textrm{Genome position}$};
+\node (topLabel) at ($(topLeft) + 5*(genUnit) + (0,-3.0)$) {$\subfigtextsize\textrm{Genome position}$};
 \end{tikzpicture}
-\end{subfigure}
-\begin{subfigure}[t]{0.33\columnwidth}
+\end{subfigure}\\
+\begin{subfigure}{\columnwidth}
 \centering
 \caption*{(C)}
-\begin{tikzpicture}[node distance=2mm and 4mm,scale=0.45]
+\begin{tikzpicture}[xscale=0.8, yscale=0.2, node distance=2mm and 10mm]
 
-\tikzset{greynode/.style={circle,fill,inner sep=0.7},
-nodelabel/.style={font=\scriptsize}}
+\tikzset{greynode/.style={circle,fill,inner sep=1},
+nodelabel/.style={font=\subfigtextsize}}
 
 % Left sample nodes
 \node (s0) [greynode] {};
@@ -1206,7 +1209,7 @@ nodelabel/.style={font=\scriptsize}}
 \foreach \u/\lab in {s0/0, s1/1, s2/2} \node[nodelabel,anchor=north] at (\u) {\lab};
 
 % Right sample nodes
-\node (rightTree) at (4, 0) {};
+\node (rightTree) at (5, 0) {};
 \node [greynode] (s0r) at ($(s0) + (rightTree)$) {};
 \node [greynode] (s1r) at ($(s1) + (rightTree)$) {};
 \node [greynode] (s2r) at ($(s2) + (rightTree)$) {};
@@ -1234,20 +1237,20 @@ nodelabel/.style={font=\scriptsize}}
 	\draw (\child) -| (\parent);
 
 % Axes
-\draw[very thick] ($(s0) + (0,-1.0)$) -- ($(s2r) + (0,-1.0)$);
+\draw[very thick] ($(s0) + (0,-2.0)$) -- ($(s2r) + (0,-2.0)$);
 \node (topAx) at (0,-1.0) {};
-\node (topLeft) at ($(s0) + (0,-1.0)$) {};
+\node (topLeft) at ($(s0) + (0,-2.0)$) {};
 \node (genUnit) at ($0.1*(s2r) - 0.1*(s0)$) {};
 \foreach \x in {0, 5, 10} \draw ($(topLeft) + \x*(genUnit) + (0,0.1)$) -- +(0, -0.2); % tick marks
-\node[anchor=north] at ($(topLeft)$) {\scriptsize 0.0};
-\node[anchor=north] at ($(topLeft) + 5*(genUnit)$) {\scriptsize 0.3};
-\node[anchor=north] at ($(topLeft) + 10*(genUnit)$) {\scriptsize 1.0};
+\node[anchor=north] at ($(topLeft)$) {\subfigtextsize 0.0};
+\node[anchor=north] at ($(topLeft) + 5*(genUnit)$) {\subfigtextsize 0.3};
+\node[anchor=north] at ($(topLeft) + 10*(genUnit)$) {\subfigtextsize 1.0};
 
 % Interval endpoints
 \draw[thin,color=black!50,dashed] ($(topLeft) + 5*(genUnit)$) -- +(0, 5.5);
 
 % Axis titles
-\node (topLabel) at ($(topLeft) + 5*(genUnit) + (0,-1.3)$) {$\scriptsize\textrm{Genome position}$};
+\node (topLabel) at ($(topLeft) + 5*(genUnit) + (0,-3.0)$) {$\subfigtextsize\textrm{Genome position}$};
 \end{tikzpicture}
 \end{subfigure}
 \caption{\label{fig-arg} (A) A simple ARG in which a recombination
