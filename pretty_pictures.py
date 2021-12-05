@@ -19,26 +19,26 @@ def mutated_tree():
     )
 
     model = msprime.F84(kappa=2)
-    mts = msprime.sim_mutations(ts, rate=1e-7, model=model, random_seed=4)
+    mts = msprime.sim_mutations(ts, rate=1e-7, model=model, random_seed=45)
 
-    height = 280
-    width = 700
+    height = 210  # height of the plotting box for each TS
+    width = 370
     top = 50
 
     colours = plt.rcParams['axes.prop_cycle'].by_key()['color']
-    print(colours)
+    # print(colours)
 
     def do_svg(ts, **kwargs):
 
         # The page style here is just for Chromium. We shouldn't
-        # need it for other vonersion options.
+        # need it for other output options.
         style = """\
             @media print {
-              @page { margin: 0; size: 6in 2.5in}
-              body { margin: 1.6cm; }
+              @page { margin: 0; size: 3.5in 5in}
+              body { margin: 0cm; }
             }
             text {
-                font-family:DejaVuSans;
+                font-family: "Dejavu Sans", sans-serif;
             }
             """
         for j in range(ts.num_individuals):
@@ -51,7 +51,7 @@ def mutated_tree():
         )
 
         return ts.draw_svg(
-            size=(width / 2, height - top),
+            size=(width, height),
             node_labels={},
             mutation_labels={m.id: m.derived_state for m in ts.mutations()},
             symbol_size=5,
@@ -62,27 +62,29 @@ def mutated_tree():
     font_size = 15
 
     # I think serif is the default, and matches what we're using for labels?
-    def make_text(text, y, font_family="sans"):
-        return (
-            f'<text x="{width / 4}" y="{y}" font-size="{font_size}" '
-            f'font-family="{font_family}" text-anchor="middle">'
-            f"{text}</text>"
-        )
+    def make_text(text, y, font_family=None):
+        html = f'<text x="{width/2}" y="{y}" text-anchor="middle" font-size="{font_size}"'
+        if font_family is not None:
+            html += f' style="font-family: {font_family}"'
+        html += f">{text}</text>"
+        return html
 
-    svg1 = do_svg(ts)
-    svg2 = do_svg(mts)
+    params = {}
+    # params = {'y_axis': True, 'y_ticks': {float(x): x for x in ["0", "1e4", "2e4", "3e4"]}}
+    svg1 = do_svg(ts, **params)
+    svg2 = do_svg(mts, **params)
     fig = (
-        f'<svg baseProfile="full" height="{height+top}" version="1.1" width="{width}" '
+        f'<svg baseProfile="full" height="{(height+top)*2}" version="1.1" width="{width}" '
         'xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" '
         'xmlns:xlink="http://www.w3.org/1999/xlink">'
         f'<g transform="translate(0 {top})">'
-        + make_text("(A)", y=-20)
-        + make_text("ts = sim_ancestry(3, ...)", y=-5, font_family="monospace")
+        + make_text("(A)", y=-25)
+        + make_text("ts = sim_ancestry(3, ...)", y=-8, font_family="monospace")
         + svg1
         + "</g>"
-        f'<g transform="translate({width/2} {top})">'
-        + make_text("(B)", y=-20)
-        + make_text("mts = sim_mutations(ts, ...)", y=-5, font_family="monospace")
+        f'<g transform="translate(0 {(height+top) + top})">'
+        + make_text("(B)", y=-25)
+        + make_text("mts = sim_mutations(ts, ...)", y=-8, font_family="monospace")
         + svg2
         + "</g>"
         "</svg>"

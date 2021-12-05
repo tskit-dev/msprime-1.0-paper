@@ -59,6 +59,7 @@ spellcheck: aspell.conf
 	aspell --conf ./aspell.conf --check paper.tex
 
 clean:
+	rm -f *.pdf
 	rm -f *.log *.dvi *.aux
 	rm -f *.blg *.bbl
 	rm -f *.eps *.[1-9]
