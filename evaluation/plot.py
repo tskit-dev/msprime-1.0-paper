@@ -30,6 +30,13 @@ def two_panel_fig(**kwargs):
     ax2.set_title("(B)")
     return fig, (ax1, ax2)
 
+def two_panel_fig_single_col(**kwargs):
+    width = 6
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(width, width / 2), **kwargs)
+    ax1.set_title("(A)")
+    ax2.set_title("(B)")
+    return fig, (ax1, ax2)
+
 
 @click.command()
 def mutations_perf():
@@ -235,7 +242,7 @@ def ancestry_perf():
     dromel_chr2l = 4 * 1720600 * 23513712 * 2.40462600791e-08
     print(f"Dromel rho {dromel_chr2l:.2g}")
 
-    fig, axes = two_panel_fig()
+    fig, axes = two_panel_fig_single_col()
 
     def annotate_rho(ax, rho, x_offset, y_offset, text):
         ax.axvline(rho / 4, color="0.8", linestyle="-.")
@@ -337,7 +344,9 @@ cli.add_command(mutations_perf)
 cli.add_command(gc_perf)
 cli.add_command(sweeps_perf)
 cli.add_command(dtwf_perf)
-cli.add_command(ancestry_perf)
+
+with matplotlib.rc_context({"font.size": 7}):
+    cli.add_command(ancestry_perf)
 
 if __name__ == "__main__":
     cli()
