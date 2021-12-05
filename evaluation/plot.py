@@ -181,7 +181,7 @@ def dtwf_perf():
     # print(df)
 
     df.memory /= 1024 ** 3
-    label_map = {"ARGON": "ARGON", "msprime": "DTWF", "hybrid": "DTWF + Hudson"}
+    label_map = {"ARGON": "ARGON", "msprime": "DTWF", "hybrid": "Hybrid"}
 
     fig, (ax1, ax2) = two_panel_fig()
     lines = {}
@@ -206,7 +206,7 @@ def dtwf_perf():
     ax2.annotate(
         f"{round(largest_value * 1024)} MiB",
         textcoords="offset points",
-        xytext=(-30, 5),
+        xytext=(-26, 5),
         xy=(largest_L, largest_value),
         xycoords="data",
     )
