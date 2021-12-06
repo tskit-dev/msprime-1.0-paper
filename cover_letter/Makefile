@@ -1,3 +1,6 @@
+cover_letter3.pdf: cover_letter3.tex
+	pdflatex cover_letter3.tex
+
 cover_letter2.pdf: cover_letter2.tex
 	pdflatex cover_letter2.tex
 
