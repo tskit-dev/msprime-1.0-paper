@@ -6,7 +6,6 @@
 \usepackage{authblk}
 \usepackage{dsfont}
 \usepackage{environ}%
-\usepackage{nameref}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{tikz}
@@ -531,7 +530,7 @@ Note that this formulation is fully compatible with
 the concept of an Ancestral Recombination Graph (ARG)
 and any ARG topology can be fully and efficiently encoded
 in the node and edge tables illustrated in Fig.~\ref{fig-ts-example};
-see the \nameref{sec-arg} section below for
+see the Ancestral Recombination Graphs section below for
 more details.
 
 % OK, back to tree sequences: what about sequence variation?
@@ -540,7 +539,7 @@ of sequence variation among the specified samples. For coalescent
 simulations, we usually have three steps: (1) simulate
 the genetic ancestry, and optionally output the resulting marginal trees;
 (2) simulate sequence evolution conditioned on this ancestry by generating
-mutations (see the \nameref{sec-mutations} section); and (3) output the
+mutations (see the Simulating mutations section); and (3) output the
 resulting nucleotide sequences by percolating the effects of the mutations through
 the trees. Information about the mutations
 themselves---e.g., where they have occurred on the
@@ -697,7 +696,7 @@ ancestry~\citep{racimo2017archaic}.
 All of this information
 is either directly available by default in \msprime, or can be optionally
 stored via options such as \texttt{record\_migrations} or
-\texttt{record\_full\_arg} (see the \nameref{sec-arg} section) and
+\texttt{record\_full\_arg} (see the Ancestral Recombination Graphs section) and
 can be efficiently and conveniently processed via \tskit\ APIs.
 
 % These problems of inefficient and limited access to the simulated
@@ -716,7 +715,7 @@ can be efficiently and conveniently processed via \tskit\ APIs.
 
 % Explain the background: what have people done classically?
 Because coalescent simulations are usually concerned with
-neutral evolution (see the \nameref{sec-selection} section, however)
+neutral evolution (see the Selective Sweeps section, however)
 the problem of generating synthetic genetic variation can be decomposed into
 two independent steps:
 firstly, simulating genetic ancestry (the trees), then subsequently simulating
@@ -812,7 +811,7 @@ in a tree sequence with 508,125 edges.
 This efficiency for large numbers of trees is possible because
 the tree sequence encoding allows us to generate mutations
 on an edge-by-edge basis
-(see Fig.~\ref{fig-ts-example} and the~\nameref{app-mutation-algorithm}
+(see Fig.~\ref{fig-ts-example} and the Mutation Generation
 appendix),
 rather than tree-by-tree and branch-by-branch as would otherwise be required.
 Simulating mutations on a single tree is also very efficient;
@@ -909,7 +908,7 @@ overall number of events in Hudson's algorithm.
 as an upper bound
 on the number of recombination events within trapped ancestral material
 for $n$ samples.
-As discussed in the \nameref{app-time-complexity} appendix, the quadratic
+As discussed in the Time complexity of Hudson's algorithm appendix, the quadratic
 dependence of simulation running time on $\rho$ implied
 by \eqref{eqn-hsw-bound} is well supported
 by observations, and provides a useful means of predicting how long
@@ -1071,7 +1070,7 @@ These simulation models have been extensively validated against
 analytical results from the site frequency
 spectrum~\citep{birkner2013statistical,blath2016site,hobolth2019phase}
  as well as more general properties of coalescent processes.
-See the \nameref{app-multiple-mergers} appendix for more details and model derivations.
+See the Multiple Merger Coalescent Model appendix for more details and model derivations.
 
 \subsection*{Ancestral Recombination Graphs}
 \label{sec-arg}
@@ -1309,10 +1308,11 @@ Metropolis-Hastings~\citep{kuhner2000maximum,nielsen2000estimation,wang2008bayes
 We provide functions to compute the likelihood of ARG realizations
 and mutational patterns under
 the standard coalescent and infinite sites mutation model.
-For details, see the appendix: \nameref{app-likelihoods}.
+For details, see the appendix: Likelihood Calculations.
 
 \subsection*{Selective sweeps}
 \label{sec-selection}
+
 Another elaboration of the standard neutral coalescent with recombination
 is the addition of selective
 sweeps~\citep{kaplan1989hitchhiking,braverman1995hitchhiking,kim2002detecting}.
@@ -1351,7 +1351,7 @@ on that trajectory.
 Following \discoal, we generate sweep trajectories in \msprime\ using a
 jump process approximation to the conditional
 diffusion of an allele bound for
-fixation~\citep{coop2004ancestral}, as detailed in the \nameref{app-sweeps}
+fixation~\citep{coop2004ancestral}, as detailed in the Selective Sweeps Model
 appendix. Given a randomly generated allele frequency trajectory,
 the simulation of a sweep works by assigning lineages to
 two different structured coalescent ``labels'', based on
@@ -1771,7 +1771,7 @@ site diversity.
 \subsection*{Time complexity of Hudson's algorithm}
 \label{app-time-complexity}
 
-As discussed in the \nameref{sec-recombination} section, the time complexity of
+As discussed in the Recombination section, the time complexity of
 Hudson's algorithm is predicted to be
 quadratic in the population scaled recombination rate
 $\rho = 4 N_e L$ (where $L$ is the length of the genome in units of
