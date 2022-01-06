@@ -196,8 +196,13 @@ software quality via community engagement.
 % contributions, using the relevant superscript numbers
 % \equalcontrib{1}
 % \equalcontrib{2}
-\equalcontrib{$\star$} % {Denotes shared first authorship, listed alphabetically}
-\equalcontrib{$\dagger$} % {Denotes shared senior authorship, listed alphabetically}
+\makeatletter
+\newcommand{\equalcontribfirst}[1]{\@authfootnote{#1}{These authors contributed equally to this work, as joint first authors.}}
+\newcommand{\equalcontriblast}[1]{\@authfootnote{#1}{These authors contributed equally to this work, as joint last authors.}}
+\makeatother
+
+\equalcontribfirst{$\star$} % {Denotes shared first authorship, listed alphabetically}
+\equalcontriblast{$\dagger$} % {Denotes shared senior authorship, listed alphabetically}
 % \equalcontrib{$\ddagger$}{Denotes corresponding author}
 
 \correspondingauthoraffiliation{$\ddagger$}{\url{jerome.kelleher@bdi.ox.ac.uk}}
