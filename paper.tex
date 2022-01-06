@@ -1719,11 +1719,11 @@ if the parental allele is $A$ or $T$, then choose a random derived allele
 different to the parental allele;
 if the parental allele is $C$ or $G$,
 then choose the derived allele to be equal to the parent allele
-with probability $\beta/(\alpha + \beta)$,
+with probability $1-\beta/\alpha$,
 and randomly choose a different nucleotide otherwise.
 This produces the correct distribution by Poisson thinning:
-a Poisson process with rate $\alpha$ in which each point is discarded independently
-with probability $\beta / (\alpha + \beta)$ is equivalent to a Poisson
+a Poisson process with rate $\alpha$ in which each point is kept independently
+with probability $\beta / \alpha$ is equivalent to a Poisson
 process with rate $\beta$.
 All finite-state models (implemented under the generic \texttt{MatrixMutationModel} class)
 work in this way: mutations are placed at the maximum mutation rate,
