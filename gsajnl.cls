@@ -22,7 +22,7 @@
 
 % April 16, 2016:
 % Line numbers
-% v1.8 April 12, 2018: make sure line numbers are 
+% v1.8 April 12, 2018: make sure line numbers are
 % displayed in outer margins of columns; so
 % remove "running" option somehow gets it right
 \RequirePackage[switch,pagewise]{lineno}
@@ -52,7 +52,7 @@
 \newdateformat{monthyeardate}{%
   \monthname[\THEMONTH] \THEYEAR}
 
-\RequirePackage{enumitem} 
+\RequirePackage{enumitem}
 \setlist[itemize]{noitemsep}
 
 
@@ -69,7 +69,7 @@
 % Choose article type
 \newcommand*{\articletype}[1]{%
   \RequirePackage{styles/#1}}
-  
+
 % Copyright statement
 \RequirePackage{textcomp} % For copyright symbol styling
 \newcommand{\copyrightstatement}{Copyright \, \textcopyright\, \the\year{} by the Genetics Society of America}
@@ -135,10 +135,10 @@
 \pagestyle{fancy}          % Enables the custom headers/footers
 
 \fancypagestyle{firststyle}{
-   \fancyhead[R]{{\watermarkfont GENETICS |} \headerfont \articletypename}
+   % \fancyhead[R]{{\watermarkfont GENETICS |} \headerfont \articletypename}
    % v1.6: Remove volume and month information
 %    \fancyfoot[R]{\footnotesize Genetics, Vol. XXX, XXXX–XXXX \hspace{1em} \monthyeardate\today \hspace{2em} \thepage\ }
-   \fancyfoot[R]{\footnotesize Genetics\hspace{2em}\thepage}
+   % \fancyfoot[R]{\footnotesize Genetics\hspace{2em}\thepage}
 }
 
 % Headers
@@ -208,10 +208,10 @@
 
 % Colored margin box
 \newcommand{\marginmark}{
-\begin{textblock}{2}(200,9.5) 
-\begin{tikzpicture}
-\fill[color=color2] (0,0) rectangle (1.2,0.25);
-\end{tikzpicture}
+\begin{textblock}{2}(200,9.5)
+% \begin{tikzpicture}
+% \fill[color=color2] (0,0) rectangle (1.2,0.25);
+% \end{tikzpicture}
 \end{textblock}
 }
 
@@ -318,7 +318,7 @@ THE ABSTRACT\vskip12pt}\let\go\relax\fi
 \newcommand{\equalcontrib}[1]{\@authfootnote{#1}{These authors contributed equally to this work.}}
 
 \newcommand{\firstpagefootnote}{\blfootnote{\copyrightfont \ifthenelse{\boolean{displaycopyright}}{\copyrightstatement}{}\\%
-doi: 10.1534/genetics.XXX.XXXXXX \\%
+% doi: 10.1534/genetics.XXX.XXXXXX \\%
 Manuscript compiled: \today%
 }}
 
